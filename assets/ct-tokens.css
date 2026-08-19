@@ -1,0 +1,242 @@
+/*
+ * Carly Taylor Jewelry -- shared design tokens
+ * -------------------------------------------------------------------------
+ * Loaded once, early, in layout/theme.liquid (before base.css so Dawn's own
+ * cascade can still win where it should, and after so component files that
+ * follow can rely on these custom properties existing).
+ *
+ * Dawn's native settings-driven tokens (--color-*, --page-width, the card /
+ * button / input radius variables, etc. -- all built in layout/theme.liquid
+ * from config/settings_data.json) remain the source of truth wherever they
+ * can express this design. The custom properties below only cover roles
+ * Dawn's six-field color-scheme model has no slot for (the bronze/champagne
+ * brand accents, the three-step hairline border ramp, secondary body-copy
+ * tones) plus the design's signature 999px pill radius, which exceeds every
+ * Dawn radius setting's maximum (buttons_radius/inputs_radius/
+ * variant_pills_radius all cap at 40px -- config/settings_schema.json).
+ *
+ * This file is a plain asset (not a {% stylesheet %} tag), so it cannot run
+ * Liquid. The self-hosted @font-face rules below reference sibling files in
+ * this same assets/ directory by plain relative filename, which Shopify's
+ * asset CDN resolves correctly without needing the asset_url filter.
+ */
+
+/* Cormorant Garamond is not in Shopify's font_picker library under this
+   exact name (only the visually distinct "Cormorant" display cut is), so
+   it is self-hosted here rather than substituted. Karla (the design's body
+   font) *is* in Shopify's library and is driven natively through
+   settings.type_body_font instead -- see config/settings_data.json. */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('cormorant-garamond-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('cormorant-garamond-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('cormorant-garamond-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('cormorant-garamond-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* Brand accents -- no equivalent field in Dawn's color-scheme model */
+  --ct-accent: #a67b5b;
+  --ct-accent-hover: #8a6248;
+  --ct-bronze: #be9373;
+  --ct-champagne: #dbb894;
+
+  /* Ink / surfaces */
+  --ct-ink: #3a2d23;
+  --ct-cream: #fbf7f2;
+  --ct-surface: #f1e8dc;
+  --ct-surface-alt: #efe4d7;
+  --ct-on-dark: #f3e6d8;
+  --ct-on-dark-link: #eadbc8;
+  --ct-on-dark-muted: #b9a794;
+  --ct-on-dark-faint: #a99a88;
+  --ct-button-label: #f8f1e8;
+
+  /* Body copy tones (distinct from heading ink) */
+  --ct-body: #5c4e40;
+  --ct-muted: #7a6a5a;
+
+  /* Borders */
+  --ct-border: #e9ddd0;
+  --ct-border-strong: #c9b49e;
+  --ct-input-border: #dacbb7;
+  --ct-progress-track: #ebdfd0;
+
+  /* Feedback */
+  --ct-success: #7c9070;
+  --ct-error: #b0563e;
+
+  /* Radii -- the design's pill buttons exceed Dawn's 40px radius caps */
+  --ct-radius-pill: 999px;
+  --ct-radius-panel: 2rem; /* 20px */
+  --ct-radius-lg: 1.6rem; /* 16px */
+  --ct-radius-md: 1.4rem; /* 14px */
+  --ct-radius-sm: 1rem; /* 10px */
+
+  /* Layout */
+  --ct-container: 128rem; /* 1280px at this theme's 1rem = 10px root */
+  --ct-hero-min-height: 100vh;
+
+  /* Motion */
+  --ct-ease: 0.35s ease;
+  --ct-ease-fast: 0.25s ease;
+  --ct-ease-slow: 0.6s ease;
+
+  /* Typography */
+  --ct-font-heading: 'Cormorant Garamond', serif;
+  --ct-tracking-eyebrow: 0.3em;
+  --ct-tracking-nav: 0.1em;
+
+  /* Dawn's settings.page_width can only reach 1300 in steps of 100
+     (config/settings_schema.json: min 1000, max 1600, step 100), so the
+     theme editor setting is left at its nearest value and the applied
+     result is forced to the design's exact 1280px here. */
+  --page-width: var(--ct-container);
+}
+
+/* Every section in the design uses 24px side padding; Dawn's .page-width
+   switches to 5rem above 750px, which pulls the content in ~26px per side at
+   desktop. Scoped to the homepage so other templates keep Dawn's own gutters
+   until they're restyled too. */
+@media screen and (min-width: 750px) {
+  .template-index .page-width {
+    padding-left: 2.4rem;
+    padding-right: 2.4rem;
+  }
+}
+
+/* Shared building blocks reused across the new Carly Taylor sections
+   (assets/ct-header.css, ct-footer.css, ct-cart-drawer.css,
+   ct-homepage-sections.css). Centralised here so every pill button /
+   chip / eyebrow label in the design comes from one definition. */
+
+.ct-eyebrow {
+  display: block;
+  font-family: var(--font-body-family);
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: var(--ct-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--ct-bronze);
+}
+
+.ct-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: 0;
+  border-radius: var(--ct-radius-pill);
+  padding: 1.6rem 3.6rem;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ct-ease), color var(--ct-ease), border-color var(--ct-ease);
+}
+
+.ct-btn:focus-visible {
+  outline: 0.2rem solid var(--ct-champagne);
+  outline-offset: 0.2rem;
+}
+
+.ct-btn--dark {
+  background-color: var(--ct-ink);
+  color: var(--ct-button-label);
+}
+
+.ct-btn--dark:hover {
+  background-color: var(--ct-bronze);
+  color: var(--ct-button-label);
+}
+
+.ct-btn--light {
+  background-color: var(--ct-cream);
+  color: var(--ct-ink);
+}
+
+.ct-btn--light:hover {
+  background-color: var(--ct-champagne);
+  color: var(--ct-ink);
+}
+
+.ct-btn--square {
+  border-radius: 0;
+  letter-spacing: 0.22em;
+  font-size: 1.3rem;
+  padding: 1.5rem 3.6rem;
+}
+
+.ct-btn--outline {
+  background-color: transparent;
+  border: 0.1rem solid var(--ct-ink);
+  color: var(--ct-ink);
+  padding: 1.2rem 2rem;
+  font-size: 1.2rem;
+}
+
+.ct-btn--outline:hover {
+  background-color: var(--ct-ink);
+  color: var(--ct-button-label);
+}
+
+.ct-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 0.1rem solid var(--ct-border-strong);
+  border-radius: var(--ct-radius-pill);
+  padding: 1rem 2.2rem;
+  font-family: var(--font-body-family);
+  font-size: 1.3rem;
+  letter-spacing: var(--ct-tracking-nav);
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--ct-ink);
+  cursor: pointer;
+  transition: background-color var(--ct-ease), color var(--ct-ease), border-color var(--ct-ease);
+}
+
+.ct-chip:focus-visible {
+  outline: 0.2rem solid var(--ct-champagne);
+  outline-offset: 0.2rem;
+}
+
+.ct-chip[aria-current='true'] {
+  background-color: var(--ct-ink);
+  border-color: var(--ct-ink);
+  color: var(--ct-button-label);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-btn,
+  .ct-chip {
+    transition-duration: 0.01ms;
+  }
+}
