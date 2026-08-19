@@ -1,0 +1,18 @@
+# Shopify CLI
+.shopify/
+*.theme-check.log
+
+# Environment / credentials
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
