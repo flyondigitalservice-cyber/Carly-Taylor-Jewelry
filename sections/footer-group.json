@@ -1,0 +1,64 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "newsletter_enable": true,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": true,
+        "show_social": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "payment_enable": true,
+        "show_policy": true,
+        "margin_top": 0,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "blocks_wJrqtk": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_25dae9c_VR7A7F": {
+          "type": "ai_gen_block_25dae9c",
+          "settings": {
+            "copyright_text": "(c) 2025 Briefslater LLC",
+            "text_alignment": "center",
+            "background_color": "#FFFFFF",
+            "text_color": "#adaaaa",
+            "font_size": 14,
+            "font_size_mobile": 12,
+            "padding_top": 20,
+            "padding_bottom": 20,
+            "padding_horizontal": 20,
+            "padding_top_mobile": 16,
+            "padding_bottom_mobile": 16,
+            "padding_horizontal_mobile": 16
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_25dae9c_VR7A7F"
+      ],
+      "name": "Copyright",
+      "settings": {}
+    }
+  },
+  "order": [
+    "footer",
+    "blocks_wJrqtk"
+  ]
+}
