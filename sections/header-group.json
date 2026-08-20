@@ -21,7 +21,7 @@
         "announcement-bar-0": {
           "type": "announcement",
           "settings": {
-            "text": "Welcome to Carly Taylor - Use code WELCOME for 10% off your first order",
+            "text": "Welcome to Carly Taylor — use code <strong>WELCOME</strong> for 10% off your first order",
             "link": ""
           }
         }
@@ -32,8 +32,8 @@
       "settings": {
         "auto_rotate": false,
         "change_slides_speed": 5,
-        "color_scheme": "scheme-1",
-        "show_line_separator": true,
+        "color_scheme": "scheme-7",
+        "show_line_separator": false,
         "show_social": false,
         "enable_country_selector": false,
         "enable_language_selector": false
@@ -46,13 +46,13 @@
         "mobile_logo_position": "center",
         "menu": "main-menu",
         "menu_type_desktop": "dropdown",
-        "sticky_header_type": "on-scroll-up",
+        "sticky_header_type": "always",
         "show_line_separator": true,
-        "color_scheme": "scheme-1",
-        "menu_color_scheme": "scheme-1",
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "enable_customer_avatar": true,
+        "color_scheme": "scheme-6",
+        "menu_color_scheme": "scheme-6",
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "enable_customer_avatar": false,
         "margin_bottom": 0,
         "padding_top": 20,
         "padding_bottom": 20

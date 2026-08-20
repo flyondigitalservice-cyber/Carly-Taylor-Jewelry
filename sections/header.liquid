@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+{{ 'ct-header.css' | asset_url | stylesheet_tag }}
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
 <link
   rel="stylesheet"
@@ -122,7 +123,7 @@
   {% if header_tag == 'sticky-header' %}
     data-sticky-type="{{ section.settings.sticky_header_type }}"
   {% endif %}
-  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
+  class="header-wrapper ct-header{% if request.page_type == 'index' %} ct-header--home{% endif %} color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
 >
   {%- liquid
     assign social_links = false
@@ -152,28 +153,10 @@
         <h1 class="header__heading">
       {%- endif -%}
       <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-        {%- if settings.logo != blank -%}
-          <div class="header__heading-logo-wrapper">
-            {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-            {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-            {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
-            {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-            {{
-              settings.logo
-              | image_url: width: 600
-              | image_tag:
-                class: 'header__heading-logo motion-reduce',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-            }}
-          </div>
-        {%- else -%}
-          <span class="h2">{{ shop.name }}</span>
-        {%- endif -%}
+        <div class="header__heading-logo-wrapper ct-logo-wrapper">
+          <span class="ct-logo" aria-hidden="true">{{ 'full-logo.svg' | inline_asset_content }}</span>
+          <span class="visually-hidden">{{ shop.name }}</span>
+        </div>
       </a>
       {%- if request.page_type == 'index' -%}
         </h1>
@@ -195,28 +178,10 @@
         <h1 class="header__heading">
       {%- endif -%}
       <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-        {%- if settings.logo != blank -%}
-          <div class="header__heading-logo-wrapper">
-            {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-            {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-            {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
-            {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-            {{
-              settings.logo
-              | image_url: width: 600
-              | image_tag:
-                class: 'header__heading-logo',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-            }}
-          </div>
-        {%- else -%}
-          <span class="h2">{{ shop.name }}</span>
-        {%- endif -%}
+        <div class="header__heading-logo-wrapper ct-logo-wrapper">
+          <span class="ct-logo" aria-hidden="true">{{ 'full-logo.svg' | inline_asset_content }}</span>
+          <span class="visually-hidden">{{ shop.name }}</span>
+        </div>
       </a>
       {%- if request.page_type == 'index' -%}
         </h1>
@@ -247,12 +212,42 @@
           </localization-form>
         {%- endif -%}
       </div>
-      {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- comment -%}
+        Search + customer account. The Carly Taylor design shows neither, but a
+        real storefront needs both entry points, so they're restored here as an
+        explicit, merchant-controllable deviation from the mockup (settings
+        ct_show_search / ct_show_account below) rather than silently.
 
-      {%- if shop.customer_accounts_enabled -%}
+        Both use Dawn's stock markup and behaviour untouched -- the search modal
+        comes straight from snippets/header-search.liquid (predictive search
+        included, gated on settings.predictive_search_enabled) and the account
+        link is Dawn's, avatar support included. ct-header.css only re-skins
+        them to the CT palette; no search or account logic is reimplemented.
+
+        Every asset these need is already loaded: component-search.css at the
+        top of this file, and details-modal.js / search-form.js /
+        predictive-search.js / component-predictive-search.css from
+        layout/theme.liquid. Nothing extra to enqueue.
+
+        Dawn already renders header-search near the top of this file, but only
+        when logo_position is 'top-center' or the menu is empty. The guard below
+        is the exact complement of that condition, so exactly one search modal
+        exists for ANY combination of those settings -- not just the current
+        middle-left + main-menu pairing. Without it, a merchant switching the
+        logo to top-center in the theme editor would silently get two.
+      {%- endcomment -%}
+
+      {%- if section.settings.ct_show_search
+          and section.settings.logo_position != 'top-center'
+          and section.settings.menu != blank
+      -%}
+        {% render 'header-search', input_id: 'Search-In-Modal' %}
+      {%- endif -%}
+
+      {%- if section.settings.ct_show_account and shop.customer_accounts_enabled -%}
         <a
           href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-          class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}"
+          class="header__icon header__icon--account ct-header__icon link focus-inset{% if section.settings.enable_customer_avatar %} header__icon--customer-avatar{% endif %}"
           rel="nofollow"
         >
           {%- if section.settings.enable_customer_avatar -%}
@@ -260,11 +255,11 @@
               {%- if customer and customer.has_avatar? -%}
                 {{ customer | avatar }}
               {%- else -%}
-                <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+                <span class="svg-wrapper">{{- 'icon-account.svg' | inline_asset_content -}}</span>
               {%- endif -%}
             </account-icon>
           {%- else -%}
-            <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+            <span class="svg-wrapper">{{- 'icon-account.svg' | inline_asset_content -}}</span>
           {%- endif -%}
           <span class="visually-hidden">
             {%- liquid
@@ -285,21 +280,11 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
-        {% if cart == empty %}
-          <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
-        {% else %}
-          <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-        {% endif %}
-        <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
-        {%- if cart != empty -%}
-          <div class="cart-count-bubble">
-            {%- if cart.item_count < 100 -%}
-              <span aria-hidden="true">{{ cart.item_count }}</span>
-            {%- endif -%}
-            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
-          </div>
-        {%- endif -%}
+      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart ct-bag link focus-inset" id="cart-icon-bubble">
+        <span class="ct-bag__label">{{ 'sections.header.ct_bag_label' | t }}</span>
+        <span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
+        <span aria-hidden="true">{{ cart.item_count }}</span>
+        <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
       </a>
     </div>
   </header>
@@ -425,6 +410,52 @@
 
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
+
+{%- comment -%}
+  Transparent-over-hero header state. Independent of Dawn's own
+  StickyHeader class above (which only ever manages show/hide-on-scroll) --
+  this only toggles a class the new ct-header.css styles read, and never
+  touches Dawn's own scroll classes or listeners.
+{%- endcomment -%}
+<script>
+  (function () {
+    var header = document.querySelector('.ct-header');
+    if (!header) return;
+    var threshold = 40;
+    var ticking = false;
+    function update() {
+      header.classList.toggle('ct-header--scrolled', window.scrollY > threshold);
+      ticking = false;
+    }
+
+    // The design floats the announcement bar AND the header over the hero, so
+    // the homepage pull-up has to clear both. Dawn's own --header-height covers
+    // only .section-header, and the announcement bar is a separate sibling
+    // section, so measure the whole header group here.
+    function measure() {
+      var announcement = document.querySelector('.announcement-bar-section');
+      var announcementH = announcement ? announcement.offsetHeight : 0;
+      var groupH = announcementH + header.offsetHeight;
+      var root = document.documentElement.style;
+      root.setProperty('--ct-announcement-height', announcementH + 'px');
+      root.setProperty('--ct-header-group-height', groupH + 'px');
+    }
+
+    measure();
+    update();
+    window.addEventListener('resize', measure, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    window.addEventListener(
+      'scroll',
+      function () {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+  })();
+</script>
 
 <script type="application/ld+json">
   {
@@ -602,6 +633,24 @@
       "default": true,
       "label": "t:sections.header.settings.enable_language_selector.label",
       "info": "t:sections.header.settings.enable_language_selector.info"
+    },
+    {
+      "type": "header",
+      "content": "Search and account"
+    },
+    {
+      "type": "checkbox",
+      "id": "ct_show_search",
+      "default": true,
+      "label": "Show search",
+      "info": "Opens Dawn's search modal. Predictive results follow the theme-wide Search behaviour setting."
+    },
+    {
+      "type": "checkbox",
+      "id": "ct_show_account",
+      "default": true,
+      "label": "Show account link",
+      "info": "Only appears if customer accounts are enabled for the store."
     },
     {
       "type": "checkbox",
