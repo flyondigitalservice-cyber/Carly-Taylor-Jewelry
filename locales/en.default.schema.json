@@ -482,7 +482,8 @@
           "settings": {
             "text": {
               "label": "Text",
-              "default": "Welcome to our store"
+              "default": "Welcome to our store",
+              "info": "Use the editor's bold formatting to highlight a promo code or key phrase."
             },
             "text_alignment": {
               "label": "Text alignment",

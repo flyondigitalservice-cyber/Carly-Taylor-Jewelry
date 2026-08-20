@@ -308,3 +308,17 @@
     transition-duration: 0.01ms;
   }
 }
+
+/*
+ * Announcement bar. The design keys the "WELCOME" code out with bold +
+ * champagne colour + wider letter-spacing inside otherwise plain text --
+ * sections/announcement-bar.liquid's block "text" setting is inline_richtext
+ * so the merchant controls the bold span from the theme editor rather than
+ * this being hardcoded markup.
+ */
+
+.announcement-bar-section .announcement-bar__message strong {
+  color: var(--ct-champagne);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
