@@ -1,0 +1,199 @@
+/*
+ * Carly Taylor Jewelry -- homepage sections
+ * -------------------------------------------------------------------------
+ * Shared stylesheet for sections/ct-hero.liquid, sections/ct-category-grid.liquid,
+ * sections/ct-newsletter.liquid, and the circular-quick-add / crossfade
+ * restyle of sections/featured-collection.liquid (scoped under .ct-featured,
+ * only applied when that section's "Circular quick add" setting is on --
+ * every other featured-collection instance on the site is untouched).
+ * Requires assets/ct-tokens.css.
+ *
+ * Breakpoints deliberately match Dawn's own (750px / 990px), not the
+ * source design's (560px / 1024px) -- kept consistent with the rest of
+ * the theme rather than introducing a second breakpoint system.
+ */
+
+/* ============================= Hero / banner ============================ */
+
+.ct-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+}
+
+.ct-hero--fullscreen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.ct-hero--large {
+  min-height: 52rem;
+}
+
+/* Media / overlay / content stack with positive z-index inside the isolate
+   context -- unambiguous, no reliance on negative-index painting order. */
+
+.ct-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.ct-hero__media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The overlay is an empty div, and base.css carries
+       a:empty, ul:empty, div:empty, section:empty, ... { display: none }
+   which hid it outright -- the gradient computed correctly on a 0x0 box, so the
+   hero rendered completely undarkened. `div:empty` is specificity (0,1,1) and
+   beats a bare class (0,1,0), hence the descendant selector below. Do not
+   lower this to `.ct-hero__overlay { display:block }` -- base.css wins. */
+
+.ct-hero .ct-hero__overlay {
+  display: block;
+}
+
+.ct-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ct-hero--gradient-left .ct-hero__overlay {
+  background:
+    linear-gradient(to right, rgba(58, 45, 35, 0.55) 0%, rgba(58, 45, 35, 0.25) 55%, rgba(58, 45, 35, 0) 100%),
+    linear-gradient(to bottom, rgba(58, 45, 35, 0.35) 0%, rgba(58, 45, 35, 0) 20%);
+}
+
+.ct-hero--gradient-right .ct-hero__overlay {
+  background: linear-gradient(to left, rgba(58, 45, 35, 0.5) 0%, rgba(58, 45, 35, 0.15) 50%, rgba(58, 45, 35, 0) 100%);
+}
+
+.ct-hero__content-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex: 1;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.ct-hero__content {
+  max-width: 56rem;
+  color: var(--ct-cream);
+}
+
+.ct-hero--content-middle-left .ct-hero__content-wrap {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ct-hero--content-middle-center .ct-hero__content-wrap {
+  align-items: center;
+  justify-content: center;
+}
+
+.ct-hero--content-middle-right .ct-hero__content-wrap {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ct-hero--content-bottom-left .ct-hero__content-wrap {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.ct-hero--content-bottom-right .ct-hero__content-wrap {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.ct-hero--content-middle-center .ct-hero__content {
+  text-align: center;
+}
+
+.ct-hero--content-middle-right .ct-hero__content,
+.ct-hero--content-bottom-right .ct-hero__content {
+  text-align: right;
+}
+
+.ct-hero__eyebrow {
+  color: var(--ct-champagne);
+  letter-spacing: 0.35em;
+  margin: 0 0 2rem;
+}
+
+.ct-hero--fullscreen .ct-hero__heading {
+  font-family: var(--ct-font-heading);
+  font-weight: 500;
+  font-size: clamp(4.2rem, 5.5vw, 8rem);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--ct-cream);
+}
+
+.ct-hero--large .ct-hero__heading {
+  font-family: var(--font-body-family);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 2.6vw, 3.8rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--ct-cream);
+}
+
+/* Design: the promo-banner text column is narrower (520px) than the
+   fullscreen hero's shared 560px -- .ct-hero__content is reused by both
+   variants, so the tighter width is scoped to --large only. */
+.ct-hero--large .ct-hero__content {
+  max-width: 52rem;
+}
+
+/* The design breaks the line before the italic phrase ("Pieces you'll
+   reach" / "for every day"). A literal <br> can't be used -- the heading is
+   an inline_richtext setting and Shopify strips <br> when the section is
+   saved in the theme editor -- so the break is forced in CSS instead. */
+.ct-hero__heading em {
+  display: block;
+  font-style: italic;
+  color: var(--ct-champagne);
+}
+
+.ct-hero__body {
+  margin: 1.2rem 0 2.6rem;
+  font-size: 1.7rem;
+  line-height: 1.7;
+  color: rgba(251, 247, 242, 0.9);
+  max-width: 44rem;
+}
+
+.ct-hero--fullscreen .ct-hero__body {
+  margin-top: 2.2rem;
+  color: rgba(251, 247, 242, 0.85);
+}
+
+.ct-hero--content-middle-right .ct-hero__body,
+.ct-hero--content-bottom-right .ct-hero__body,
+.ct-hero--content-middle-center .ct-hero__body {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ct-hero--content-middle-right .ct-hero__body,
+.ct-hero--content-bottom-right .ct-hero__body {
+  margin-right: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-hero__button {
+    transition-duration: 0.01ms;
+  }
+}

@@ -373,6 +373,98 @@
     }
   },
   "sections": {
+    "ct_hero": {
+      "name": "Hero / promo banner",
+      "settings": {
+        "image": {
+          "label": "Image"
+        },
+        "min_height": {
+          "label": "Height",
+          "options__1": {
+            "label": "Fullscreen"
+          },
+          "options__2": {
+            "label": "Fixed (520px)"
+          }
+        },
+        "gradient_direction": {
+          "label": "Overlay gradient direction",
+          "options__1": {
+            "label": "From the left"
+          },
+          "options__2": {
+            "label": "From the right"
+          }
+        },
+        "content_position": {
+          "label": "Content position",
+          "options__1": {
+            "label": "Middle left"
+          },
+          "options__2": {
+            "label": "Middle center"
+          },
+          "options__3": {
+            "label": "Middle right"
+          },
+          "options__4": {
+            "label": "Bottom left"
+          },
+          "options__5": {
+            "label": "Bottom right"
+          }
+        },
+        "header_content": {
+          "content": "Content"
+        },
+        "eyebrow": {
+          "label": "Eyebrow text"
+        },
+        "heading_tag": {
+          "label": "Heading tag",
+          "info": "Use H1 once per page -- typically only the hero at the top of the homepage."
+        },
+        "heading": {
+          "label": "Heading",
+          "info": "Italicize a phrase in the editor to colour it as an accent."
+        },
+        "body": {
+          "label": "Body text"
+        },
+        "header_button": {
+          "content": "Button"
+        },
+        "button_label": {
+          "label": "Button label"
+        },
+        "button_link": {
+          "label": "Button link"
+        },
+        "button_style": {
+          "label": "Button style",
+          "options__1": {
+            "label": "Dark pill"
+          },
+          "options__2": {
+            "label": "Light pill"
+          },
+          "options__3": {
+            "label": "Dark, square corners"
+          }
+        },
+        "header_advanced": {
+          "content": "Advanced"
+        },
+        "eager_load": {
+          "label": "Prioritize image loading",
+          "info": "Turn on only for a section placed at the very top of the page (the hero), so its image isn't lazy-loaded."
+        }
+      },
+      "presets": {
+        "name": "Hero / promo banner"
+      }
+    },
     "all": {
       "animation": {
         "content": "Animations",
