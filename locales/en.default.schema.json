@@ -864,6 +864,10 @@
     "featured-collection": {
       "name": "Featured collection",
       "settings": {
+        "ct_eyebrow": {
+          "label": "Eyebrow text",
+          "info": "Small uppercase label shown above the heading."
+        },
         "header_text": {
         "content": "Text"
         },
@@ -897,6 +901,10 @@
         },                 
         "collection": {
           "label": "Collection"
+        },
+        "product_list": {
+          "label": "Products",
+          "info": "Hand-pick products in a specific order. Overrides the collection above when any products are selected."
         },
         "products_to_show": {
           "label": "Product count"
@@ -943,6 +951,10 @@
         },
         "show_secondary_image": {
           "label": "Show second image on hover"
+        },
+        "ct_quick_add_style": {
+          "label": "Circular quick add",
+          "info": "Replaces the full-width quick add button with a small circular icon next to the price, for single-variant products."
         },
         "show_vendor": {
           "label": "Vendor"

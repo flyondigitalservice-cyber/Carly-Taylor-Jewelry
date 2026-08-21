@@ -63,10 +63,50 @@
         "view_all_label": "View all pieces",
         "color_scheme": "scheme-6"
       }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "featured",
+        "product_list": [
+          "tigerlily-necklace",
+          "ava-earrings",
+          "debbie-anklet",
+          "julia-earrings",
+          "patty-anklets",
+          "skylar-earrings",
+          "tiffany-necklace",
+          "savannah-earrings"
+        ],
+        "products_to_show": 8,
+        "ct_eyebrow": "Customer favorites",
+        "title": "Featured pieces",
+        "heading_size": "h2",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "link",
+        "color_scheme": "scheme-6",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add_style": true,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 44,
+        "padding_bottom": 88
+      }
     }
   },
   "order": [
     "ct_hero",
-    "ct_category_grid"
+    "ct_category_grid",
+    "featured_collection"
   ]
 }

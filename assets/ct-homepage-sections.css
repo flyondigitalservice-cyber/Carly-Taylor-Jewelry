@@ -323,3 +323,123 @@
     font-size: 1.3rem;
   }
 }
+
+/* ==================== Featured products (circular quick add) ==================== */
+/* Scoped under .ct-featured -- set on sections/featured-collection.liquid's
+   outer wrapper only when its "Circular quick add" checkbox is on, so
+   every other featured-collection instance elsewhere in the theme keeps
+   Dawn's default full-width rectangular quick-add + zoom-on-hover crossfade. */
+
+/* Centered eyebrow + heading block.
+   Dawn renders the featured-collection title left-aligned with no eyebrow;
+   the design centres both and sits "Customer favorites" above the heading. */
+
+.ct-featured .collection__title {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.ct-featured .collection__title .ct-eyebrow {
+  margin: 0 0 1.2rem;
+}
+
+/* Match the category grid's heading exactly -- Dawn's own .title sizing is
+   driven by --font-heading-scale and lands well short of the design's 44px. */
+.ct-featured .collection__title .title {
+  font-family: var(--ct-font-heading);
+  font-weight: 500;
+  font-size: clamp(3rem, 4vw, 4.4rem);
+  margin: 0;
+  letter-spacing: normal;
+}
+
+.ct-featured .card__content--inline-quick-add {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ct-featured .card__content--inline-quick-add .card__information {
+  flex: 1;
+  min-width: 0;
+}
+
+.ct-featured .card__heading {
+  font-family: var(--ct-font-heading);
+  font-weight: 400;
+  font-size: 2rem;
+}
+
+.ct-featured .price {
+  color: var(--ct-accent);
+}
+
+.ct-featured .quick-add--circle {
+  flex: none;
+  margin: 0;
+}
+
+.ct-featured .quick-add__submit--circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  min-width: 0;
+  padding: 0;
+  border-radius: var(--ct-radius-pill);
+  border: 0.1rem solid var(--ct-border-strong);
+  background-color: transparent;
+  color: var(--ct-ink);
+  transition: background-color var(--ct-ease), color var(--ct-ease), border-color var(--ct-ease);
+}
+
+.ct-featured .quick-add__submit--circle:hover {
+  background-color: var(--ct-ink);
+  border-color: var(--ct-ink);
+  color: var(--ct-button-label);
+}
+
+.ct-featured .quick-add__submit--circle .icon-wrap svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Pure opacity crossfade on the secondary product image, no zoom. Dawn's
+   default (assets/component-card.css:383-402) pairs the crossfade with a
+   scale(1.03) hover zoom, scoped inside "@media (min-width: 990px)" with
+   no base opacity rule for the second image outside that query -- below
+   990px the secondary image has no defined resting opacity at all, so
+   narrowing that gate (e.g. to a hover-capability query instead) risks
+   leaving the secondary image permanently covering the primary one on
+   tablet/mobile. Kept on Dawn's exact same viewport gate here rather than
+   risk an unverified stacking regression; only the zoom transform is
+   cancelled and the transition made explicit. */
+@media screen and (min-width: 990px) {
+  .ct-featured .card .media.media--hover-effect > img:only-child,
+  .ct-featured .card-wrapper .media.media--hover-effect > img:only-child {
+    transition: none;
+  }
+
+  .ct-featured .card:hover .media.media--hover-effect > img:first-child:only-child,
+  .ct-featured .card-wrapper:hover .media.media--hover-effect > img:first-child:only-child {
+    transform: none;
+  }
+
+  .ct-featured .card-wrapper .media.media--hover-effect > img:first-child:not(:only-child) {
+    transition: opacity var(--ct-ease-slow);
+  }
+
+  .ct-featured .card-wrapper:hover .media.media--hover-effect > img + img {
+    transition: opacity var(--ct-ease-slow);
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-featured .media--hover-effect > img,
+  .ct-featured .quick-add__submit--circle {
+    transition-duration: 0.01ms !important;
+  }
+}
