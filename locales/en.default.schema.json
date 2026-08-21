@@ -465,6 +465,41 @@
         "name": "Hero / promo banner"
       }
     },
+    "ct_category_grid": {
+      "name": "Category grid",
+      "settings": {
+        "heading": {
+          "label": "Heading"
+        },
+        "view_all_label": {
+          "label": "\"View all\" label"
+        },
+        "view_all_link": {
+          "label": "\"View all\" link"
+        }
+      },
+      "blocks": {
+        "category": {
+          "name": "Category",
+          "settings": {
+            "collection": {
+              "label": "Collection"
+            },
+            "label": {
+              "label": "Label override",
+              "info": "Defaults to the collection's title."
+            },
+            "image": {
+              "label": "Image override",
+              "info": "Defaults to the collection's own image."
+            }
+          }
+        }
+      },
+      "presets": {
+        "name": "Category grid"
+      }
+    },
     "all": {
       "animation": {
         "content": "Animations",

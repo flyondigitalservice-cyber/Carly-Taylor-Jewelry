@@ -24,9 +24,49 @@
         "button_style": "light",
         "eager_load": true
       }
+    },
+    "ct_category_grid": {
+      "type": "ct-category-grid",
+      "blocks": {
+        "necklaces": {
+          "type": "category",
+          "settings": {
+            "collection": "necklace",
+            "label": "Necklaces"
+          }
+        },
+        "bracelets": {
+          "type": "category",
+          "settings": {
+            "collection": "bracelets",
+            "label": "Bracelets"
+          }
+        },
+        "earrings": {
+          "type": "category",
+          "settings": {
+            "collection": "earrings",
+            "label": "Earrings"
+          }
+        },
+        "anklets": {
+          "type": "category",
+          "settings": {
+            "collection": "anklets",
+            "label": "Anklets"
+          }
+        }
+      },
+      "block_order": ["necklaces", "bracelets", "earrings", "anklets"],
+      "settings": {
+        "heading": "Shop by category",
+        "view_all_label": "View all pieces",
+        "color_scheme": "scheme-6"
+      }
     }
   },
   "order": [
-    "ct_hero"
+    "ct_hero",
+    "ct_category_grid"
   ]
 }

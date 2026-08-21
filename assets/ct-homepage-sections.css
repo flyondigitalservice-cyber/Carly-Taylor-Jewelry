@@ -197,3 +197,129 @@
     transition-duration: 0.01ms;
   }
 }
+
+/* ============================ Category grid ============================= */
+
+.ct-category-grid__heading-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.ct-category-grid__heading {
+  font-family: var(--ct-font-heading);
+  font-weight: 500;
+  font-size: clamp(3rem, 4vw, 4.4rem);
+  margin: 0;
+}
+
+.ct-category-grid__view-all {
+  font-family: var(--font-body-family);
+  font-size: 1.3rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-accent);
+  border-bottom: 0.1rem solid var(--ct-border-strong);
+  text-decoration: none;
+  padding-bottom: 0.2rem;
+  transition: color var(--ct-ease);
+}
+
+.ct-category-grid__view-all:hover {
+  color: var(--ct-accent-hover);
+}
+
+.ct-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.8rem;
+}
+
+.ct-category-grid__tile {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--ct-radius-lg);
+  overflow: hidden;
+  background-color: var(--ct-surface-alt);
+  text-decoration: none;
+}
+
+.ct-category-grid__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Zoom-on-hover. Not in the source design (its category tiles are static) --
+   added on request. Behind a hover-capable query so touch devices, where the
+   transform would latch on tap and stay zoomed, never trigger it. The tile
+   already clips with overflow:hidden, so the image scales inside its corners. */
+@media (hover: hover) and (pointer: fine) {
+  .ct-category-grid__image {
+    transition: transform var(--ct-ease-slow);
+    will-change: transform;
+  }
+
+  .ct-category-grid__tile:hover .ct-category-grid__image,
+  .ct-category-grid__tile:focus-visible .ct-category-grid__image {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-category-grid__image {
+    transition: none;
+  }
+
+  .ct-category-grid__tile:hover .ct-category-grid__image,
+  .ct-category-grid__tile:focus-visible .ct-category-grid__image {
+    transform: none;
+  }
+}
+
+.ct-category-grid__tile:focus-visible {
+  outline: 0.2rem solid var(--ct-champagne);
+  outline-offset: 0.3rem;
+}
+
+.ct-category-grid__label {
+  position: absolute;
+  left: 1.6rem;
+  bottom: 1.6rem;
+  background-color: rgba(251, 247, 242, 0.92);
+  border-radius: var(--ct-radius-pill);
+  padding: 1.2rem 2.6rem;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ct-ink);
+}
+
+@media screen and (max-width: 989px) {
+  .ct-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .ct-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ct-category-grid__tile {
+    aspect-ratio: 4 / 3;
+  }
+
+  .ct-category-grid__label {
+    left: 1.4rem;
+    bottom: 1.4rem;
+    padding: 1rem 2.2rem;
+    font-size: 1.3rem;
+  }
+}
