@@ -102,11 +102,27 @@
         "padding_top": 44,
         "padding_bottom": 88
       }
+    },
+    "ct_promo_banner": {
+      "type": "ct-hero",
+      "settings": {
+        "min_height": "large",
+        "gradient_direction": "right",
+        "content_position": "middle-right",
+        "eyebrow": "",
+        "heading_tag": "h2",
+        "heading": "The Art of Everyday Luxury",
+        "body": "<p>Inspired by you, designed by us</p>",
+        "button_label": "Shop now",
+        "button_link": "shopify://collections/all",
+        "button_style": "square"
+      }
     }
   },
   "order": [
     "ct_hero",
     "ct_category_grid",
-    "featured_collection"
+    "featured_collection",
+    "ct_promo_banner"
   ]
 }
