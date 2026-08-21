@@ -12,6 +12,10 @@
   - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
   - skip_styles: {Boolean} Don't include component styles. Useful when rendering multiple product cards in a loop. Default: false (optional)
   - quick_add: {Boolean} Show the quick add button.
+  - quick_add_style: {Boolean} When quick_add is 'standard' and the product has a single
+    variant with no quantity rules, renders the add-to-cart button as a small circular
+    icon-only control instead of the full-width text button. Default: false (unchanged
+    rectangular button). Multi-variant "choose options" modal buttons are unaffected. (optional)
   - section_id: {String} The ID of the section that contains this card.
   - horizontal_class: {Boolean} Add a card--horizontal class if set to true. Default: false (optional)
   - horizontal_quick_add: {Boolean} Changes the quick add button styles when set to true. Default: false (optional)
@@ -143,7 +147,7 @@
           </div>
         </div>
       </div>
-      <div class="card__content">
+      <div class="card__content{% if quick_add_style %} card__content--inline-quick-add{% endif %}">
         <div class="card__information">
           <h3
             class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"
@@ -290,7 +294,7 @@
         </div>
         {% assign product_form_id = 'quick-add-' | append: section_id | append: card_product.id %}
         {% if quick_add == 'standard' %}
-          <div class="quick-add no-js-hidden">
+          <div class="quick-add no-js-hidden{% if quick_add_style %} quick-add--circle{% endif %}">
             {%- liquid
               assign qty_rules = false
               if card_product.selected_or_first_available_variant.quantity_rule.min > 1 or card_product.selected_or_first_available_variant.quantity_rule.max != null or card_product.selected_or_first_available_variant.quantity_rule.increment > 1
@@ -358,22 +362,36 @@
                     id="{{ product_form_id }}-submit"
                     type="submit"
                     name="add"
-                    class="quick-add__submit button button--full-width button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add{% endif %}"
+                    class="quick-add__submit button button--full-width button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add{% endif %}{% if quick_add_style %} quick-add__submit--circle{% endif %}"
                     aria-haspopup="dialog"
-                    aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
+                    {% if quick_add_style %}
+                      aria-label="{{ 'products.product.ct_add_to_bag' | t: product: card_product.title | escape }}"
+                    {% else %}
+                      aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
+                    {% endif %}
                     aria-live="polite"
                     data-sold-out-message="true"
                     {% if card_product.selected_or_first_available_variant.available == false %}
                       disabled
                     {% endif %}
                   >
-                    <span>
-                      {%- if card_product.selected_or_first_available_variant.available -%}
-                        {{ 'products.product.add_to_cart' | t }}
-                      {%- else -%}
-                        {{ 'products.product.sold_out' | t }}
-                      {%- endif -%}
-                    </span>
+                    {%- if quick_add_style -%}
+                      <span class="icon-wrap" aria-hidden="true">
+                        {%- if card_product.selected_or_first_available_variant.available -%}
+                          {{- 'icon-plus.svg' | inline_asset_content -}}
+                        {%- else -%}
+                          {{- 'icon-close.svg' | inline_asset_content -}}
+                        {%- endif -%}
+                      </span>
+                    {%- else -%}
+                      <span>
+                        {%- if card_product.selected_or_first_available_variant.available -%}
+                          {{ 'products.product.add_to_cart' | t }}
+                        {%- else -%}
+                          {{ 'products.product.sold_out' | t }}
+                        {%- endif -%}
+                      </span>
+                    {%- endif -%}
                     <span class="sold-out-message hidden">
                       {{ 'products.product.sold_out' | t }}
                     </span>
