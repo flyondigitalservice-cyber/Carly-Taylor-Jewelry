@@ -443,3 +443,155 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ====================== Experience grid (multicolumn restyle) ====================== */
+/* Scoped under .ct-experience-grid, set on sections/multicolumn.liquid's
+   outer wrapper only when its "Bordered card style" checkbox is on --
+   every other multicolumn instance elsewhere in the theme is untouched
+   and keeps Dawn's global --text-boxes-* card styling. */
+
+/* Heading matches the other section headings (design: clamp(30px,4vw,44px)
+   Cormorant 500, left-aligned). Dawn's .title sizing comes from
+   --font-heading-scale and does not land on that value. */
+
+/* margin:0, not 0 0 3rem -- Dawn's own .title-wrapper-with-link already
+   carries a 3rem (desktop) / 2rem (mobile) margin-bottom (base.css), and its
+   descendant rule .title-wrapper-with-link .title{margin:0} zeroes the title
+   itself so only one margin applies. Re-adding a bottom margin here doesn't
+   collapse with the wrapper's (the wrapper is display:flex, so its flex-item
+   child's margin can't collapse into it) -- it stacked on top and doubled
+   the gap under the heading to 60px at desktop instead of the design's 30px. */
+.ct-experience-grid .multicolumn__title .title {
+  font-family: var(--ct-font-heading);
+  font-weight: 500;
+  font-size: clamp(3rem, 4vw, 4.4rem);
+  margin: 0;
+  letter-spacing: normal;
+}
+
+/* Theme-asset icon (design: 96x96, object-fit:contain, 16px below).
+   Standalone box -- see the comment in sections/multicolumn.liquid for why
+   this deliberately avoids Dawn's .media wrapper. */
+
+.ct-experience-grid .ct-experience-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.6rem;
+}
+
+.ct-experience-grid .ct-experience-icon__img {
+  width: var(--ct-icon-size, 9.6rem);
+  height: var(--ct-icon-size, 9.6rem);
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Cards sit flush in the design regardless of how much copy each one holds.
+   Dawn's card is not stretched by default, so uneven text left ragged bottoms. */
+
+.ct-experience-grid .multicolumn-list__item {
+  display: flex;
+}
+
+/* Design: 4-up grid, 18px gap. Dawn's .grid is flexbox with column-gap driven
+   by the theme's global spacing_grid_horizontal setting (8px here) and
+   .grid__item widths pre-calculated against that same 8px, so simply
+   overriding the gap would desync the width math and misalign the row. A
+   real grid sidesteps that -- same fix already used for .ct-newsletter and
+   the footer blocks grid. */
+.ct-experience-grid .multicolumn-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.8rem;
+}
+
+.ct-experience-grid .multicolumn-list__item.grid__item {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 989px) {
+  .ct-experience-grid .multicolumn-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .ct-experience-grid .multicolumn-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Design: flex column, centered, gap:6px between icon / title / body.
+   Dawn's card is a plain block (left-aligned) with no gap at all. */
+/* `.multicolumn` and `.ct-experience-grid` sit on the same wrapper, so the
+   doubled-up selector is (0,3,0) -- needed to outrank Dawn's
+   `.multicolumn.background-none .multicolumn-card { border-radius: 0 }`
+   (0,2,0), which was squaring off the design's 16px cards. */
+.multicolumn.ct-experience-grid .multicolumn-card,
+.ct-experience-grid .multicolumn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  background-color: #fff;
+  border: 0.1rem solid var(--ct-border);
+  border-radius: var(--ct-radius-lg);
+  padding: 4rem 3.2rem;
+  width: 100%;
+  height: 100%;
+}
+
+/* Reset Dawn's own padding (.multicolumn-card__info{padding:2.5rem}, only
+   partially zeroed by .background-none) -- it left a stray 25px of bottom
+   padding stacked underneath the card's own 40px, and turn this into the
+   inner half of the icon/title/body gap chain (see comment on h3 below). */
+.ct-experience-grid .multicolumn-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+}
+
+.ct-experience-grid .multicolumn-card__info h3 {
+  font-family: var(--ct-font-heading);
+  /* The design's card title is a plain div at weight 400 with no tracking.
+     Dawn's headings carry weight 500 plus a letter-spacing derived from
+     --font-heading-scale, which together pushed "Made for Every Day" past the
+     231px content box and wrapped it onto two lines. */
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.2;
+  font-size: 2.6rem;
+  color: var(--ct-ink);
+  /* Icon-to-title = icon's own 16px margin-bottom + the card's 6px flex gap
+     (22px total, matching the design's icon margin-bottom:16px inside a
+     gap:6px flex column). No margin-top here or that 22px would double up. */
+  margin: 0 0 0.8rem;
+}
+
+.ct-experience-grid .multicolumn-card__info .rte {
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: var(--ct-body);
+  /* Title-to-body = h3's 8px margin-bottom + this info column's 6px flex
+     gap = 14px, matching the design's paragraph margin:8px 0 0 inside its
+     own gap:6px flex column. */
+  margin: 0;
+}
+
+/* Icon max-width: constrains the aspect-ratio box itself (Dawn positions
+   the actual <img> absolutely inside it, so the image scales down with
+   its container rather than being fought directly). */
+.multicolumn-card__image-wrapper--constrained {
+  display: flex;
+  justify-content: center;
+}
+
+.multicolumn-card__image-wrapper--constrained .media {
+  width: var(--ct-icon-max-width, 100%);
+  flex: none;
+}

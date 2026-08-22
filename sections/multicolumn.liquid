@@ -1,5 +1,6 @@
 {{ 'section-multicolumn.css' | asset_url | stylesheet_tag }}
 {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+{{ 'ct-homepage-sections.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -23,7 +24,7 @@
   endif
 -%}
 
-<div class="multicolumn color-{{ section.settings.color_scheme }} gradient{% unless section.settings.background_style == 'none' and settings.text_boxes_border_thickness > 0 or settings.text_boxes_shadow_opacity > 0 %} background-{{ section.settings.background_style }}{% endunless %}{% if section.settings.title == blank %} no-heading{% endif %}">
+<div class="multicolumn color-{{ section.settings.color_scheme }} gradient{% unless section.settings.background_style == 'none' and settings.text_boxes_border_thickness > 0 or settings.text_boxes_shadow_opacity > 0 %} background-{{ section.settings.background_style }}{% endunless %}{% if section.settings.title == blank %} no-heading{% endif %}{% if section.settings.ct_card_style %} ct-experience-grid{% endif %}">
   <div
     class="page-width section-{{ section.id }}-padding isolate{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
     {% if settings.animations_reveal_on_scroll %}
@@ -80,7 +81,12 @@
                 {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
                   {% assign spaced_image = true %}
                 {% endif %}
-                <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
+                <div
+                  class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}{% if section.settings.icon_max_width > 0 %} multicolumn-card__image-wrapper--constrained{% endif %}"
+                  {% if section.settings.icon_max_width > 0 %}
+                    style="--ct-icon-max-width: {{ section.settings.icon_max_width }}px;"
+                  {% endif %}
+                >
                   <div
                     class="media media--transparent media--{{ section.settings.image_ratio }}"
                     {% if section.settings.image_ratio == 'adapt' %}
@@ -116,6 +122,34 @@
                         class: 'multicolumn-card__image'
                     }}
                   </div>
+                </div>
+              {%- elsif block.settings.ct_icon != blank and block.settings.ct_icon != 'none' -%}
+                {%- comment -%}
+                  Fallback for theme-asset icons. Shopify's image_picker only accepts
+                  uploaded Files, never theme assets, so the Carly Taylor experience
+                  icons cannot be selected through it -- this renders them directly
+                  from assets/ when no image has been picked.
+                {%- endcomment -%}
+                {%- comment -%}
+                  Deliberately NOT wrapped in Dawn's .media -- that class is
+                  position:relative with absolutely-positioned children and no
+                  intrinsic height, so it collapses to zero unless a ratio class
+                  supplies padding-bottom. A fixed-size icon needs neither.
+                {%- endcomment -%}
+                <div
+                  class="ct-experience-icon"
+                  {% if section.settings.icon_max_width > 0 %}
+                    style="--ct-icon-size: {{ section.settings.icon_max_width }}px;"
+                  {% endif %}
+                >
+                  <img
+                    src="{{ block.settings.ct_icon | prepend: 'ct-icon-' | append: '.png' | asset_url }}"
+                    alt=""
+                    loading="lazy"
+                    width="96"
+                    height="96"
+                    class="ct-experience-icon__img"
+                  >
                 </div>
               {%- endif -%}
               <div class="multicolumn-card__info">
@@ -282,9 +316,27 @@
       "label": "t:sections.multicolumn.settings.image_ratio.label"
     },
     {
+      "type": "range",
+      "id": "icon_max_width",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.multicolumn.settings.ct_icon_max_width.label",
+      "info": "t:sections.multicolumn.settings.ct_icon_max_width.info",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "ct_card_style",
+      "label": "t:sections.multicolumn.settings.ct_card_style.label",
+      "info": "t:sections.multicolumn.settings.ct_card_style.info",
+      "default": false
+    },
+    {
       "type": "header",
       "content": "t:sections.multicolumn.settings.header_button.content"
-    },    
+    },
     {
       "type": "text",
       "id": "button_label",
@@ -408,6 +460,35 @@
           "type": "image_picker",
           "id": "image",
           "label": "t:sections.multicolumn.blocks.column.settings.image.label"
+        },
+        {
+          "type": "select",
+          "id": "ct_icon",
+          "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.label",
+          "info": "t:sections.multicolumn.blocks.column.settings.ct_icon.info",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.options__none"
+            },
+            {
+              "value": "everyday",
+              "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.options__everyday"
+            },
+            {
+              "value": "quality",
+              "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.options__quality"
+            },
+            {
+              "value": "priced",
+              "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.options__priced"
+            },
+            {
+              "value": "gifts",
+              "label": "t:sections.multicolumn.blocks.column.settings.ct_icon.options__gifts"
+            }
+          ],
+          "default": "none"
         },
         {
           "type": "inline_richtext",

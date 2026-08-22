@@ -2661,6 +2661,14 @@
             "label": "Circle"
           }
         },
+        "ct_icon_max_width": {
+          "label": "Icon max width",
+          "info": "Constrains the image to a fixed size regardless of column width. Set to 0 to use the Width setting above instead."
+        },
+        "ct_card_style": {
+          "label": "Bordered card style",
+          "info": "White background, hairline border, and rounded corners on each column."
+        },
         "columns_desktop": {
           "label": "Columns"
         },
@@ -2712,6 +2720,15 @@
           "settings": {
             "image": {
               "label": "Image"
+            },
+            "ct_icon": {
+              "label": "Built-in icon",
+              "info": "Used only when no image is selected above. These icons ship with the theme and cannot be chosen through the image picker.",
+              "options__none": "None",
+              "options__everyday": "Everyday wear",
+              "options__quality": "Quality",
+              "options__priced": "Fairly priced",
+              "options__gifts": "Gifting"
             },
             "title": {
               "label": "Heading",

@@ -117,12 +117,69 @@
         "button_link": "shopify://collections/all",
         "button_style": "square"
       }
+    },
+    "experience_grid": {
+      "type": "multicolumn",
+      "blocks": {
+        "everyday": {
+          "type": "column",
+          "settings": {
+            "ct_icon": "everyday",
+            "title": "Made for Every Day",
+            "text": "<p>Jewelry designed to be lived in — kept on through workouts, showers, and everything your week throws at it, without losing its shine.</p>"
+          }
+        },
+        "quality": {
+          "type": "column",
+          "settings": {
+            "ct_icon": "quality",
+            "title": "Quality That Lasts",
+            "text": "<p>High-quality gold and silver finishes on every piece, so the necklace you love today still looks the way you remember it years from now.</p>"
+          }
+        },
+        "priced": {
+          "type": "column",
+          "settings": {
+            "ct_icon": "priced",
+            "title": "Priced to Layer",
+            "text": "<p>From $25 to under $100, our pieces are made to mix and stack — build a collection you'll actually wear, without a second thought.</p>"
+          }
+        },
+        "gifts": {
+          "type": "column",
+          "settings": {
+            "ct_icon": "gifts",
+            "title": "Gifts That Feel Personal",
+            "text": "<p>Every piece carries a name, making it easy to find one that feels like it was made for someone you love.</p>"
+          }
+        }
+      },
+      "block_order": ["everyday", "quality", "priced", "gifts"],
+      "settings": {
+        "title": "Experience Carly Taylor",
+        "heading_size": "h2",
+        "image_width": "third",
+        "image_ratio": "adapt",
+        "icon_max_width": 96,
+        "ct_card_style": true,
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
+        "color_scheme": "scheme-6",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 88,
+        "padding_bottom": 88
+      }
     }
   },
   "order": [
     "ct_hero",
     "ct_category_grid",
     "featured_collection",
-    "ct_promo_banner"
+    "ct_promo_banner",
+    "experience_grid"
   ]
 }
