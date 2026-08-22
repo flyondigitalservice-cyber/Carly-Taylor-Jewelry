@@ -325,6 +325,10 @@
         "paragraph_html": "<a href=\"{{ link }}\" class=\"link underlined-link\">Log in</a> to check out faster."
       }
     },
+    "ct_newsletter": {
+      "email_placeholder": "Your email address",
+      "success": "You're on the list — welcome to the family."
+    },
     "footer": {
       "payment": "Payment methods"
     },

@@ -324,6 +324,145 @@
   }
 }
 
+/* =============================== Newsletter =============================== */
+
+.ct-newsletter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(34rem, 100%), 1fr));
+  gap: 0;
+  border-radius: var(--ct-radius-panel);
+  overflow: hidden;
+  /* Design: #F1E8DC panel fill. The color-scheme-6 utility class this section
+     also carries paints #FBF7F2 (the page's own cream background) -- nearly
+     indistinguishable from the page behind it, which flattened the panel to
+     invisible. --ct-surface is the same #F1E8DC the design uses, so it wins
+     here (same specificity, later in source than the scheme's <style> block
+     in <head>). */
+  background-color: var(--ct-surface);
+}
+
+.ct-newsletter--image-right .ct-newsletter__media {
+  order: 2;
+}
+
+.ct-newsletter--image-right .ct-newsletter__content {
+  order: 1;
+}
+
+.ct-newsletter--image-left .ct-newsletter__media {
+  order: 1;
+}
+
+.ct-newsletter--image-left .ct-newsletter__content {
+  order: 2;
+}
+
+.ct-newsletter__media {
+  position: relative;
+  min-height: 38rem;
+}
+
+.ct-newsletter__media-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ct-newsletter__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3.6rem, 5vw, 6.4rem);
+}
+
+/* Design: margin-bottom:14px, no top margin. .ct-eyebrow is shared across
+   sections with its own margin per context (see .ct-hero__eyebrow); the
+   plain <p> UUA default (1em top+bottom, ~12px at this font-size) would
+   otherwise add unwanted top space inside this vertically-centered column. */
+.ct-newsletter__content .ct-eyebrow {
+  margin: 0 0 1.4rem;
+}
+
+.ct-newsletter__heading {
+  font-family: var(--ct-font-heading);
+  font-weight: 500;
+  font-size: clamp(2.8rem, 3.5vw, 4.2rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+/* Same deliberate break as the hero: "Be first to meet" / "the new pieces". */
+.ct-newsletter__heading em {
+  display: block;
+  font-style: italic;
+  color: var(--ct-bronze);
+}
+
+.ct-newsletter__body {
+  margin: 1.8rem 0 2.6rem;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  color: var(--ct-muted);
+  max-width: 40rem;
+}
+
+.ct-newsletter__field-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 44rem;
+}
+
+.ct-newsletter__input {
+  flex: 1;
+  min-width: 20rem;
+  border: 0.1rem solid var(--ct-input-border);
+  border-radius: var(--ct-radius-pill);
+  padding: 1.5rem 2.2rem;
+  font-family: var(--font-body-family);
+  font-size: 1.4rem;
+  background-color: #fff;
+  color: var(--ct-ink);
+}
+
+.ct-newsletter__input::placeholder {
+  color: var(--ct-on-dark-muted);
+}
+
+.ct-newsletter__input:focus-visible {
+  outline: 0.2rem solid var(--ct-bronze);
+  outline-offset: 0.2rem;
+}
+
+.ct-newsletter__submit {
+  padding: 1.5rem 3.2rem;
+  font-size: 1.3rem;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+.ct-newsletter__message {
+  margin: 1.4rem 0 0;
+  font-size: 1.4rem;
+}
+
+.ct-newsletter__message--success {
+  color: var(--ct-success);
+}
+
+.ct-newsletter__message--error {
+  color: var(--ct-error);
+}
+
+@media screen and (max-width: 749px) {
+  .ct-newsletter__media {
+    min-height: 26rem;
+  }
+}
+
 /* ==================== Featured products (circular quick add) ==================== */
 /* Scoped under .ct-featured -- set on sections/featured-collection.liquid's
    outer wrapper only when its "Circular quick add" checkbox is on, so

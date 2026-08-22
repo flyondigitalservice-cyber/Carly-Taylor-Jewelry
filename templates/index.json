@@ -173,6 +173,19 @@
         "padding_top": 88,
         "padding_bottom": 88
       }
+    },
+    "ct_newsletter": {
+      "type": "ct-newsletter",
+      "settings": {
+        "image_side": "right",
+        "eyebrow": "Stay in touch",
+        "heading": "Be first to meet <em>the new pieces</em>",
+        "body": "<p>New arrivals, restocks, and subscriber-only offers — a short note now and then, never spam.</p>",
+        "button_label": "Subscribe",
+        "color_scheme": "scheme-6",
+        "padding_top": 0,
+        "padding_bottom": 88
+      }
     }
   },
   "order": [
@@ -180,6 +193,7 @@
     "ct_category_grid",
     "featured_collection",
     "ct_promo_banner",
-    "experience_grid"
+    "experience_grid",
+    "ct_newsletter"
   ]
 }

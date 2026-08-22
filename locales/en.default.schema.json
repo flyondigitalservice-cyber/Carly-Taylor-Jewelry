@@ -500,6 +500,39 @@
         "name": "Category grid"
       }
     },
+    "ct_newsletter": {
+      "name": "Newsletter",
+      "settings": {
+        "image": {
+          "label": "Image"
+        },
+        "image_side": {
+          "label": "Image position",
+          "options__1": {
+            "label": "Left"
+          },
+          "options__2": {
+            "label": "Right"
+          }
+        },
+        "eyebrow": {
+          "label": "Eyebrow text"
+        },
+        "heading": {
+          "label": "Heading",
+          "info": "Italicize a phrase in the editor to colour it as an accent."
+        },
+        "body": {
+          "label": "Body text"
+        },
+        "button_label": {
+          "label": "Button label"
+        }
+      },
+      "presets": {
+        "name": "Newsletter"
+      }
+    },
     "all": {
       "animation": {
         "content": "Animations",
