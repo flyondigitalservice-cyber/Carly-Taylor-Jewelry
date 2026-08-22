@@ -13,52 +13,77 @@
   "sections": {
     "footer": {
       "type": "footer",
-      "settings": {
-        "color_scheme": "scheme-1",
-        "newsletter_enable": true,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": true,
-        "show_social": true,
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "payment_enable": true,
-        "show_policy": true,
-        "margin_top": 0,
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
-    "blocks_wJrqtk": {
-      "type": "_blocks",
       "blocks": {
-        "ai_gen_block_25dae9c_VR7A7F": {
-          "type": "ai_gen_block_25dae9c",
+        "ct_brand": {
+          "type": "brand_information",
           "settings": {
-            "copyright_text": "(c) 2025 Briefslater LLC",
-            "text_alignment": "center",
-            "background_color": "#FFFFFF",
-            "text_color": "#adaaaa",
-            "font_size": 14,
-            "font_size_mobile": 12,
-            "padding_top": 20,
-            "padding_bottom": 20,
-            "padding_horizontal": 20,
-            "padding_top_mobile": 16,
-            "padding_bottom_mobile": 16,
-            "padding_horizontal_mobile": 16
-          },
-          "blocks": {}
+            "show_social": false
+          }
+        },
+        "ct_shop_links": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Shop",
+            "menu": "",
+            "link_1_label": "All pieces",
+            "link_1_url": "/collections/all",
+            "link_2_label": "Necklaces",
+            "link_2_url": "/collections/necklace",
+            "link_3_label": "Bracelets",
+            "link_3_url": "/collections/bracelets",
+            "link_4_label": "Earrings",
+            "link_4_url": "/collections/earrings",
+            "link_5_label": "Anklets",
+            "link_5_url": "/collections/anklets"
+          }
+        },
+        "ct_company_links": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Company",
+            "menu": "",
+            "link_1_label": "Contact",
+            "link_1_url": "/pages/contact",
+            "link_2_label": "Shipping & returns",
+            "link_2_url": "/policies/shipping-policy",
+            "link_3_label": "Privacy policy",
+            "link_3_url": "/policies/privacy-policy"
+          }
+        },
+        "ct_follow": {
+          "type": "ct_follow",
+          "settings": {
+            "heading": "Follow along",
+            "contact_label": "Questions?",
+            "contact_email": "hello@carlytaylor.co"
+          }
         }
       },
       "block_order": [
-        "ai_gen_block_25dae9c_VR7A7F"
+        "ct_brand",
+        "ct_shop_links",
+        "ct_company_links",
+        "ct_follow"
       ],
-      "name": "Copyright",
-      "settings": {}
+      "settings": {
+        "ct_copyright": "© 2026 Carly Taylor Jewelry — All rights reserved",
+        "color_scheme": "scheme-7",
+        "newsletter_enable": false,
+        "newsletter_heading": "Subscribe to our emails",
+        "enable_follow_on_shop": false,
+        "show_social": true,
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "payment_enable": true,
+        "show_policy": false,
+        "margin_top": 0,
+        "padding_top": 72,
+        "padding_bottom": 48
+      }
     }
   },
   "order": [
-    "footer",
-    "blocks_wJrqtk"
+    "footer"
   ]
 }
+

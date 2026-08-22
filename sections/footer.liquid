@@ -4,6 +4,7 @@
 {{ 'component-list-menu.css' | asset_url | stylesheet_tag }}
 {{ 'component-list-payment.css' | asset_url | stylesheet_tag }}
 {{ 'component-list-social.css' | asset_url | stylesheet_tag }}
+{{ 'ct-footer.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .footer {
@@ -68,7 +69,7 @@
           >
             {%- for block in section.blocks -%}
               <div
-                class="footer-block grid__item{% if block.type == 'link_list' %} footer-block--menu{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                class="footer-block grid__item{% if block.type == 'link_list' %} footer-block--menu{% endif %}{% if block.type == 'ct_follow' %} footer-block--ct-follow{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
                 {{ block.shopify_attributes }}
                 {% if settings.animations_reveal_on_scroll %}
                   data-cascade
@@ -100,9 +101,43 @@
                           </li>
                         {%- endfor -%}
                       </ul>
+                    {%- else -%}
+                      {%- comment -%}
+                        Fallback for when no Shopify menu is selected. A link_list
+                        block renders nothing at all without a menu, which left the
+                        Shop and Company columns as bare headings. These five
+                        label/url pairs let the columns be filled straight from the
+                        section, no admin menu required. Identical markup and
+                        classes to the menu path, so the footer styling applies
+                        unchanged. Picking a menu always takes priority.
+                      {%- endcomment -%}
+                      {%- capture ct_manual_links -%}
+                        {%- for i in (1..5) -%}
+                          {%- liquid
+                            assign label_key = 'link_' | append: i | append: '_label'
+                            assign url_key = 'link_' | append: i | append: '_url'
+                            assign ct_label = block.settings[label_key]
+                            assign ct_href = block.settings[url_key]
+                          -%}
+                          {%- if ct_label != blank -%}
+                            <li>
+                              <a
+                                href="{{ ct_href | default: routes.root_url }}"
+                                class="link link--text list-menu__item list-menu__item--link"
+                              >
+                                {{ ct_label | escape }}
+                              </a>
+                            </li>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endcapture -%}
+                      {%- if ct_manual_links != blank -%}
+                        <ul class="footer-block__details-content list-unstyled">{{ ct_manual_links }}</ul>
+                      {%- endif -%}
                     {%- endif -%}
                   {%- when 'brand_information' -%}
                     <div class="footer-block__brand-info">
+                      <span class="ct-footer-logo" aria-hidden="true">{{ 'full-logo.svg' | inline_asset_content }}</span>
                       {%- if settings.brand_image != blank -%}
                         {%- assign brand_image_height = settings.brand_image_width
                           | divided_by: settings.brand_image.aspect_ratio
@@ -130,6 +165,63 @@
                       {%- endif -%}
                       {%- if block.settings.show_social and has_social_icons -%}
                         {%- render 'social-icons', class: 'footer__list-social' -%}
+                      {%- endif -%}
+                    </div>
+                  {%- when 'ct_follow' -%}
+                    {%- comment -%}
+                      "Follow along" column from the Carly Taylor design: heading,
+                      circular social buttons, then a contact line. Dawn only ever
+                      renders social icons inside brand_information or the bottom
+                      bar, so this is its own block type.
+                      Icons are the design's own SVG paths, each shown only when
+                      the matching URL is set in Theme settings > Social media.
+                    {%- endcomment -%}
+                    {%- comment -%}
+                      No heading rendered here on purpose -- the loop above
+                      already emits block.settings.heading for every block type.
+                    {%- endcomment -%}
+                    <div class="footer-block__details-content ct-follow">
+                      <ul class="ct-follow__list list-unstyled" role="list">
+                        {%- if settings.social_instagram_link != blank -%}
+                          <li>
+                            <a href="{{ settings.social_instagram_link }}" class="ct-follow__link">
+                              <span class="visually-hidden">Instagram</span>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+                                <circle cx="12" cy="12" r="4.5"></circle>
+                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+                              </svg>
+                            </a>
+                          </li>
+                        {%- endif -%}
+                        {%- if settings.social_tiktok_link != blank -%}
+                          <li>
+                            <a href="{{ settings.social_tiktok_link }}" class="ct-follow__link">
+                              <span class="visually-hidden">TikTok</span>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M9 19c0 2-1.5 3-3 3s-3-1-3-3 1.5-3 3-3c.5 0 1 .1 1.5.4V4l12-2v13c0 2-1.5 3-3 3s-3-1-3-3 1.5-3 3-3c.5 0 1 .1 1.5.4V6L9 7.5V19z"></path>
+                              </svg>
+                            </a>
+                          </li>
+                        {%- endif -%}
+                        {%- if settings.social_facebook_link != blank -%}
+                          <li>
+                            <a href="{{ settings.social_facebook_link }}" class="ct-follow__link">
+                              <span class="visually-hidden">Facebook</span>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M12 22a10 10 0 1 0-10-10c0 5 3.5 9 8 10v-7H8v-3h2v-2.2C10 7.2 11.5 6 13.7 6c1 0 2 .2 2 .2V8.7h-1.2c-1.2 0-1.5.7-1.5 1.4V12h2.6l-.4 3H13v7"></path>
+                              </svg>
+                            </a>
+                          </li>
+                        {%- endif -%}
+                      </ul>
+                      {%- if block.settings.contact_label != blank or block.settings.contact_email != blank -%}
+                        <p class="ct-follow__contact">
+                          {{- block.settings.contact_label }}
+                          {% if block.settings.contact_email != blank -%}
+                            <a href="mailto:{{ block.settings.contact_email }}">{{ block.settings.contact_email }}</a>
+                          {%- endif -%}
+                        </p>
                       {%- endif -%}
                     </div>
                   {%- when 'image' -%}
@@ -256,7 +348,16 @@
       data-cascade
     {% endif %}
   >
-    <div class="footer__content-bottom-wrapper page-width">
+    <div class="footer__content-bottom-wrapper page-width ct-footer-bottom">
+      {%- comment -%}
+        The design puts the copyright and the payment marks on one rule-topped
+        row, copyright left / payment right. Dawn ships them as two separate
+        centred rows, so the copyright is rendered here instead and Dawn's own
+        centred block is hidden in ct-footer.css.
+      {%- endcomment -%}
+      {%- if section.settings.ct_copyright != blank -%}
+        <div class="ct-footer-copyright">{{ section.settings.ct_copyright | escape }}</div>
+      {%- endif -%}
       <div class="footer__column footer__localization isolate">
         {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
           <localization-form>
@@ -343,7 +444,22 @@
           "id": "menu",
           "default": "footer",
           "label": "t:sections.footer.blocks.link_list.settings.menu.label"
-        }
+        },
+        {
+          "type": "header",
+          "content": "Manual links",
+          "info": "Used only when no menu is selected above. Lets this column be filled without creating a menu in the admin."
+        },
+        { "type": "text", "id": "link_1_label", "label": "Link 1 label" },
+        { "type": "url", "id": "link_1_url", "label": "Link 1 URL" },
+        { "type": "text", "id": "link_2_label", "label": "Link 2 label" },
+        { "type": "url", "id": "link_2_url", "label": "Link 2 URL" },
+        { "type": "text", "id": "link_3_label", "label": "Link 3 label" },
+        { "type": "url", "id": "link_3_url", "label": "Link 3 URL" },
+        { "type": "text", "id": "link_4_label", "label": "Link 4 label" },
+        { "type": "url", "id": "link_4_url", "label": "Link 4 URL" },
+        { "type": "text", "id": "link_5_label", "label": "Link 5 label" },
+        { "type": "url", "id": "link_5_url", "label": "Link 5 URL" }
       ]
     },
     {
@@ -378,6 +494,34 @@
           "id": "subtext",
           "default": "t:sections.footer.blocks.text.settings.subtext.default",
           "label": "t:sections.footer.blocks.text.settings.subtext.label"
+        }
+      ]
+    },
+    {
+      "type": "ct_follow",
+      "name": "Follow along",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Follow along",
+          "label": "Heading"
+        },
+        {
+          "type": "paragraph",
+          "content": "Social icons use the URLs in Theme settings > Social media. Each icon appears only once its URL is set."
+        },
+        {
+          "type": "text",
+          "id": "contact_label",
+          "default": "Questions?",
+          "label": "Contact label"
+        },
+        {
+          "type": "text",
+          "id": "contact_email",
+          "label": "Contact email"
         }
       ]
     },
@@ -484,6 +628,12 @@
       "id": "payment_enable",
       "default": true,
       "label": "t:sections.footer.settings.payment_enable.label"
+    },
+    {
+      "type": "text",
+      "id": "ct_copyright",
+      "label": "Copyright text",
+      "info": "Shown bottom-left, on the same row as the payment marks."
     },
     {
       "type": "checkbox",
