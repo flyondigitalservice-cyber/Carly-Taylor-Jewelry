@@ -6,6 +6,7 @@
   - product_form_id: {String} product form id.
   - section_id: {String} id of section to which this snippet belongs.
   - show_pickup_availability: {Boolean} for the pickup availability. If true the pickup availability is rendered, false - not rendered (optional).
+  - show_line_total: {Boolean} Carly Taylor addition. When true, swaps the submit button's label to "Add to bag" (locale key products.product.ct_add_to_bag_label) and appends an empty `[data-ct-line-total]` span that sections/main-product.liquid's own inline script fills in with "-- {qty x price}", live-updating. Default/omitted: unchanged Dawn behaviour (optional).
 
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
@@ -87,6 +88,9 @@
                 {{ 'products.product.unavailable' | t }}
               {%- elsif product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
                 {{ 'products.product.sold_out' | t }}
+              {%- elsif show_line_total -%}
+                {{ 'products.product.ct_add_to_bag_label' | t }}
+                <span data-ct-line-total></span>
               {%- else -%}
                 {{ 'products.product.add_to_cart' | t }}
               {%- endif -%}

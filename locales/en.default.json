@@ -116,6 +116,8 @@
   "products": {
     "product": {
       "add_to_cart": "Add to cart",
+      "ct_add_to_bag": "Add {{ product }} to bag",
+      "ct_add_to_bag_label": "Add to bag",
       "choose_options": "Choose options",
       "choose_product_options": "Choose options for {{ product_name }}",
       "description": "Description",
