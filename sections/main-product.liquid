@@ -1,6 +1,6 @@
 <product-info
   id="MainProduct-{{ section.id }}"
-  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+  class="ct-product section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
   data-section="{{ section.id }}"
   data-product-id="{{ product.id }}"
   data-update-url="true"
@@ -41,6 +41,13 @@
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+  {%- comment -%}
+    Progressive-enhancement only: animates the height of Dawn's native
+    <details>/<summary> collapsible_tab blocks on open/close (design task 1).
+    Markup/behaviour work identically -- keyboard toggling, no-JS fallback --
+    without this file; see assets/ct-accordion.js for the reasoning.
+  {%- endcomment -%}
+  <script src="{{ 'ct-accordion.js' | asset_url }}" defer="defer"></script>
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
@@ -54,6 +61,8 @@
   {%- endif -%}
 
   {%- assign first_3d_model = product.media | where: 'media_type', 'model' | first -%}
+  {{ 'ct-product.css' | asset_url | stylesheet_tag }}
+
   {%- if first_3d_model -%}
     {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
     <link
@@ -73,7 +82,34 @@
   {%- endif -%}
 
   {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  {%- liquid
+    # Category crumb/eyebrow: prefers the collection this product was reached
+    # through (so "back to category" is accurate for however the shopper
+    # arrived), falling back to the product's own type, then its first
+    # collection, in case the page was opened directly (no `collection`
+    # context) or product.type is blank.
+    assign ct_category_label = product.type
+    assign ct_category_url = routes.all_products_collection_url
+    if collection and collection.url
+      assign ct_category_label = collection.title
+      assign ct_category_url = collection.url
+    elsif product.collections.first
+      assign ct_category_url = product.collections.first.url
+      if ct_category_label == blank
+        assign ct_category_label = product.collections.first.title
+      endif
+    endif
+  -%}
   <div class="page-width">
+    <nav class="ct-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+      {%- if ct_category_label != blank -%}
+        <span class="ct-breadcrumb__sep" aria-hidden="true">/</span>
+        <a href="{{ ct_category_url }}">{{ ct_category_label }}</a>
+      {%- endif -%}
+      <span class="ct-breadcrumb__sep" aria-hidden="true">/</span>
+      <span class="ct-breadcrumb__current" aria-current="page">{{ product.title }}</span>
+    </nav>
     <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
       <div class="grid__item product__media-wrapper">
         {% render 'product-media-gallery', variant_images: variant_images %}
@@ -84,6 +120,10 @@
           class="product__info-container{% if section.settings.enable_sticky_info %} product__column-sticky{% endif %}"
         >
           {%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+          {%- if ct_category_label != blank -%}
+            <div class="ct-product__eyebrow ct-eyebrow">{{ ct_category_label }}</div>
+          {%- endif -%}
 
           {%- for block in section.blocks -%}
             {%- case block.type -%}
@@ -141,8 +181,19 @@
                   {%- endform -%}
                 </div>
               {%- when 'inventory' -%}
+                {%- comment -%}
+                  Dawn ships this block's 3 states as inline `style="color: rgb(...)"`
+                  on the status dot, which no stylesheet can override without
+                  `!important`. Swapped for state classes
+                  (ct-product__inventory-icon--in/--low/--backorder/--out) below so the
+                  colour comes from the brand token palette (--ct-success/--ct-accent/
+                  --ct-error) in ct-product.css instead -- copy/markup/logic otherwise
+                  untouched. Low stock and "still orderable" (backorder) both map to
+                  --ct-accent (a warm caution, not an alarm); true "not orderable" maps
+                  to --ct-error; in-stock maps to --ct-success.
+                {%- endcomment -%}
                 <p
-                  class="product__inventory{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} visibility-hidden{% endif %}"
+                  class="product__inventory ct-product__inventory{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} visibility-hidden{% endif %}"
                   {{ block.shopify_attributes }}
                   id="Inventory-{{ section.id }}"
                   role="status"
@@ -152,7 +203,7 @@
                       {%- if product.selected_or_first_available_variant.inventory_quantity
                           <= block.settings.inventory_threshold
                       -%}
-                        <span class="svg-wrapper" style="color: rgb(238, 148, 65)">
+                        <span class="svg-wrapper ct-product__inventory-icon ct-product__inventory-icon--low">
                           {{- 'icon-inventory-status.svg' | inline_asset_content -}}
                         </span>
                         {%- if block.settings.show_inventory_quantity -%}
@@ -164,7 +215,7 @@
                           {{- 'products.product.inventory_low_stock' | t -}}
                         {%- endif -%}
                       {%- else -%}
-                        <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
+                        <span class="svg-wrapper ct-product__inventory-icon ct-product__inventory-icon--in">
                           {{- 'icon-inventory-status.svg' | inline_asset_content -}}
                         </span>
                         {%- if block.settings.show_inventory_quantity -%}
@@ -178,12 +229,12 @@
                       {%- endif -%}
                     {%- else -%}
                       {%- if product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
-                        <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
+                        <span class="svg-wrapper ct-product__inventory-icon ct-product__inventory-icon--backorder">
                           {{- 'icon-inventory-status.svg' | inline_asset_content -}}
                         </span>
                         {{- 'products.product.inventory_out_of_stock_continue_selling' | t -}}
                       {%- else -%}
-                        <span class="svg-wrapper" style="color: rgb(200, 200, 200)">
+                        <span class="svg-wrapper ct-product__inventory-icon ct-product__inventory-icon--out">
                           {{- 'icon-inventory-status.svg' | inline_asset_content -}}
                         </span>
                         {{- 'products.product.inventory_out_of_stock' | t -}}
@@ -483,8 +534,44 @@
                   product: product,
                   product_form_id: product_form_id,
                   section_id: section.id,
-                  show_pickup_availability: true
+                  show_pickup_availability: true,
+                  show_line_total: true
                 -%}
+                {%- comment -%}
+                  Trust line + benefit rows render HERE (mid-loop, right after the
+                  buy_buttons case) rather than after the block loop closes, so that DOM
+                  order is: [Add to bag button] -> [trust line] -> [benefit rows] ->
+                  [collapsible_tab accordions, if any follow buy_buttons in block_order].
+                  Both are section SETTINGS rather than block types for the same reason
+                  documented on the benefit rows below: templates/product.json naming a
+                  block type that only exists in this file's schema breaks under a
+                  partial theme sync (see the top-of-task note / prior incident).
+                {%- endcomment -%}
+                {%- if section.settings.ct_trust_enable and section.settings.ct_trust_text != blank -%}
+                  <p class="ct-product__trust">
+                    <span class="ct-product__trust-icon" aria-hidden="true">
+                      {{- 'icon-lock.svg' | inline_asset_content -}}
+                    </span>
+                    <span>{{ section.settings.ct_trust_text }}</span>
+                  </p>
+                {%- endif -%}
+                {%- if section.settings.ct_benefits_enable -%}
+                  {%- capture ct_benefits -%}
+                    {%- for i in (1..3) -%}
+                      {%- assign ct_benefit_key = 'ct_benefit_' | append: i -%}
+                      {%- assign ct_benefit_text = section.settings[ct_benefit_key] -%}
+                      {%- if ct_benefit_text != blank -%}
+                        <li class="ct-product__benefit">
+                          <span class="ct-product__benefit-icon" aria-hidden="true">&#10022;</span>
+                          <span class="ct-product__benefit-text">{{ ct_benefit_text }}</span>
+                        </li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endcapture -%}
+                  {%- if ct_benefits != blank -%}
+                    <ul class="ct-product__benefits" role="list">{{ ct_benefits }}</ul>
+                  {%- endif -%}
+                {%- endif -%}
               {%- when 'rating' -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">
@@ -676,6 +763,7 @@
                 {% render 'icon-with-text', block: block %}
             {%- endcase -%}
           {%- endfor -%}
+
           <a href="{{ product.url }}" class="link product__view-details animate-arrow">
             {{ 'products.product.view_full_details' | t }}
             {{- 'icon-arrow.svg' | inline_asset_content -}}
@@ -735,7 +823,151 @@
     <script type="application/ld+json">
       {{ product | structured_data }}
     </script>
+
+    {%- comment -%}
+      Live "Add to bag -- {line total}" label (design spec). Purely additive:
+      it only ever rewrites the text of the `[data-ct-line-total]` span buy-
+      buttons.liquid renders when `show_line_total: true` is passed (main-
+      product.liquid's call site only -- see snippets/buy-buttons.liquid).
+      Every DOM lookup is null-checked before use, so on any markup change
+      this silently no-ops instead of throwing; it never touches product-
+      form.js/variant-selects/cart submission, only a label's text content.
+    {%- endcomment -%}
+    <script type="application/json" id="ct-variant-prices-{{ section.id }}">
+      {
+        {%- for variant in product.variants -%}
+          "{{ variant.id }}": {{ variant.price }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      }
+    </script>
+    <script>
+      (function () {
+        var root = document.getElementById('MainProduct-{{ section.id }}');
+        if (!root) return;
+        var qtyInput = document.getElementById('Quantity-{{ section.id }}');
+        var variantInput = root.querySelector('.product-variant-id');
+        var totalEl = root.querySelector('[data-ct-line-total]');
+        var priceStatus = document.getElementById('price-{{ section.id }}');
+        var pricesTag = document.getElementById('ct-variant-prices-{{ section.id }}');
+        if (!qtyInput || !variantInput || !totalEl || !pricesTag) return;
+
+        var prices;
+        try {
+          prices = JSON.parse(pricesTag.textContent);
+        } catch (error) {
+          return;
+        }
+
+        var moneyFormat = {{ shop.money_format | json }};
+
+        {%- comment -%}
+          shop.money_format legitimately contains a literal double-curly-brace
+          placeholder (e.g. a dollar sign followed by "amount" wrapped in
+          double braces), and matching/replacing it needs a JS regex built
+          from those same literal characters. The block below is wrapped in
+          Liquid's raw tag so those characters are treated as inert content
+          instead of being parsed as a Liquid output tag -- without that the
+          section fails to compile. The money_format assignment above and the
+          section-id-based element lookups elsewhere in this script stay
+          outside that wrapped block since those interpolations are meant to
+          be parsed normally.
+        {%- endcomment -%}
+        {% raw %}
+        function formatWithDelimiters(cents, precision, thousands, decimal) {
+          precision = precision == null ? 2 : precision;
+          thousands = thousands == null ? ',' : thousands;
+          decimal = decimal == null ? '.' : decimal;
+          if (isNaN(cents) || cents == null) return '0';
+          var value = (cents / 100).toFixed(precision);
+          var parts = value.split('.');
+          var dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+          var decimals = parts[1] ? decimal + parts[1] : '';
+          return dollars + decimals;
+        }
+
+        function formatMoney(cents) {
+          var format = moneyFormat || '${{ amount }}';
+          var match = format.match(/\{\{\s*(\w+)\s*\}\}/);
+          var placeholder = match ? match[1] : 'amount';
+          var value;
+          switch (placeholder) {
+            case 'amount_no_decimals':
+              value = formatWithDelimiters(cents, 0);
+              break;
+            case 'amount_with_comma_separator':
+              value = formatWithDelimiters(cents, 2, '.', ',');
+              break;
+            case 'amount_no_decimals_with_comma_separator':
+              value = formatWithDelimiters(cents, 0, '.', ',');
+              break;
+            case 'amount_with_apostrophe_separator':
+              value = formatWithDelimiters(cents, 2, "'", '.');
+              break;
+            default:
+              value = formatWithDelimiters(cents, 2);
+          }
+          return match ? format.replace(match[0], value) : '$' + value;
+        }
+
+        function update() {
+          try {
+            var unitPrice = prices[variantInput.value];
+            if (unitPrice == null) return;
+            var qty = parseInt(qtyInput.value, 10) || 1;
+            totalEl.textContent = '— ' + formatMoney(unitPrice * qty);
+          } catch (error) {
+            /* Leave the static "Add to bag" label alone if anything here
+               fails -- this is a cosmetic enhancement, not part of the
+               add-to-cart submission path. */
+          }
+        }
+        {% endraw %}
+
+        qtyInput.addEventListener('input', update);
+        qtyInput.addEventListener('change', update);
+        if (priceStatus && window.MutationObserver) {
+          new MutationObserver(update).observe(priceStatus, { childList: true, subtree: true });
+        }
+        update();
+      })();
+    </script>
   </div>
+
+  {%- comment -%}
+    Mobile sticky add-to-bag bar (design task 3). Dawn has no equivalent
+    component. Deliberately outside `.page-width` (it's a fixed-position
+    overlay, not constrained page content) but still inside <product-info> so
+    it's removed automatically if this section is ever removed from the
+    template. It does NOT duplicate form state: the button below has no
+    <form> of its own and instead points at the real product form via the
+    HTML `form` attribute (form="{{ product_form_id }}"), so the exact same
+    variant-id/quantity inputs and product-form.js submit handler run --
+    only one add-to-cart code path exists on this page. Visibility is driven
+    entirely by assets/ct-sticky-atc.js (IntersectionObserver on the real
+    submit button + the site footer), not by this markup.
+  {%- endcomment -%}
+  {%- if product.selected_or_first_available_variant -%}
+    <div class="ct-sticky-atc" id="CtStickyAtc-{{ section.id }}" data-section-id="{{ section.id }}" hidden>
+      <div class="ct-sticky-atc__info">
+        <p class="ct-sticky-atc__title">{{ product.title | escape }}</p>
+        <div class="ct-sticky-atc__price" data-ct-sticky-price>
+          {%- render 'price', product: product, use_variant: true, show_badges: false -%}
+        </div>
+      </div>
+      <button
+        type="submit"
+        name="add"
+        form="{{ product_form_id }}"
+        class="ct-btn ct-btn--dark ct-sticky-atc__button"
+        {% if product.selected_or_first_available_variant.available == false %}
+          disabled
+        {% endif %}
+      >
+        {{ 'products.product.ct_add_to_bag_label' | t }}
+      </button>
+    </div>
+    <script src="{{ 'ct-sticky-atc.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
 </product-info>
 
 {% schema %}
@@ -2089,6 +2321,52 @@
     }
   ],
   "settings": [
+    {
+      "type": "header",
+      "content": "Benefit rows"
+    },
+    {
+      "type": "checkbox",
+      "id": "ct_benefits_enable",
+      "default": true,
+      "label": "Show benefit rows"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "ct_benefit_1",
+      "default": "High-quality gold &amp; silver — made to keep on",
+      "label": "Benefit row 1"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "ct_benefit_2",
+      "default": "Free shipping on orders over $150",
+      "label": "Benefit row 2",
+      "info": "Update the amount to match your real free-shipping threshold."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "ct_benefit_3",
+      "default": "10% off your first order with code WELCOME",
+      "label": "Benefit row 3"
+    },
+    {
+      "type": "header",
+      "content": "Secure checkout line"
+    },
+    {
+      "type": "checkbox",
+      "id": "ct_trust_enable",
+      "default": true,
+      "label": "Show secure checkout line"
+    },
+    {
+      "type": "text",
+      "id": "ct_trust_text",
+      "default": "Secure checkout — encrypted & protected",
+      "label": "Secure checkout text",
+      "info": "Shown directly under the Add to bag button, with a lock icon."
+    },
     {
       "type": "checkbox",
       "id": "enable_sticky_info",

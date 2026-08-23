@@ -12,19 +12,28 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "vendor": {
-          "type": "text",
-          "settings": {
-            "text": "{{ product.vendor }}",
-            "text_style": "uppercase"
-          }
-        },
         "title": {
           "type": "title",
           "settings": {}
         },
         "price": {
           "type": "price",
+          "settings": {}
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "text_style": "body",
+            "inventory_threshold": 5,
+            "show_inventory_quantity": false
+          }
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
           "settings": {}
         },
         "variant_picker": {
@@ -45,26 +54,43 @@
             "show_gift_card_recipient": true
           }
         },
-        "description": {
-          "type": "description",
-          "settings": {}
-        },
-        "share": {
-          "type": "share",
+        "tab_details": {
+          "type": "collapsible_tab",
           "settings": {
-            "share_label": "Share"
+            "heading": "Details",
+            "icon": "none",
+            "content": "<p>Each piece is designed in-house and finished by hand in small batches. Available in 14k gold vermeil and sterling silver, with a smooth, tarnish-resistant finish made for everyday wear.</p>"
+          }
+        },
+        "tab_materials": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Materials & care",
+            "icon": "none",
+            "content": "<p>Crafted from 14k gold vermeil (a thick layer of genuine gold over sterling silver) or solid sterling silver. Avoid contact with perfume, lotion and chlorinated water, and store each piece in a dry place away from direct sunlight to keep it looking its best.</p>"
+          }
+        },
+        "tab_shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & returns",
+            "icon": "none",
+            "content": "<p>Orders ship within 1–2 business days in signature Carly Taylor packaging, ready to gift. Free standard shipping on orders over $150. Not the right fit? Returns are accepted within 30 days of delivery for a full refund.</p>"
           }
         }
       },
       "block_order": [
-        "vendor",
         "title",
         "price",
+        "inventory",
+        "rating",
+        "description",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "description",
-        "share"
+        "tab_details",
+        "tab_materials",
+        "tab_shipping"
       ],
       "settings": {
         "enable_sticky_info": true,
@@ -72,14 +98,20 @@
         "media_size": "large",
         "constrain_to_viewport": true,
         "media_fit": "contain",
-        "gallery_layout": "stacked",
-        "mobile_thumbnails": "hide",
+        "gallery_layout": "thumbnail",
+        "mobile_thumbnails": "show",
         "media_position": "left",
         "image_zoom": "lightbox",
         "hide_variants": true,
         "enable_video_looping": false,
-        "padding_top": 36,
-        "padding_bottom": 12
+        "padding_top": 40,
+        "padding_bottom": 0,
+        "ct_benefits_enable": true,
+        "ct_benefit_1": "High-quality gold &amp; silver — made to keep on",
+        "ct_benefit_2": "Free shipping on orders over $150",
+        "ct_benefit_3": "10% off your first order with code WELCOME",
+        "ct_trust_enable": true,
+        "ct_trust_text": "Secure checkout — encrypted & protected"
       }
     },
     "related-products": {
@@ -93,11 +125,11 @@
         "color_scheme": "scheme-1",
         "image_ratio": "square",
         "image_shape": "default",
-        "show_secondary_image": true,
+        "show_secondary_image": false,
         "show_vendor": false,
         "show_rating": false,
-        "padding_top": 36,
-        "padding_bottom": 28
+        "padding_top": 80,
+        "padding_bottom": 80
       }
     }
   },
