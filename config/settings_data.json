@@ -123,9 +123,12 @@
     "predictive_search_show_vendor": false,
     "predictive_search_show_price": false,
     "currency_code_enabled": false,
+    "cart_type": "drawer",
     "show_vendor": false,
     "show_cart_note": false,
     "cart_drawer_collection": "",
+    "cart_color_scheme": "scheme-6",
+    "ct_free_shipping_threshold": 75,
     "sections": {
       "main-password-header": {
         "type": "main-password-header",

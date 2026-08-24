@@ -345,6 +345,13 @@
             "label": "Collection",
             "info": "Shown when cart drawer is empty"
           }
+        },
+        "ct_free_shipping_header": {
+          "content": "Free shipping bar"
+        },
+        "ct_free_shipping_threshold": {
+          "label": "Free shipping threshold",
+          "info": "Shown as a progress bar in the cart drawer. Set to 0 to hide it."
         }
       }
     },

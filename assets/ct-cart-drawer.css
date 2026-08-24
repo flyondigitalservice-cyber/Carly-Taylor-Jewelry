@@ -1,0 +1,94 @@
+/*
+ * Carly Taylor Jewelry -- cart drawer
+ * -------------------------------------------------------------------------
+ * Loaded from snippets/cart-drawer.liquid, after component-cart-drawer.css
+ * (loaded in <head> via layout/theme.liquid) so these overrides win on the
+ * cascade without needing !important. Requires assets/ct-tokens.css.
+ *
+ * Base colours (cream bg, espresso text) come from the scheme-6 color
+ * scheme assigned via settings.cart_color_scheme in config/settings_data.json.
+ */
+
+.cart-drawer .drawer__inner {
+  max-width: 44rem;
+}
+
+.cart-drawer .drawer__header {
+  border-bottom: 0.1rem solid var(--ct-border);
+}
+
+.cart-drawer .drawer__heading {
+  font-family: var(--ct-font-heading);
+  font-size: 2.6rem;
+  font-weight: 500;
+}
+
+/* Empty state */
+
+.ct-cart-empty-mark {
+  display: block;
+  width: 6.4rem;
+  margin: 0 auto 1.6rem;
+  color: var(--ct-ink);
+  opacity: 0.3;
+}
+
+.ct-cart-empty-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cart-drawer .cart__empty-text {
+  font-family: var(--ct-font-heading);
+  font-size: 2.4rem;
+  font-weight: 500;
+}
+
+/* Free-shipping progress */
+
+.ct-free-shipping {
+  padding: 1.4rem 2.4rem;
+  border-bottom: 0.1rem solid var(--ct-border);
+}
+
+.ct-free-shipping__text {
+  margin: 0 0 0.8rem;
+  font-size: 1.3rem;
+  color: var(--ct-body);
+}
+
+.ct-free-shipping__text strong {
+  color: var(--ct-bronze);
+}
+
+.ct-free-shipping__text--met {
+  margin-bottom: 0;
+  color: var(--ct-success);
+}
+
+.ct-free-shipping__track {
+  height: 0.5rem;
+  border-radius: var(--ct-radius-pill);
+  background-color: var(--ct-progress-track);
+  overflow: hidden;
+}
+
+.ct-free-shipping__fill {
+  height: 100%;
+  border-radius: var(--ct-radius-pill);
+  background-color: var(--ct-bronze);
+  transition: width 0.4s ease;
+}
+
+/* Line-item discounts already render natively (cart-drawer.liquid), just
+   recoloured to the brand accent instead of Dawn's default badge colour. */
+.cart-drawer .discounts__discount {
+  color: var(--ct-bronze);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-free-shipping__fill {
+    transition-duration: 0.01ms;
+  }
+}

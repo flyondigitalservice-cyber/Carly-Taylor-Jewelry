@@ -299,6 +299,8 @@
       "title": "Your cart",
       "caption": "Cart items",
       "remove_title": "Remove {{ title }}",
+      "ct_free_shipping_remaining_html": "You're <strong>{{ amount }}</strong> away from free shipping",
+      "ct_free_shipping_met": "Your order ships free",
       "estimated_total": "Estimated total",
       "new_estimated_total": "New estimated total",
       "note": "Order special instructions",

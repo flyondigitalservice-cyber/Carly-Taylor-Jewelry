@@ -7,6 +7,7 @@
 
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'ct-cart-drawer.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
@@ -31,6 +32,7 @@
         <div class="drawer__inner-empty">
           <div class="cart-drawer__warnings center{% if settings.cart_drawer_collection != blank %} cart-drawer__warnings--has-collection{% endif %}">
             <div class="cart-drawer__empty-content">
+              <span class="ct-cart-empty-mark" aria-hidden="true">{{ 'mark.svg' | inline_asset_content }}</span>
               <h2 class="cart__empty-text">{{ 'sections.cart.empty' | t }}</h2>
               <button
                 class="drawer__close"
@@ -74,6 +76,32 @@
           </span>
         </button>
       </div>
+      {%- liquid
+        assign ct_threshold_cents = settings.ct_free_shipping_threshold | times: 100
+        assign ct_show_bar = false
+        if ct_threshold_cents > 0 and cart != empty
+          assign ct_show_bar = true
+          assign ct_remaining_cents = ct_threshold_cents | minus: cart.total_price
+          assign ct_remaining_money = ct_remaining_cents | money
+          assign ct_pct = cart.total_price | times: 100 | divided_by: ct_threshold_cents | at_most: 100
+        endif
+      -%}
+      {%- if ct_show_bar -%}
+        <div class="ct-free-shipping" role="status">
+          {%- if ct_remaining_cents > 0 -%}
+            <p class="ct-free-shipping__text">
+              {{ 'sections.cart.ct_free_shipping_remaining_html' | t: amount: ct_remaining_money }}
+            </p>
+            <div class="ct-free-shipping__track">
+              <div class="ct-free-shipping__fill" style="width: {{ ct_pct }}%;"></div>
+            </div>
+          {%- else -%}
+            <p class="ct-free-shipping__text ct-free-shipping__text--met">
+              {{ 'sections.cart.ct_free_shipping_met' | t }}
+            </p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
       <cart-drawer-items
         {% if cart == empty %}
           class=" is-empty"
