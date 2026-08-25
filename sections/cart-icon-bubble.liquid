@@ -4,17 +4,25 @@
   This section is re-rendered through the Section Rendering API and written
   straight into that link's innerHTML on every cart change -- by cart.js,
   cart-drawer.js, cart-notification.js, quick-add-bulk.js and
-  quick-order-list.js. Dawn's stock version emits an SVG cart icon plus a
-  count bubble, which replaced the "Bag - N" pill contents the moment anything
-  was added to or removed from the cart, so the pill reverted to an icon.
+  quick-order-list.js.
 
-  It therefore has to mirror the markup in sections/header.liquid exactly.
-  The <a> wrapper itself (and its .ct-bag class) is not re-rendered -- only
-  what is inside it -- so only the inner spans belong here.
+  It therefore has to mirror the markup inside the <a> in sections/header.liquid
+  exactly. The <a> wrapper itself is not re-rendered -- only what is inside it --
+  so only the icon and count bubble belong here.
 
-  If the pill markup in sections/header.liquid changes, change it here too.
+  If the cart markup in sections/header.liquid changes, change it here too.
 {%- endcomment -%}
-<span class="ct-bag__label">{{ 'sections.header.ct_bag_label' | t }}</span>
-<span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
-<span aria-hidden="true">{{ cart.item_count }}</span>
-<span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+{%- if cart == empty -%}
+  <span class="svg-wrapper">{{- 'icon-cart-empty.svg' | inline_asset_content -}}</span>
+{%- else -%}
+  <span class="svg-wrapper">{{- 'icon-cart.svg' | inline_asset_content -}}</span>
+{%- endif -%}
+<span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+{%- if cart != empty -%}
+  <div class="cart-count-bubble">
+    {%- if cart.item_count < 100 -%}
+      <span aria-hidden="true">{{ cart.item_count }}</span>
+    {%- endif -%}
+    <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+  </div>
+{%- endif -%}

@@ -137,14 +137,15 @@
   color: inherit;
 }
 
-/* Search + account icons.
-   Restored into the header as a deliberate deviation from the design, which
-   shows neither -- see the comment above the markup in sections/header.liquid.
-   Dawn's own icon geometry is left alone (4.4rem tap target, 2rem glyph); only
-   colour, spacing and the underline are re-skinned here. */
+/* Search, account and cart icons.
+   Search and account are restored into the header as a deliberate deviation
+   from the design, which shows neither -- see the comment above the markup in
+   sections/header.liquid. All three are Dawn's stock icon links, so their
+   geometry is left alone (4.4rem tap target, 2rem glyph); only colour, spacing
+   and the underline are re-skinned here. */
 
 /* Dawn's `.header__icons` is a bare flex row with no gap, so the icons sat
-   flush against each other and against the bag pill. */
+   flush against each other. */
 .ct-header .header__icons {
   align-items: center;
   gap: 0.4rem;
@@ -244,56 +245,22 @@
   border-radius: var(--ct-radius-pill);
 }
 
-/* "Bag · N" pill, replaces Dawn's icon-only cart link.
-   base.css pins `.header__icon` to a 4.4rem square, which squeezed the pill
-   into a circle and clipped the label down to "ag" -- the width/height reset
-   below is what lets it size to its text. */
-
-.ct-bag.header__icon {
-  width: auto;
-  height: auto;
-}
-
-.ct-bag {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  /* The link carries Dawn's .link class, which sets text-decoration:underline.
-     It's a filled pill, not a text link, so the underline is cancelled here --
-     and on hover too, since .link re-applies it in that state. */
-  text-decoration: none;
-  border-radius: var(--ct-radius-pill);
-  padding: 1rem 2rem;
-  font-family: var(--font-body-family);
-  font-size: 1.3rem;
-  letter-spacing: var(--ct-tracking-nav);
-  text-transform: uppercase;
+/* Cart count bubble. The cart link itself is Dawn's stock icon link and is
+   already covered by the `.ct-header .header__icon` rules above, alongside the
+   search and account icons -- only the bubble needs re-skinning, since base.css
+   paints it from the scheme's button colours rather than the CT palette. */
+.ct-header .cart-count-bubble {
   background-color: var(--ct-ink);
   color: var(--ct-button-label);
+  font-family: var(--font-body-family);
   transition: background-color var(--ct-ease), color var(--ct-ease);
 }
 
-.ct-bag:hover,
-.ct-bag:focus,
-.ct-bag:focus-visible {
-  text-decoration: none;
-}
-
-.ct-bag:hover {
-  background-color: var(--ct-bronze);
-}
-
-.ct-header--home:not(.ct-header--scrolled) .ct-bag {
+/* Over the hero the icons go cream, so the bubble inverts to stay legible
+   against the photograph -- same swap the icons themselves make. */
+.ct-header--home:not(.ct-header--scrolled) .cart-count-bubble {
   background-color: var(--ct-cream);
   color: var(--ct-ink);
-}
-
-.ct-header--home:not(.ct-header--scrolled) .ct-bag:hover {
-  background-color: var(--ct-champagne);
-}
-
-.ct-bag__label {
-  font-weight: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -304,7 +271,7 @@
   .ct-header .search-modal .search__button,
   .ct-header .search-modal .reset__button,
   .ct-header .search-modal__close-button,
-  .ct-bag {
+  .ct-header .cart-count-bubble {
     transition-duration: 0.01ms;
   }
 }

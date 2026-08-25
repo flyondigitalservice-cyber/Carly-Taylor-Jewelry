@@ -280,11 +280,33 @@
         {%- endcase -%}
       {%- endfor -%}
 
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart ct-bag link focus-inset" id="cart-icon-bubble">
-        <span class="ct-bag__label">{{ 'sections.header.ct_bag_label' | t }}</span>
-        <span aria-hidden="true">&nbsp;&middot;&nbsp;</span>
-        <span aria-hidden="true">{{ cart.item_count }}</span>
-        <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+      {%- comment -%}
+        Cart. Dawn's stock icon-only link, kept identical in markup and
+        behaviour to the search and account icons beside it so all three read as
+        one set -- ct-header.css only re-skins the count bubble to the CT
+        palette. The inner markup is duplicated in sections/cart-icon-bubble.liquid,
+        which the Section Rendering API writes into this link on every cart
+        change; change one and change the other.
+      {%- endcomment -%}
+      <a
+        href="{{ routes.cart_url }}"
+        class="header__icon header__icon--cart ct-header__icon link focus-inset"
+        id="cart-icon-bubble"
+      >
+        {%- if cart == empty -%}
+          <span class="svg-wrapper">{{- 'icon-cart-empty.svg' | inline_asset_content -}}</span>
+        {%- else -%}
+          <span class="svg-wrapper">{{- 'icon-cart.svg' | inline_asset_content -}}</span>
+        {%- endif -%}
+        <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+        {%- if cart != empty -%}
+          <div class="cart-count-bubble">
+            {%- if cart.item_count < 100 -%}
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </div>
+        {%- endif -%}
       </a>
     </div>
   </header>

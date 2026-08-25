@@ -289,7 +289,6 @@
     "header": {
       "announcement": "Announcement",
       "menu": "Menu",
-      "ct_bag_label": "Bag",
       "cart_count": {
         "one": "{{ count }} item",
         "other": "{{ count }} items"
