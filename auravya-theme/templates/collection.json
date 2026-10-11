@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "main-collection",
-      "settings": { "show_banner": true, "show_image": true, "show_filters": true, "products_per_page": 24, "columns": "3" }
-    }
-  },
-  "order": ["main"]
-}

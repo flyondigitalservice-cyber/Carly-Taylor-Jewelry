@@ -1,199 +1,498 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "ct_hero": {
-      "type": "ct-hero",
+    "hero": {
+      "type": "hero-banner",
       "settings": {
-        "min_height": "fullscreen",
-        "gradient_direction": "left",
-        "content_position": "middle-left",
-        "eyebrow": "Carly Taylor Jewelry",
-        "heading_tag": "h1",
-        "heading": "Pieces you'll reach <em>for every day</em>",
-        "body": "<p>Gold and silver jewelry made to be lived in — layered on morning coffee runs, kept on through everything.</p>",
-        "button_label": "Shop the collection",
-        "button_link": "shopify://collections/all",
-        "button_style": "light",
-        "eager_load": true
-      }
-    },
-    "ct_category_grid": {
-      "type": "ct-category-grid",
+        "height": 88,
+        "layout": "split",
+        "text_position": "left"
+      },
       "blocks": {
-        "necklaces": {
-          "type": "category",
+        "s1": {
+          "type": "slide",
           "settings": {
-            "collection": "necklace",
+            "eyebrow": "The Festive 2026 Edit",
+            "heading": "Silver that stays,\nshine that speaks.",
+            "text": "925 sterling silver, plated in your choice of gold, rose gold or rhodium — crafted to be worn every day, priced to be loved forever.",
+            "button_label": "Shop bestsellers",
+            "button_link": "/collections/best-seller",
+            "button2_label": "Explore 925 silver",
+            "button2_link": "/collections/silver-jewellery",
+            "usps": "Lifetime plating warranty|7-day easy returns|BIS-registered 925"
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Gifting, sorted",
+            "heading": "Under ₹3,000,\nover expectations.",
+            "text": "Curated silver gifts in signature Auravya boxes with a handwritten note.",
+            "button_label": "Shop gifts",
+            "button_link": "/collections/gifts-under-3000",
+            "button2_label": "",
+            "button2_link": "",
+            "usps": "Free gift wrap|Ships in 24 hrs"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2"
+      ]
+    },
+    "trust": {
+      "type": "trust-bar",
+      "settings": {}
+    },
+    "cats": {
+      "type": "category-grid",
+      "settings": {
+        "subheading": "Shop by category",
+        "heading": "Find your forever piece",
+        "align": "left"
+      },
+      "blocks": {
+        "c1": {
+          "type": "tile",
+          "settings": {
+            "collection": "necklaces",
             "label": "Necklaces"
           }
         },
-        "bracelets": {
-          "type": "category",
-          "settings": {
-            "collection": "bracelets",
-            "label": "Bracelets"
-          }
-        },
-        "earrings": {
-          "type": "category",
+        "c2": {
+          "type": "tile",
           "settings": {
             "collection": "earrings",
             "label": "Earrings"
           }
         },
-        "anklets": {
-          "type": "category",
+        "c3": {
+          "type": "tile",
+          "settings": {
+            "collection": "rings",
+            "label": "Rings"
+          }
+        },
+        "c4": {
+          "type": "tile",
+          "settings": {
+            "collection": "bracelets",
+            "label": "Bracelets"
+          }
+        },
+        "c5": {
+          "type": "tile",
           "settings": {
             "collection": "anklets",
-            "label": "Anklets"
+            "label": "Anklets & more"
           }
         }
       },
-      "block_order": ["necklaces", "bracelets", "earrings", "anklets"],
-      "settings": {
-        "heading": "Shop by category",
-        "view_all_label": "View all pieces",
-        "color_scheme": "scheme-6"
-      }
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ]
     },
-    "featured_collection": {
+    "best": {
       "type": "featured-collection",
       "settings": {
-        "collection": "featured",
-        "product_list": [
-          "tigerlily-necklace",
-          "ava-earrings",
-          "debbie-anklet",
-          "julia-earrings",
-          "patty-anklets",
-          "skylar-earrings",
-          "tiffany-necklace",
-          "savannah-earrings"
-        ],
-        "products_to_show": 8,
-        "ct_eyebrow": "Customer favorites",
-        "title": "Featured pieces",
-        "heading_size": "h2",
-        "show_description": false,
-        "description_style": "body",
-        "columns_desktop": 4,
-        "enable_desktop_slider": false,
-        "full_width": false,
-        "show_view_all": false,
-        "view_all_style": "link",
-        "color_scheme": "scheme-6",
-        "image_ratio": "square",
-        "image_shape": "default",
-        "show_secondary_image": true,
-        "show_vendor": false,
-        "show_rating": false,
-        "quick_add_style": true,
-        "quick_add": "none",
-        "columns_mobile": "2",
-        "swipe_on_mobile": false,
-        "padding_top": 44,
-        "padding_bottom": 88
+        "collection": "best-seller",
+        "subheading": "Most loved",
+        "heading": "Bestsellers",
+        "layout": "carousel",
+        "limit": 10,
+        "align": "left"
       }
     },
-    "ct_promo_banner": {
-      "type": "ct-hero",
+    "promo1": {
+      "type": "promo-banner",
       "settings": {
-        "min_height": "large",
-        "gradient_direction": "right",
-        "content_position": "middle-right",
-        "eyebrow": "",
-        "heading_tag": "h2",
-        "heading": "The Art of Everyday Luxury",
-        "body": "<p>Inspired by you, designed by us</p>",
-        "button_label": "Shop now",
-        "button_link": "shopify://collections/all",
-        "button_style": "square"
+        "style": "solid",
+        "bg": "#1E1A16",
+        "text_position": "center",
+        "eyebrow": "Pick your finish",
+        "heading": "One design. Four precious coatings.",
+        "text": "Every piece is available in bright silver, 18K gold vermeil, rose gold & hand-oxidised — choose the one that feels like you.",
+        "badge": "925 + plating",
+        "button_label": "Browse by coating",
+        "button_link": "/collections/silver-jewellery"
       }
     },
-    "experience_grid": {
-      "type": "multicolumn",
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "subheading": "Our craft",
+        "heading": "Made by hand, hallmarked by law, worn by you.",
+        "text": "Each Auravya piece begins as recycled 925 sterling silver, hand-set with conflict-free zircons by karigars in Jaipur, then plated to micron-level thickness so the shine keeps up with your life.",
+        "float_card": "3.2 micron plating · 5-layer protection",
+        "button_label": "Read our story",
+        "button_link": "/pages/about"
+      },
       "blocks": {
-        "everyday": {
-          "type": "column",
+        "f1": {
+          "type": "feature",
           "settings": {
-            "ct_icon": "everyday",
-            "title": "Made for Every Day",
-            "text": "<p>Jewelry designed to be lived in — kept on through workouts, showers, and everything your week throws at it, without losing its shine.</p>"
+            "icon": "cert",
+            "title": "BIS-registered 925",
+            "text": "Hallmark-certified silver, always."
           }
         },
-        "quality": {
-          "type": "column",
+        "f2": {
+          "type": "feature",
           "settings": {
-            "ct_icon": "quality",
-            "title": "Quality That Lasts",
-            "text": "<p>High-quality gold and silver finishes on every piece, so the necklace you love today still looks the way you remember it years from now.</p>"
+            "icon": "shield",
+            "title": "Lifetime plating warranty",
+            "text": "Free re-plating, forever."
           }
         },
-        "priced": {
-          "type": "column",
+        "f3": {
+          "type": "feature",
           "settings": {
-            "ct_icon": "priced",
-            "title": "Priced to Layer",
-            "text": "<p>From $25 to under $100, our pieces are made to mix and stack — build a collection you'll actually wear, without a second thought.</p>"
-          }
-        },
-        "gifts": {
-          "type": "column",
-          "settings": {
-            "ct_icon": "gifts",
-            "title": "Gifts That Feel Personal",
-            "text": "<p>Every piece carries a name, making it easy to find one that feels like it was made for someone you love.</p>"
+            "icon": "gift",
+            "title": "Signature packaging",
+            "text": "Gift-ready box with every order."
           }
         }
       },
-      "block_order": ["everyday", "quality", "priced", "gifts"],
+      "block_order": [
+        "f1",
+        "f2",
+        "f3"
+      ]
+    },
+    "new": {
+      "type": "featured-collection",
       "settings": {
-        "title": "Experience Carly Taylor",
-        "heading_size": "h2",
-        "image_width": "third",
-        "image_ratio": "adapt",
-        "icon_max_width": 96,
-        "ct_card_style": true,
-        "button_label": "",
-        "button_link": "",
-        "columns_desktop": 4,
-        "column_alignment": "center",
-        "background_style": "none",
-        "color_scheme": "scheme-6",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 88,
-        "padding_bottom": 88
+        "collection": "new-arrival",
+        "subheading": "Just landed",
+        "heading": "New arrivals",
+        "layout": "grid",
+        "columns": "4",
+        "limit": 8,
+        "align": "left"
       }
     },
-    "ct_newsletter": {
-      "type": "ct-newsletter",
+    "reviews": {
+      "type": "review-highlight",
       "settings": {
-        "image_side": "right",
-        "eyebrow": "Stay in touch",
-        "heading": "Be first to meet <em>the new pieces</em>",
-        "body": "<p>New arrivals, restocks, and subscriber-only offers — a short note now and then, never spam.</p>",
-        "button_label": "Subscribe",
-        "color_scheme": "scheme-6",
-        "padding_top": 0,
-        "padding_bottom": 88
+        "subheading": "Loved across India",
+        "heading": "What our circle says",
+        "avg": "4.8",
+        "count": "2,400"
+      },
+      "blocks": {
+        "r1": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "quote": "The gold plating looks exactly like real gold. Wore the constellation necklace daily for 6 months — zero tarnish.",
+            "author": "Meera S.",
+            "meta": "Bengaluru · Star Constellation Necklace"
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "quote": "Ordered with engraving for my sister's wedding. Packaging made me tear up. Beautiful work.",
+            "author": "Ananya R.",
+            "meta": "Pune · Forever Heart Pendant"
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "stars": 4,
+            "quote": "Ring fit perfectly using their size guide. Rose gold finish is subtle and elegant.",
+            "author": "Kavya N.",
+            "meta": "Chennai · Solitaire Promise Ring"
+          }
+        },
+        "r4": {
+          "type": "review",
+          "settings": {
+            "stars": 5,
+            "quote": "COD + fast delivery to a tier-3 town. The payal is delicate yet sturdy. Buying two more as gifts.",
+            "author": "Ritika J.",
+            "meta": "Indore · Silver Payal Anklet"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4"
+      ]
+    },
+    "journal": {
+      "type": "blog-preview",
+      "settings": {
+        "subheading": "The Journal",
+        "heading": "Care, styling & silver lore"
       }
+    },
+    "offer": {
+      "type": "offer-strip",
+      "settings": {
+        "eyebrow": "Festive Sale is live",
+        "heading": "Flat 15% off sitewide + free gift wrap on every order",
+        "code": "FESTIVE15",
+        "end_date": "",
+        "button_label": "Shop the sale",
+        "button_link": "/collections/all",
+        "icon": "diya",
+        "bg": "#5B1A1A",
+        "fg": "#F8E7C9",
+        "full_width": false
+      }
+    },
+    "price": {
+      "type": "shop-by-price",
+      "settings": {
+        "subheading": "Gifts for every budget",
+        "heading": "Shop by price",
+        "align": "center"
+      },
+      "blocks": {
+        "p1": {
+          "type": "price",
+          "settings": {
+            "label": "Under",
+            "min_price": 0,
+            "max_price": 999
+          }
+        },
+        "p2": {
+          "type": "price",
+          "settings": {
+            "label": "Under",
+            "min_price": 0,
+            "max_price": 1999
+          }
+        },
+        "p3": {
+          "type": "price",
+          "settings": {
+            "label": "Under",
+            "min_price": 0,
+            "max_price": 2999
+          }
+        },
+        "p4": {
+          "type": "price",
+          "settings": {
+            "label": "Under",
+            "min_price": 0,
+            "max_price": 4999
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]
+    },
+    "occasion": {
+      "type": "category-grid",
+      "settings": {
+        "subheading": "Gifting made easy",
+        "heading": "Shop by occasion",
+        "align": "center"
+      },
+      "blocks": {
+        "o1": {
+          "type": "tile",
+          "settings": {
+            "collection": "daily-wear",
+            "label": "Everyday wear"
+          }
+        },
+        "o2": {
+          "type": "tile",
+          "settings": {
+            "collection": "festive",
+            "label": "Festive & wedding"
+          }
+        },
+        "o3": {
+          "type": "tile",
+          "settings": {
+            "collection": "gifts-for-her",
+            "label": "Gifts for her"
+          }
+        },
+        "o4": {
+          "type": "tile",
+          "settings": {
+            "collection": "men",
+            "label": "For him"
+          }
+        }
+      },
+      "block_order": [
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ]
+    },
+    "reels": {
+      "type": "video-reels",
+      "settings": {
+        "subheading": "Watch & shop",
+        "heading": "Styled by you",
+        "align": "left"
+      },
+      "blocks": {
+        "v1": {
+          "type": "reel",
+          "settings": {
+            "caption": "Everyday layering"
+          }
+        },
+        "v2": {
+          "type": "reel",
+          "settings": {
+            "caption": "Festive glow"
+          }
+        },
+        "v3": {
+          "type": "reel",
+          "settings": {
+            "caption": "Office-ready"
+          }
+        },
+        "v4": {
+          "type": "reel",
+          "settings": {
+            "caption": "Gift unboxing"
+          }
+        }
+      },
+      "block_order": [
+        "v1",
+        "v2",
+        "v3",
+        "v4"
+      ]
+    },
+    "insta": {
+      "type": "instagram-grid",
+      "settings": {
+        "subheading": "#WearAuravya",
+        "heading": "Seen on you",
+        "handle": "@auravya"
+      },
+      "blocks": {
+        "i1": {
+          "type": "image",
+          "settings": {}
+        },
+        "i2": {
+          "type": "image",
+          "settings": {}
+        },
+        "i3": {
+          "type": "image",
+          "settings": {}
+        },
+        "i4": {
+          "type": "image",
+          "settings": {}
+        },
+        "i5": {
+          "type": "image",
+          "settings": {}
+        },
+        "i6": {
+          "type": "image",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5",
+        "i6"
+      ]
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "subheading": "Good to know",
+        "heading": "Frequently asked questions",
+        "align": "center"
+      },
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Is your jewellery real 925 silver?",
+            "answer": "<p>Yes. Every piece is 925 sterling silver and BIS hallmarked. You will find the 925 stamp on the piece.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Will the plating fade or turn black?",
+            "answer": "<p>Our plating is thick and sealed, so it lasts with everyday wear. Silver can naturally darken over time — a quick wipe with the polishing cloth brings it back. Plating is covered by our lifetime re-plating warranty.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "Do you offer Cash on Delivery?",
+            "answer": "<p>Yes, COD is available on most pincodes across India. Enter your pincode on any product page to check delivery and COD for your area.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Orders are dispatched within 24 hours and usually reach you in 3–6 working days. Metro cities are often faster.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Easy 15-day returns and exchanges on unused pieces in original packaging. Engraved pieces are personalised and cannot be returned.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5"
+      ]
     }
   },
   "order": [
-    "ct_hero",
-    "ct_category_grid",
-    "featured_collection",
-    "ct_promo_banner",
-    "experience_grid",
-    "ct_newsletter"
+    "hero",
+    "offer",
+    "trust",
+    "cats",
+    "best",
+    "price",
+    "promo1",
+    "occasion",
+    "new",
+    "story",
+    "reels",
+    "reviews",
+    "insta",
+    "faq",
+    "journal"
   ]
 }

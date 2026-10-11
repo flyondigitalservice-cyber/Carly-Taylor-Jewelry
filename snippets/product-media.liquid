@@ -1,120 +1,74 @@
-{% comment %}
-  Renders product media
+{%- comment -%}
+  Product gallery: main stage + thumbnails + zoom + swipe. Args: product, compact (quick view)
+{%- endcomment -%}
+{%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+<product-gallery class="gallery {% if compact %}gallery--compact{% else %}gallery--thumbs{% endif %}" data-gallery>
+  <div class="gallery__stage" data-stage>
+    {%- for media in product.media -%}
+      {%- liquid
+        if featured_media
+          assign is_active = false
+          if media.id == featured_media.id
+            assign is_active = true
+          endif
+        else
+          assign is_active = forloop.first
+        endif
+      -%}
+      <figure class="gallery__slide{% if is_active %} is-active{% endif %}" data-slide="{{ media.id }}" data-alt="{{ media.alt | escape }}">
+        {%- case media.media_type -%}
+          {%- when 'video', 'external_video' -%}
+            {{ media | media_tag: image_size: '1200x', controls: true, class: 'gallery__video', loop: true, muted: true, playsinline: true }}
+          {%- when 'model' -%}
+            {{ media | media_tag: image_size: '1200x', class: 'gallery__model' }}
+          {%- else -%}
+            {%- if is_active and compact != true -%}
+              {%- assign loading = 'eager' -%}{%- assign priority = 'high' -%}
+            {%- else -%}
+              {%- assign loading = 'lazy' -%}{%- assign priority = 'auto' -%}
+            {%- endif -%}
+            {{ media | image_url: width: 1400 | image_tag:
+              widths: '360, 540, 720, 900, 1100, 1400',
+              sizes: '(min-width: 1024px) 50vw, 100vw',
+              alt: media.alt | default: product.title,
+              loading: loading,
+              fetchpriority: priority,
+              decoding: 'async'
+            }}
+            <button class="gallery__zoom iconbtn" type="button" data-zoom="{{ media | image_url: width: 2000 }}" aria-label="{{ 'products.zoom' | t }}">
+              <svg class="icon"><use href="#i-zoom"/></svg>
+            </button>
+        {%- endcase -%}
+        <span class="gallery__tint" aria-hidden="true"></span>
+      </figure>
+    {%- endfor -%}
+    {%- if product.media.size == 0 -%}
+      <figure class="gallery__slide is-active"><span class="pcard__ph gallery__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span></figure>
+    {%- endif -%}
+    {%- if product.media.size > 1 -%}
+      <button class="iconbtn gallery__arrow gallery__arrow--prev" type="button" data-gallery-prev aria-label="{{ 'general.previous' | t }}"><svg class="icon"><use href="#i-chev-l"/></svg></button>
+      <button class="iconbtn gallery__arrow gallery__arrow--next" type="button" data-gallery-next aria-label="{{ 'general.next' | t }}"><svg class="icon"><use href="#i-chev-r"/></svg></button>
+    {%- endif -%}
+  </div>
 
-  Accepts:
-  - media: {Object} Product Media object
-  - loop: {Boolean} Enable video looping (optional)
-  - variant_image: {Boolean} Whether or not media is associated with a variant
-
-  Usage:
-  {% render 'product-media',
-    media: media,
-    loop: section.settings.enable_video_looping,
-    variant_image: true
-  %}
-{% endcomment %}
-
-{%- if media.media_type == 'image' -%}
-  <img
-    class="global-media-settings global-media-settings--no-shadow{% if variant_image %} product__media-item--variant{% endif %}"
-    srcset="
-      {%- if media.preview_image.width >= 550 -%}{{ media.preview_image | image_url: width: 550 }} 550w,{%- endif -%}
-      {%- if media.preview_image.width >= 1100 -%}{{ media.preview_image | image_url: width: 1100 }} 1100w,{%- endif -%}
-      {%- if media.preview_image.width >= 1445 -%}{{ media.preview_image | image_url: width: 1445 }} 1445w,{%- endif -%}
-      {%- if media.preview_image.width >= 1680 -%}{{ media.preview_image | image_url: width: 1680 }} 1680w,{%- endif -%}
-      {%- if media.preview_image.width >= 2048 -%}{{ media.preview_image | image_url: width: 2048 }} 2048w,{%- endif -%}
-      {%- if media.preview_image.width >= 2200 -%}{{ media.preview_image | image_url: width: 2200 }} 2200w,{%- endif -%}
-      {%- if media.preview_image.width >= 2890 -%}{{ media.preview_image | image_url: width: 2890 }} 2890w,{%- endif -%}
-      {%- if media.preview_image.width >= 4096 -%}{{ media.preview_image | image_url: width: 4096 }} 4096w,{%- endif -%}
-      {{ media.preview_image | image_url }} {{ media.preview_image.width }}w
-    "
-    sizes="(min-width: 750px) calc(100vw - 22rem), 1100px"
-    src="{{ media.preview_image | image_url: width: 1445 }}"
-    alt="{{ media.alt | escape }}"
-    loading="lazy"
-    width="1100"
-    height="{{ 1100 | divided_by: media.preview_image.aspect_ratio | ceil }}"
-    data-media-id="{{ media.id }}"
-  >
-{%- else -%}
-  {%- if media.media_type == 'model' -%}
-    <div class="product-media-modal__model" data-media-id="{{ media.id }}">
-      <product-model
-        class="deferred-media media media--transparent global-media-settings global-media-settings--no-shadow"
-        style="padding-top: min(calc(100vh - 12rem), 100%)"
-      >
-  {%- else -%}
-    <deferred-media
-      class="deferred-media media global-media-settings global-media-settings--no-shadow"
-      style="padding-top: min(calc(100vh - 12rem), {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%)"
-      data-media-id="{{ media.id }}"
-    >
-  {%- endif -%}
-
-  <button id="Deferred-Poster-Modal-{{ media.id }}" class="deferred-media__poster" type="button">
-    <span class="deferred-media__poster-button motion-reduce">
-      {%- if media.media_type == 'model' -%}
-        <span class="svg-wrapper">{{ 'icon-3d-model' | inline_asset_content }}</span>
-      {%- else -%}
-        <span class="svg-wrapper">{{ 'icon-play.svg' | inline_asset_content }}</span>
-      {%- endif -%}
-    </span>
-    <img
-      srcset="
-        {% if media.preview_image.width >= 288 %}{{ media.preview_image | image_url: width: 288 }} 288w,{% endif %}
-        {% if media.preview_image.width >= 576 %}{{ media.preview_image | image_url: width: 576 }} 576w,{% endif %}
-        {% if media.preview_image.width >= 550 %}{{ media.preview_image | image_url: width: 550 }} 550w,{% endif %}
-        {% if media.preview_image.width >= 1100 %}{{ media.preview_image | image_url: width: 1100 }} 1100w,{% endif %}
-        {{ media.preview_image | image_url }} {{ media.preview_image.width }}w
-      "
-      src="{{ media | image_url: width: 550, height: 550 }}"
-      sizes="(min-width: 1200px) calc((1200px - 10rem) / 2), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw - 4rem)"
-      loading="lazy"
-      width="576"
-      height="{{ 576 | divided_by: media.preview_image.aspect_ratio }}"
-      alt="{{ media.preview_image.alt | escape }}"
-    >
-  </button>
-  <template>
-    {%- case media.media_type -%}
-      {%- when 'external_video' -%}
-        {%- assign video_class = 'js-' | append: media.host -%}
-        {%- if media.host == 'youtube' -%}
-          {{
-            media
-            | external_video_url: autoplay: true, loop: loop, playlist: media.external_id
-            | external_video_tag: class: video_class, loading: 'lazy'
-          }}
-        {%- else -%}
-          {{
-            media
-            | external_video_url: autoplay: true, loop: loop
-            | external_video_tag: class: video_class, loading: 'lazy'
-          }}
-        {%- endif -%}
-      {%- when 'video' -%}
-        {{ media | media_tag: image_size: '2048x', autoplay: true, loop: loop, controls: true, preload: 'none' }}
-      {%- when 'model' -%}
-        {{ media | media_tag: image_size: '2048x', toggleable: true }}
-    {%- endcase -%}
-  </template>
-
-  {%- if media.media_type == 'model' -%}
-    </product-model>
-    <button
-      class="button button--full-width product__xr-button"
-      type="button"
-      aria-label="{{ 'products.product.xr_button_label' | t }}"
-      data-shopify-xr
-      data-shopify-model3d-id="{{ media.id }}"
-      data-shopify-title="title"
-      data-shopify-xr-hidden
-    >
-      <span class="svg-wrapper">{{ 'icon-3d-model' | inline_asset_content }}</span>
-      {{ 'products.product.xr_button' | t }}
-    </button>
+  {%- if product.media.size > 1 -%}
+    <div class="gallery__thumbs" role="tablist" aria-label="{{ 'products.media_gallery' | t }}" data-thumbs>
+      {%- for media in product.media -%}
+        {%- liquid
+          if featured_media
+            assign is_active = false
+            if media.id == featured_media.id
+              assign is_active = true
+            endif
+          else
+            assign is_active = forloop.first
+          endif
+        -%}
+        <button class="gallery__thumb{% if is_active %} is-active{% endif %}{% if media.media_type == 'video' or media.media_type == 'external_video' %} gallery__thumb--video{% endif %}" type="button" role="tab"
+                data-thumb="{{ media.id }}" aria-selected="{{ is_active }}" aria-label="{{ 'products.media_n' | t: n: forloop.index }}">
+          <img src="{{ media.preview_image | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
+        </button>
+      {%- endfor -%}
     </div>
-  {%- else -%}
-    </deferred-media>
   {%- endif -%}
-{%- endif -%}
+</product-gallery>

@@ -1,67 +1,18 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
-  "name": "t:sections.header.name",
+  "name": "Header group",
   "type": "header",
   "sections": {
-    "1765078982e18fb92c": {
-      "type": "_blocks",
-      "settings": {}
-    },
-    "announcement-bar": {
-      "type": "announcement-bar",
-      "blocks": {
-        "announcement-bar-0": {
-          "type": "announcement",
-          "settings": {
-            "text": "Welcome to Carly Taylor — use code <strong>WELCOME</strong> for 10% off your first order",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "announcement-bar-0"
-      ],
-      "settings": {
-        "auto_rotate": false,
-        "change_slides_speed": 5,
-        "color_scheme": "scheme-7",
-        "show_line_separator": false,
-        "show_social": false,
-        "enable_country_selector": false,
-        "enable_language_selector": false
-      }
-    },
+    "announcement": { "type": "announcement-bar", "settings": {} },
     "header": {
       "type": "header",
-      "settings": {
-        "logo_position": "middle-left",
-        "mobile_logo_position": "center",
-        "menu": "main-menu",
-        "menu_type_desktop": "dropdown",
-        "sticky_header_type": "always",
-        "show_line_separator": true,
-        "color_scheme": "scheme-6",
-        "menu_color_scheme": "scheme-6",
-        "enable_country_selector": false,
-        "enable_language_selector": false,
-        "enable_customer_avatar": false,
-        "margin_bottom": 0,
-        "padding_top": 20,
-        "padding_bottom": 20
-      }
+      "settings": { "menu": "main-menu", "promo_text": "The Festive Edit — 925 silver, plated to last" },
+      "blocks": {
+        "col1": { "type": "column", "settings": { "heading": "By category", "collection": "necklaces", "menu": "footer-shop", "link_text": "Shop all jewellery", "link_url": "/collections/all" } },
+        "col2": { "type": "column", "settings": { "heading": "By metal finish", "menu": "footer-coatings", "link_text": "Silver care guide", "link_url": "/pages/silver-care" } },
+        "col3": { "type": "column", "settings": { "heading": "Gifting", "collection": "gifts-under-3000", "menu": "footer-help", "link_text": "Gift guide", "link_url": "/pages/gift-guide" } }
+      },
+      "block_order": ["col1", "col2", "col3"]
     }
   },
-  "order": [
-    "1765078982e18fb92c",
-    "announcement-bar",
-    "header"
-  ]
+  "order": ["announcement", "header"]
 }

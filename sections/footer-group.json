@@ -1,89 +1,20 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
-  "name": "t:sections.footer.name",
+  "name": "Footer group",
   "type": "footer",
   "sections": {
     "footer": {
       "type": "footer",
-      "blocks": {
-        "ct_brand": {
-          "type": "brand_information",
-          "settings": {
-            "show_social": false
-          }
-        },
-        "ct_shop_links": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Shop",
-            "menu": "",
-            "link_1_label": "All pieces",
-            "link_1_url": "/collections/all",
-            "link_2_label": "Necklaces",
-            "link_2_url": "/collections/necklace",
-            "link_3_label": "Bracelets",
-            "link_3_url": "/collections/bracelets",
-            "link_4_label": "Earrings",
-            "link_4_url": "/collections/earrings",
-            "link_5_label": "Anklets",
-            "link_5_url": "/collections/anklets"
-          }
-        },
-        "ct_company_links": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Company",
-            "menu": "",
-            "link_1_label": "Contact",
-            "link_1_url": "/pages/contact",
-            "link_2_label": "Shipping & returns",
-            "link_2_url": "/policies/shipping-policy",
-            "link_3_label": "Privacy policy",
-            "link_3_url": "/policies/privacy-policy"
-          }
-        },
-        "ct_follow": {
-          "type": "ct_follow",
-          "settings": {
-            "heading": "Follow along",
-            "contact_label": "Questions?",
-            "contact_email": "hello@carlytaylor.co"
-          }
-        }
-      },
-      "block_order": [
-        "ct_brand",
-        "ct_shop_links",
-        "ct_company_links",
-        "ct_follow"
-      ],
       "settings": {
-        "ct_copyright": "© 2026 Carly Taylor Jewelry — All rights reserved",
-        "color_scheme": "scheme-7",
-        "newsletter_enable": false,
-        "newsletter_heading": "Subscribe to our emails",
-        "enable_follow_on_shop": false,
-        "show_social": true,
-        "enable_country_selector": false,
-        "enable_language_selector": false,
-        "payment_enable": true,
-        "show_policy": false,
-        "margin_top": 0,
-        "padding_top": 72,
-        "padding_bottom": 48
-      }
+        "show_newsletter": true,
+        "about_text": "Handcrafted 925 sterling silver jewellery with your choice of precious plating — silver, gold, rose gold & oxidised. BIS-registered, hallmark certified, made in India."
+      },
+      "blocks": {
+        "shop": { "type": "menu", "settings": { "heading": "Shop", "menu": "footer-shop" } },
+        "help": { "type": "menu", "settings": { "heading": "Help", "menu": "footer-help" } },
+        "company": { "type": "menu", "settings": { "heading": "Company", "menu": "footer-company" } }
+      },
+      "block_order": ["shop", "help", "company"]
     }
   },
-  "order": [
-    "footer"
-  ]
+  "order": ["footer"]
 }
-

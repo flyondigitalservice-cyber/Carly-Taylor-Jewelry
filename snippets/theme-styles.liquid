@@ -8,8 +8,8 @@
   assign head_italic = head_font | font_modify: 'style', 'italic'
   assign head_bold = head_font | font_modify: 'weight', '600'
 -%}
-{%- unless head_font.system? -%}{{ head_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{%- endunless -%}
-{%- unless body_font.system? -%}{{ body_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{%- endunless -%}
+{%- unless head_font.system? -%}<link rel="preload" as="font" href="{{ head_font | font_url }}" type="font/woff2" crossorigin>{%- endunless -%}
+{%- unless body_font.system? -%}<link rel="preload" as="font" href="{{ body_font | font_url }}" type="font/woff2" crossorigin>{%- endunless -%}
 {%- style -%}
   {{ head_font | font_face: font_display: 'swap' }}
   {{ head_italic | font_face: font_display: 'swap' }}
