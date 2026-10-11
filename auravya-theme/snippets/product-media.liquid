@@ -1,34 +1,72 @@
-{%- comment -%} PDP gallery: main stage + thumbnails + zoom. Args: product, layout ('stack'|'thumbs') {%- endcomment -%}
-<product-gallery class="gallery gallery--{{ section.settings.gallery_layout | default: 'thumbs' }}" data-gallery>
+{%- comment -%}
+  Product gallery: main stage + thumbnails + zoom + swipe. Args: product, compact (quick view)
+{%- endcomment -%}
+{%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+<product-gallery class="gallery {% if compact %}gallery--compact{% else %}gallery--thumbs{% endif %}" data-gallery>
   <div class="gallery__stage" data-stage>
     {%- for media in product.media -%}
-      <figure class="gallery__slide{% if forloop.first %} is-active{% endif %}" data-slide="{{ media.id }}"
-              data-alt="{{ media.alt | default: '' | escape }}"
-              data-variant-ids="{% for v in product.variants %}{% if v.featured_media.id == media.id %}{{ v.id }} {% endif %}{% endfor %}">
-        {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
-          {{ media | media_tag: image_size: '1200x', controls: true, class: 'gallery__video' }}
-        {%- else -%}
-          <img src="{{ media | image_url: width: 1200 }}" alt="{{ media.alt | default: product.title | escape }}"
-               width="1200" height="1200" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async"
-               fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
-        {%- endif -%}
+      {%- liquid
+        if featured_media
+          assign is_active = false
+          if media.id == featured_media.id
+            assign is_active = true
+          endif
+        else
+          assign is_active = forloop.first
+        endif
+      -%}
+      <figure class="gallery__slide{% if is_active %} is-active{% endif %}" data-slide="{{ media.id }}" data-alt="{{ media.alt | escape }}">
+        {%- case media.media_type -%}
+          {%- when 'video', 'external_video' -%}
+            {{ media | media_tag: image_size: '1200x', controls: true, class: 'gallery__video', loop: true, muted: true, playsinline: true }}
+          {%- when 'model' -%}
+            {{ media | media_tag: image_size: '1200x', class: 'gallery__model' }}
+          {%- else -%}
+            {%- if is_active and compact != true -%}
+              {%- assign loading = 'eager' -%}{%- assign priority = 'high' -%}
+            {%- else -%}
+              {%- assign loading = 'lazy' -%}{%- assign priority = 'auto' -%}
+            {%- endif -%}
+            {{ media | image_url: width: 1400 | image_tag:
+              widths: '360, 540, 720, 900, 1100, 1400',
+              sizes: '(min-width: 1024px) 50vw, 100vw',
+              alt: media.alt | default: product.title,
+              loading: loading,
+              fetchpriority: priority,
+              decoding: 'async'
+            }}
+            <button class="gallery__zoom iconbtn" type="button" data-zoom="{{ media | image_url: width: 2000 }}" aria-label="{{ 'products.zoom' | t }}">
+              <svg class="icon"><use href="#i-zoom"/></svg>
+            </button>
+        {%- endcase -%}
         <span class="gallery__tint" aria-hidden="true"></span>
-        <button class="gallery__zoom iconbtn" type="button" data-zoom="{{ media | image_url: width: 2000 }}" aria-label="{{ 'products.quick_view' | t }}">
-          <svg class="icon"><use href="#i-zoom"/></svg>
-        </button>
       </figure>
     {%- endfor -%}
     {%- if product.media.size == 0 -%}
       <figure class="gallery__slide is-active"><span class="pcard__ph gallery__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span></figure>
     {%- endif -%}
+    {%- if product.media.size > 1 -%}
+      <button class="iconbtn gallery__arrow gallery__arrow--prev" type="button" data-gallery-prev aria-label="{{ 'general.previous' | t }}"><svg class="icon"><use href="#i-chev-l"/></svg></button>
+      <button class="iconbtn gallery__arrow gallery__arrow--next" type="button" data-gallery-next aria-label="{{ 'general.next' | t }}"><svg class="icon"><use href="#i-chev-r"/></svg></button>
+    {%- endif -%}
   </div>
 
   {%- if product.media.size > 1 -%}
-    <div class="gallery__thumbs" role="tablist" aria-label="Product images" data-thumbs>
+    <div class="gallery__thumbs" role="tablist" aria-label="{{ 'products.media_gallery' | t }}" data-thumbs>
       {%- for media in product.media -%}
-        <button class="gallery__thumb{% if forloop.first %} is-active{% endif %}" type="button" role="tab"
-                data-thumb="{{ media.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Image {{ forloop.index }}">
-          <img src="{{ media | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
+        {%- liquid
+          if featured_media
+            assign is_active = false
+            if media.id == featured_media.id
+              assign is_active = true
+            endif
+          else
+            assign is_active = forloop.first
+          endif
+        -%}
+        <button class="gallery__thumb{% if is_active %} is-active{% endif %}{% if media.media_type == 'video' or media.media_type == 'external_video' %} gallery__thumb--video{% endif %}" type="button" role="tab"
+                data-thumb="{{ media.id }}" aria-selected="{{ is_active }}" aria-label="{{ 'products.media_n' | t: n: forloop.index }}">
+          <img src="{{ media.preview_image | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
         </button>
       {%- endfor -%}
     </div>

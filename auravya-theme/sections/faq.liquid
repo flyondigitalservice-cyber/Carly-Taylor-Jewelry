@@ -1,0 +1,64 @@
+{%- comment -%} FAQ accordion with FAQPage structured data for Google {%- endcomment -%}
+<section class="faq section-gap" id="Section-{{ section.id }}">
+  <div class="container faq__inner">
+    <div class="sechead sechead--{{ section.settings.align }}">
+      {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div class="sechead__text rte">{{ section.settings.text }}</div>{%- endif -%}
+    </div>
+    <div class="faq__list">
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          {%- render 'collapsible-row', title: block.settings.question, content: block.settings.answer, open: false -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- if section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          { "@type": "Question", "name": {{ block.settings.question | strip_html | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.answer | strip_html | json }} } }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Good to know" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "richtext", "id": "text", "label": "Intro text" },
+    { "type": "select", "id": "align", "label": "Heading align", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ], "default": "center" }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Is your jewellery real 925 silver?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Yes. Every piece is 925 sterling silver and BIS hallmarked. You will find the 925 stamp on the piece.</p>" }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "FAQ",
+    "blocks": [
+      { "type": "question", "settings": { "question": "Is your jewellery real 925 silver?", "answer": "<p>Yes. Every piece is 925 sterling silver and BIS hallmarked. You will find the 925 stamp on the piece.</p>" } },
+      { "type": "question", "settings": { "question": "Will the plating fade or turn black?", "answer": "<p>Our plating is thick and sealed, so it lasts with everyday wear. Silver can naturally darken over time — a quick wipe with the polishing cloth brings it back. Plating is covered by our lifetime re-plating warranty.</p>" } },
+      { "type": "question", "settings": { "question": "Do you offer Cash on Delivery?", "answer": "<p>Yes, COD is available on most pincodes across India. Enter your pincode on any product page to check delivery and COD for your area.</p>" } },
+      { "type": "question", "settings": { "question": "How long does delivery take?", "answer": "<p>Orders are dispatched within 24 hours and usually reach you in 3–6 working days. Metro cities are often faster.</p>" } },
+      { "type": "question", "settings": { "question": "What is your return policy?", "answer": "<p>Easy 15-day returns and exchanges on unused pieces in original packaging. Engraved pieces are personalised and cannot be returned.</p>" } }
+    ]
+  }]
+}
+{% endschema %}

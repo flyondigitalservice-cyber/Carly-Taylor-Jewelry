@@ -36,27 +36,97 @@
 {
   "name": "Image with text",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Image" },
-    { "type": "select", "id": "image_position", "label": "Image position", "options": [
-      { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
-    ], "default": "left" },
-    { "type": "text", "id": "subheading", "label": "Eyebrow" },
-    { "type": "textarea", "id": "heading", "label": "Heading" },
-    { "type": "textarea", "id": "text", "label": "Text" },
-    { "type": "text", "id": "float_card", "label": "Floating card text" },
-    { "type": "text", "id": "button_label", "label": "Button label" },
-    { "type": "url", "id": "button_link", "label": "Button link" }
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "float_card",
+      "label": "Floating card text"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
   ],
-  "blocks": {
-    "feature": {
+  "blocks": [
+    {
+      "type": "feature",
       "name": "Feature",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Icon id", "info": "shield, return, gift, cert, sparkle, box, truck, pencil" },
-        { "type": "text", "id": "title", "label": "Title" },
-        { "type": "text", "id": "text", "label": "Text" }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon id",
+          "info": "shield, return, gift, cert, sparkle, box, truck, pencil"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
       ]
     }
-  },
-  "presets": [{ "name": "Image with text", "blocks": [{ "type": "feature" }, { "type": "feature" }, { "type": "feature" }] }]
+  ],
+  "presets": [
+    {
+      "name": "Image with text",
+      "blocks": [
+        {
+          "type": "feature"
+        },
+        {
+          "type": "feature"
+        },
+        {
+          "type": "feature"
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}

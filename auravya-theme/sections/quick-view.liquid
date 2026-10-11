@@ -1,18 +1,20 @@
-{%- comment -%} Compact product view used inside the quick-view modal (template suffix ?view=quick) {%- endcomment -%}
-<div class="qv" data-qv-root>
+{%- comment -%}
+  Compact product view for the quick-view modal.
+  Loaded by product.js via the Section Rendering API: /products/{handle}?section_id=quick-view
+{%- endcomment -%}
+<div class="qv" data-qv-root data-product-json='{{ product | json | escape }}'>
   <div class="qv__media">
-    {%- if product.featured_image -%}
-      <img src="{{ product.featured_image | image_url: width: 900 }}" alt="{{ product.title | escape }}" width="900" height="900">
-    {%- endif -%}
+    {%- render 'product-media', product: product, compact: true -%}
     {%- render 'product-badge', product: product -%}
   </div>
   <div class="qv__body">
-    <span class="pcard__vendor">{{ product.metafields.custom.material | default: '925 Sterling Silver' }}</span>
-    <h2 class="h3"><a href="{{ product.url }}">{{ product.title }}</a></h2>
+    <span class="pcard__vendor">{{ product.metafields.custom.material | default: settings.default_material }}</span>
+    <h2 class="h3 qv__title"><a href="{{ product.url }}">{{ product.title }}</a></h2>
     {%- render 'rating', product: product, size: 'sm' -%}
     {%- render 'price', product: product, size: 'md' -%}
+    {%- if settings.show_tax_note -%}<p class="pdp__taxnote">{{ settings.tax_note_text }}</p>{%- endif -%}
     {%- render 'product-form', product: product, id_prefix: 'QV' -%}
-    <a class="link-underline qv__full" href="{{ product.url }}">View full details <svg class="icon"><use href="#i-arrow-r"/></svg></a>
+    <a class="link-underline qv__full" href="{{ product.url }}">{{ 'products.view_details' | t }} <svg class="icon"><use href="#i-arrow-r"/></svg></a>
   </div>
 </div>
 

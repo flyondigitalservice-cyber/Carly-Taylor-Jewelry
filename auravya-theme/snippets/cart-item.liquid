@@ -1,34 +1,43 @@
-{%- comment -%} Cart line item. Args: item, compact (bool) {%- endcomment -%}
-<div class="citem" data-cart-item="{{ item.key }}" data-key="{{ item.key }}">
+{%- comment -%} Cart line item (cart page + first paint of the drawer). Args: item {%- endcomment -%}
+<div class="citem" data-cart-item="{{ item.key }}">
   <a class="citem__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
     {%- if item.image -%}<img src="{{ item.image | image_url: width: 200 }}" alt="" width="100" height="100" loading="lazy">{%- endif -%}
   </a>
   <div class="citem__body">
     <div class="citem__top">
-      <a class="citem__title" href="{{ item.url }}">{{ item.product.title }}
-        {%- if item.variant.title != 'Default Title' -%}<span class="citem__variant">{{ item.variant.title }}</span>{%- endif -%}
+      <a class="citem__title" href="{{ item.url }}">{{ item.product.title | escape }}
+        {%- unless item.product.has_only_default_variant -%}<span class="citem__variant">{{ item.variant.title | escape }}</span>{%- endunless -%}
       </a>
-      <button class="iconbtn citem__remove" data-remove-item="{{ item.key }}" aria-label="{{ 'general.remove' | t }}">
+      <button class="iconbtn citem__remove" type="button" data-remove-item="{{ item.key }}" aria-label="{{ 'general.remove' | t }}: {{ item.product.title | escape }}">
         <svg class="icon"><use href="#i-trash"/></svg>
       </button>
     </div>
 
-    {%- if item.properties.size > 0 -%}
+    {%- assign visible_props = 0 -%}
+    {%- for prop in item.properties -%}
+      {%- assign first_char = prop.first | slice: 0 -%}
+      {%- if prop.last != blank and first_char != '_' -%}{%- assign visible_props = visible_props | plus: 1 -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if visible_props > 0 or item.line_level_discount_allocations.size > 0 -%}
       <ul class="citem__props">
         {%- for prop in item.properties -%}
-          {%- unless prop.last == blank -%}<li><strong>{{ prop.first }}:</strong> {{ prop.last }}</li>{%- endunless -%}
+          {%- assign first_char = prop.first | slice: 0 -%}
+          {%- if prop.last != blank and first_char != '_' -%}<li><strong>{{ prop.first | escape }}:</strong> {{ prop.last | escape }}</li>{%- endif -%}
+        {%- endfor -%}
+        {%- for allocation in item.line_level_discount_allocations -%}
+          <li class="citem__disc"><svg class="icon"><use href="#i-sparkle"/></svg>{{ allocation.discount_application.title | escape }} (−{%- render 'money', amount: allocation.amount -%})</li>
         {%- endfor -%}
       </ul>
     {%- endif -%}
 
     <div class="citem__bottom">
-      {%- assign ci_qty_id = item.key | replace: ':', '-' -%}
-      {%- render 'quantity-input', qty: item.quantity, min: 0, size: 'sm', input_name: 'updates[]', id: ci_qty_id -%}
+      {%- assign ci_qty_id = 'Qty-' | append: item.key | replace: ':', '-' -%}
+      {%- render 'quantity-input', qty: item.quantity, min: 0, size: 'sm', input_name: 'updates[]', id: ci_qty_id, item_key: item.key -%}
       <div class="citem__price">
         {%- if item.original_line_price > item.final_line_price -%}
-          <s>{{ item.original_line_price | money }}</s>
+          <s>{%- render 'money', amount: item.original_line_price -%}</s>
         {%- endif -%}
-        <strong>{{ item.final_line_price | money }}</strong>
+        <strong>{%- render 'money', amount: item.final_line_price -%}</strong>
       </div>
     </div>
   </div>

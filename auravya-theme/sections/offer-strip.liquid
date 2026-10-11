@@ -1,0 +1,52 @@
+{%- comment -%} Festive offer strip: message, tap-to-copy coupon code and an optional sale countdown {%- endcomment -%}
+{%- if section.settings.heading != blank or section.settings.code != blank -%}
+<section class="offerstrip{% if section.settings.full_width %} offerstrip--full{% endif %}" id="Section-{{ section.id }}"
+  style="--os-bg: {{ section.settings.bg }}; --os-fg: {{ section.settings.fg }};">
+  <div class="{% unless section.settings.full_width %}container{% endunless %}">
+    <div class="offerstrip__inner">
+      {%- if section.settings.icon != 'none' -%}<svg class="icon offerstrip__icon" aria-hidden="true"><use href="#i-{{ section.settings.icon }}"/></svg>{%- endif -%}
+      <div class="offerstrip__copy">
+        {%- if section.settings.eyebrow != blank -%}<span class="offerstrip__eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+        <p class="offerstrip__heading">{{ section.settings.heading }}</p>
+      </div>
+      {%- if section.settings.end_date != blank -%}
+        <div class="countdown" data-countdown="{{ section.settings.end_date | escape }}" aria-label="{{ 'general.offer_ends' | t }}" hidden>
+          <span><strong data-cd-d>00</strong><em>{{ 'general.days' | t }}</em></span>
+          <span><strong data-cd-h>00</strong><em>{{ 'general.hrs' | t }}</em></span>
+          <span><strong data-cd-m>00</strong><em>{{ 'general.mins' | t }}</em></span>
+          <span><strong data-cd-s>00</strong><em>{{ 'general.secs' | t }}</em></span>
+        </div>
+      {%- endif -%}
+      {%- if section.settings.code != blank -%}
+        <button type="button" class="offerstrip__code" data-copy-text="{{ section.settings.code | escape }}" aria-label="{{ 'general.copy_code' | t }}: {{ section.settings.code | escape }}">
+          <span>{{ 'general.use_code' | t }}</span> <strong>{{ section.settings.code }}</strong> <svg class="icon"><use href="#i-copy"/></svg>
+        </button>
+      {%- endif -%}
+      {%- if section.settings.button_link != blank -%}
+        <a class="btn btn--sm offerstrip__btn" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Offer strip",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Festive Sale is live" },
+    { "type": "text", "id": "heading", "label": "Offer text", "default": "Flat 15% off sitewide + free gift wrap on every order" },
+    { "type": "text", "id": "code", "label": "Coupon code", "default": "FESTIVE15", "info": "Create the matching discount in Shopify → Discounts." },
+    { "type": "text", "id": "end_date", "label": "Countdown end (optional)", "info": "Format: 2026-11-03 23:59 (IST). Leave empty for no timer. The timer hides itself after the end date." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the sale" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "select", "id": "icon", "label": "Icon", "options": [
+      { "value": "diya", "label": "Diya" }, { "value": "gift", "label": "Gift" }, { "value": "tag", "label": "Tag" }, { "value": "sparkle", "label": "Sparkle" }, { "value": "none", "label": "None" }
+    ], "default": "diya" },
+    { "type": "color", "id": "bg", "label": "Background", "default": "#5B1A1A" },
+    { "type": "color", "id": "fg", "label": "Text", "default": "#F8E7C9" },
+    { "type": "checkbox", "id": "full_width", "label": "Full width", "default": false }
+  ],
+  "presets": [{ "name": "Offer strip" }]
+}
+{% endschema %}

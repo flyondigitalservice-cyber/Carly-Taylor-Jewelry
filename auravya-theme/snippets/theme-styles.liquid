@@ -1,0 +1,65 @@
+{%- comment -%} Fonts + design tokens from theme settings. Shared by theme.liquid and password.liquid. {%- endcomment -%}
+{%- liquid
+  assign head_font = settings.type_header_font
+  assign body_font = settings.type_body_font
+  assign body_bold = body_font | font_modify: 'weight', 'bold'
+  assign body_medium = body_font | font_modify: 'weight', '500'
+  assign body_italic = body_font | font_modify: 'style', 'italic'
+  assign head_italic = head_font | font_modify: 'style', 'italic'
+  assign head_bold = head_font | font_modify: 'weight', '600'
+-%}
+{%- unless head_font.system? -%}{{ head_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{%- endunless -%}
+{%- unless body_font.system? -%}{{ body_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{%- endunless -%}
+{%- style -%}
+  {{ head_font | font_face: font_display: 'swap' }}
+  {{ head_italic | font_face: font_display: 'swap' }}
+  {{ head_bold | font_face: font_display: 'swap' }}
+  {{ body_font | font_face: font_display: 'swap' }}
+  {{ body_medium | font_face: font_display: 'swap' }}
+  {{ body_bold | font_face: font_display: 'swap' }}
+  {{ body_italic | font_face: font_display: 'swap' }}
+
+  :root{
+    --c-bg: {{ settings.color_background }};
+    --c-surface: {{ settings.color_surface }};
+    --c-text: {{ settings.color_text }};
+    --c-muted: {{ settings.color_text_muted }};
+    --c-accent: {{ settings.color_accent }};
+    --c-btn: {{ settings.color_button }};
+    --c-btn-text: {{ settings.color_button_text }};
+    --c-border: {{ settings.color_border }};
+    --c-sale: {{ settings.color_sale }};
+    --c-success: {{ settings.color_success }};
+    --c-star: {{ settings.color_star }};
+    --page-w: {{ settings.page_width }}px;
+    --sec-gap: {{ settings.space_sections }}px;
+    --body-size: {{ settings.type_body_scale }}px;
+    --head-scale: {{ settings.type_heading_scale | divided_by: 100.0 }};
+    --font-head: {{ head_font.family }}, {{ head_font.fallback_families }};
+    --font-head-weight: {{ head_font.weight }};
+    --font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --ratio: {% if settings.card_image_ratio == 'portrait' %}4/5{% elsif settings.card_image_ratio == 'adaptive' %}auto{% else %}1/1{% endif %};
+    --logo-w: {{ settings.logo_width }}px;
+    --radius: 14px;
+    --shadow-1: 0 1px 2px rgba(30,26,22,.05), 0 8px 24px -12px rgba(30,26,22,.14);
+    --shadow-2: 0 12px 40px -12px rgba(30,26,22,.22);
+    --ease: cubic-bezier(.22,.61,.21,1);
+    {%- comment -%} Coating swatch colours parsed from settings.swatch_map {%- endcomment -%}
+    {%- assign swatch_lines = settings.swatch_map | newline_to_br | split: '<br />' -%}
+    {%- for line in swatch_lines -%}
+      {%- assign pair = line | strip | split: ':' -%}
+      {%- if pair.size >= 2 -%}
+        {%- assign sw_name = pair[0] | strip | handleize -%}
+        {%- assign sw_val = line | strip | remove_first: pair[0] | remove_first: ':' | strip -%}
+        {%- if sw_val contains '//' -%}
+          --sw-{{ sw_name }}: url({{ sw_val }}) center/cover;
+        {%- else -%}
+          --sw-{{ sw_name }}: {{ sw_val }};
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  }
+  {%- if settings.type_uppercase_buttons -%}
+    .btn, .eyebrow, .chip, .tabs button, .announce span { text-transform: uppercase; }
+  {%- endif -%}
+{%- endstyle -%}

@@ -2,21 +2,32 @@
   Product card for grids & carousels.
   Args: product, card_size ('sm'|'md'|'lg'), show_quick_add (bool), index
 {%- endcomment -%}
-{%- assign img_ratio = settings.card_image_ratio -%}
 <div class="pcard pcard--{{ settings.card_style }}{% if card_size %} pcard--{{ card_size }}{% endif %}"
      data-product-card data-handle="{{ product.handle }}" data-price="{{ product.price_min }}"
-     data-title="{{ product.title | escape }}" data-available="{{ product.available }}"
-     data-tags="{{ product.tags | join: ',' | escape }}"
-     {% for opt in product.options_with_values %}data-option-{{ opt.name | handleize }}="{{ opt.values | join: '|' | escape }}"{% endfor %}>
+     data-title="{{ product.title | escape }}" data-available="{{ product.available }}">
   <div class="pcard__media">
     <a class="pcard__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
       {%- if product.featured_image -%}
         {%- assign img2 = product.images[1] | default: product.featured_image -%}
-        <img class="pcard__img pcard__img--1" src="{{ product.featured_image | image_url: width: 700 }}"
-             alt="{{ product.featured_image.alt | default: product.title | escape }}"
-             width="700" height="700" loading="{% if index and index < 5 %}eager{% else %}lazy{% endif %}" decoding="async">
+        {%- if index != blank and index < 4 -%}{%- assign img_loading = 'eager' -%}{%- else -%}{%- assign img_loading = 'lazy' -%}{%- endif -%}
+        {{ product.featured_image | image_url: width: 900 | image_tag:
+          class: 'pcard__img pcard__img--1',
+          widths: '240, 360, 480, 600, 720, 900',
+          sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw',
+          alt: product.featured_image.alt | default: product.title,
+          loading: img_loading,
+          decoding: 'async'
+        }}
         {%- if settings.card_hover_swap and img2 != product.featured_image -%}
-          <img class="pcard__img pcard__img--2" src="{{ img2 | image_url: width: 700 }}" alt="" width="700" height="700" loading="lazy" decoding="async" aria-hidden="true">
+          {{ img2 | image_url: width: 900 | image_tag:
+            class: 'pcard__img pcard__img--2',
+            widths: '240, 360, 480, 600, 720, 900',
+            sizes: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw',
+            alt: '',
+            loading: 'lazy',
+            decoding: 'async',
+            aria-hidden: 'true'
+          }}
         {%- endif -%}
       {%- else -%}
         <span class="pcard__ph" aria-hidden="true"><svg class="icon"><use href="#i-sparkle"/></svg></span>
@@ -27,22 +38,22 @@
 
     <div class="pcard__actions">
       {%- if settings.wishlist_enable -%}
-        <button class="iconbtn pcard__wish" data-wishlist-toggle="{{ product.handle }}" aria-label="{{ 'wishlist.add' | t }}" aria-pressed="false">
+        <button class="iconbtn pcard__wish" type="button" data-wishlist-toggle="{{ product.handle }}" aria-label="{{ 'wishlist.add' | t }}" aria-pressed="false">
           <svg class="icon wl-off"><use href="#i-heart"/></svg><svg class="icon wl-on"><use href="#i-heart-fill"/></svg>
         </button>
       {%- endif -%}
-      <button class="iconbtn pcard__qv" data-quick-view="{{ product.handle }}" aria-label="{{ 'products.quick_view' | t }}: {{ product.title | escape }}">
+      <button class="iconbtn pcard__qv" type="button" data-quick-view="{{ product.handle }}" aria-label="{{ 'products.quick_view' | t }}: {{ product.title | escape }}">
         <svg class="icon"><use href="#i-eye"/></svg>
       </button>
     </div>
 
     <div class="pcard__bar">
       {%- if product.has_only_default_variant -%}
-        <button class="btn btn--sm btn--block" data-add-to-cart="{{ product.variants.first.id }}" {% unless product.available %}disabled{% endunless %}>
+        <button class="btn btn--sm btn--block" type="button" data-add-to-cart="{{ product.variants.first.id }}" {% unless product.available %}disabled{% endunless %}>
           {%- if product.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
         </button>
       {%- else -%}
-        <button class="btn btn--sm btn--block" data-quick-add="{{ product.handle }}">
+        <button class="btn btn--sm btn--block" type="button" data-quick-add="{{ product.handle }}">
           {%- if product.available -%}{{ 'products.choose_options' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
         </button>
       {%- endif -%}
@@ -51,7 +62,7 @@
 
   <div class="pcard__info">
     {%- if settings.card_show_vendor -%}
-      <span class="pcard__vendor">{{ product.metafields.custom.material | default: '925 Sterling Silver' }}</span>
+      <span class="pcard__vendor">{{ product.metafields.custom.material | default: settings.default_material }}</span>
     {%- endif -%}
     <h3 class="pcard__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {%- render 'rating', product: product, size: 'xs' -%}
@@ -59,16 +70,18 @@
 
     {%- if settings.card_show_swatches -%}
       {%- assign swatch_names = settings.swatch_option_names | split: ',' -%}
+      {%- assign swatch_hs = '' -%}{%- for n in swatch_names -%}{%- assign nh = n | handleize -%}{%- assign swatch_hs = swatch_hs | append: '|' | append: nh -%}{%- endfor -%}{%- assign swatch_hs = swatch_hs | split: '|' -%}
       {%- for opt in product.options_with_values -%}
-        {%- assign opt_key = opt.name | strip -%}
-        {%- if swatch_names contains opt_key -%}
+        {%- assign opt_key = opt.name | handleize -%}
+        {%- if swatch_hs contains opt_key and opt.values.size > 1 -%}
           <div class="pcard__swatches" data-swatch-group aria-label="{{ opt.name | escape }}">
-            {%- for val in opt.values -%}
-              <button class="swatch" type="button" data-swatch="{{ val | escape }}" data-goto-variant="{{ val | escape }}"
+            {%- for val in opt.values limit: 6 -%}
+              <button class="swatch" type="button" data-swatch="{{ val | escape }}" data-goto-variant="{{ val | escape }}" aria-pressed="false"
                       title="{{ val | escape }}" aria-label="{{ opt.name | escape }}: {{ val | escape }}">
                 <span class="swatch__dot" style="--sw: var(--sw-{{ val | handleize }}, #ccc)"></span>
               </button>
             {%- endfor -%}
+            {%- if opt.values.size > 6 -%}<a class="pcard__more" href="{{ product.url }}">+{{ opt.values.size | minus: 6 }}</a>{%- endif -%}
           </div>
         {%- endif -%}
       {%- endfor -%}

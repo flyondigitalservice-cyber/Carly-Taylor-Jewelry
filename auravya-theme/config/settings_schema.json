@@ -1,10 +1,10 @@
 [
   {
     "theme_name": "Auravya",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Auravya Studio",
-    "theme_documentation_url": "https://github.com/auravya/theme",
-    "theme_support_url": "https://github.com/auravya/theme/support"
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/manual/online-store/themes"
   },
   {
     "name": "Brand",
@@ -47,6 +47,13 @@
         "id": "favicon",
         "label": "Favicon",
         "info": "32 x 32 px minimum"
+      },
+      {
+        "type": "text",
+        "id": "default_material",
+        "label": "Default material label",
+        "default": "925 Sterling Silver",
+        "info": "Shown on product cards and product pages. Override per product with the metafield custom.material."
       }
     ]
   },
@@ -165,6 +172,47 @@
     ]
   },
   {
+    "name": "Currency & pricing",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Set your store currency to INR in Settings → Store details. These options control how ₹ prices look across the theme."
+      },
+      {
+        "type": "checkbox",
+        "id": "money_indian_format",
+        "label": "Indian number format (₹1,49,999)",
+        "default": true,
+        "info": "Uses lakh/crore grouping whenever the shopper is paying in INR."
+      },
+      {
+        "type": "checkbox",
+        "id": "money_hide_paise",
+        "label": "Hide .00 paise",
+        "default": true,
+        "info": "₹1,499 instead of ₹1,499.00. Paise still show when a price has them."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tax_note",
+        "label": "Show tax note under product price",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "tax_note_text",
+        "label": "Tax note",
+        "default": "MRP inclusive of all taxes"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_mrp_label",
+        "label": "Label the struck-out price as \"MRP\"",
+        "default": true
+      }
+    ]
+  },
+  {
     "name": "Layout",
     "settings": [
       {
@@ -270,7 +318,7 @@
         "id": "announcement_messages",
         "label": "Announcement messages",
         "default": "Free shipping across India on orders above ₹1,499|Easy 15-day returns, no questions asked|Lifetime plating warranty on every piece",
-        "info": "One message per line. Rotates automatically."
+        "info": "Separate messages with |. They rotate automatically."
       },
       {
         "type": "range",
@@ -340,21 +388,6 @@
         "default": true
       },
       {
-        "type": "number",
-        "id": "engraving_price",
-        "label": "Engraving add-on price",
-        "default": 199,
-        "unit": "₹"
-      },
-      {
-        "type": "number",
-        "id": "price_filter_cap",
-        "label": "Price filter ceiling (fallback)",
-        "default": 15000,
-        "unit": "₹",
-        "info": "The filter normally auto-computes its maximum from product prices; this is only used when a collection is empty."
-      },
-      {
         "type": "range",
         "id": "engraving_max_chars",
         "min": 5,
@@ -364,20 +397,22 @@
         "default": 20
       },
       {
+        "type": "product",
+        "id": "engraving_product",
+        "label": "Engraving charge product",
+        "info": "Optional. Create a hidden product (e.g. \"Engraving\", price ₹199) and pick it here — it is added to the cart automatically so the charge is real. Leave empty to offer engraving free."
+      },
+      {
         "type": "checkbox",
         "id": "enable_gift_wrap",
         "label": "Enable gift wrap add-on",
         "default": true
       },
       {
-        "type": "range",
-        "id": "gift_wrap_price",
-        "min": 0,
-        "max": 999,
-        "step": 25,
-        "unit": "₹",
-        "label": "Gift wrap price",
-        "default": 149
+        "type": "product",
+        "id": "gift_wrap_product",
+        "label": "Gift wrap charge product",
+        "info": "Optional. Create a hidden product (e.g. \"Gift wrap\", price ₹149) and pick it here. Leave empty to offer gift wrap free."
       },
       {
         "type": "checkbox",
@@ -390,6 +425,38 @@
         "id": "enable_pincode_check",
         "label": "Show pincode delivery checker",
         "default": true
+      },
+      {
+        "type": "range",
+        "id": "delivery_days_min",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "unit": "d",
+        "label": "Delivery estimate — fastest",
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "delivery_days_max",
+        "min": 1,
+        "max": 15,
+        "step": 1,
+        "unit": "d",
+        "label": "Delivery estimate — slowest",
+        "default": 6
+      },
+      {
+        "type": "textarea",
+        "id": "pincode_blocked",
+        "label": "Pincodes you do not deliver to",
+        "info": "Comma separated. Full pincodes (e.g. 744101) or prefixes (e.g. 744). Leave empty if you ship across India."
+      },
+      {
+        "type": "textarea",
+        "id": "pincode_no_cod",
+        "label": "Pincodes without COD",
+        "info": "Comma separated pincodes or prefixes where Cash on Delivery is not offered."
       }
     ]
   },
@@ -519,19 +586,16 @@
         "label": "Reviews provider",
         "options": [
           {
-            "value": "shopify",
-            "label": "Shopify Product Reviews"
+            "value": "metafield",
+            "label": "Any review app (standard rating metafields)"
           },
           {
             "value": "judgeme",
-            "label": "Judge.me"
-          },
-          {
-            "value": "metafield",
-            "label": "Metafield only (no app)"
+            "label": "Judge.me widget"
           }
         ],
-        "default": "shopify"
+        "default": "metafield",
+        "info": "Star ratings use Shopify standard reviews metafields, which most review apps fill. For other apps, add their app block on the product page."
       }
     ]
   },
@@ -543,7 +607,7 @@
         "id": "trust_items",
         "label": "Trust bar items",
         "default": "Lifetime Plating Warranty|7-Day Moneyback|Premium Packaging|BIS-Registered 925 Silver",
-        "info": "One per line, shown with icons in order."
+        "info": "Separate items with | (up to 4). Icons: shield, return, gift, certificate."
       },
       {
         "type": "textarea",
@@ -581,6 +645,23 @@
         "id": "social_whatsapp",
         "label": "WhatsApp number",
         "info": "Digits only, with country code. e.g. 919876543210"
+      },
+      {
+        "type": "header",
+        "content": "WhatsApp chat button"
+      },
+      {
+        "type": "checkbox",
+        "id": "whatsapp_float",
+        "label": "Show floating WhatsApp button",
+        "default": true,
+        "info": "Uses the WhatsApp number above."
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_message",
+        "label": "Pre-filled message",
+        "default": "Hi! I have a question about your silver jewellery."
       }
     ]
   }

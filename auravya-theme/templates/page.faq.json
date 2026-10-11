@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": { "type": "main-page", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "settings": { "subheading": "", "heading": "", "align": "center" },
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "Is your jewellery real 925 silver?", "answer": "<p>Yes. Every piece is 925 sterling silver and BIS hallmarked. You will find the 925 stamp on the piece.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "Will the plating fade or turn black?", "answer": "<p>Our plating is thick and sealed, so it lasts with everyday wear. Silver can naturally darken over time — a quick wipe with the polishing cloth brings it back. Plating is covered by our lifetime re-plating warranty.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "Do you offer Cash on Delivery?", "answer": "<p>Yes, COD is available on most pincodes across India. Enter your pincode on any product page to check delivery and COD for your area.</p>" } },
+        "q4": { "type": "question", "settings": { "question": "How long does delivery take?", "answer": "<p>Orders are dispatched within 24 hours and usually reach you in 3–6 working days. Metro cities are often faster.</p>" } },
+        "q5": { "type": "question", "settings": { "question": "What is your return policy?", "answer": "<p>Easy 15-day returns and exchanges on unused pieces in original packaging. Engraved pieces are personalised and cannot be returned.</p>" } },
+        "q6": { "type": "question", "settings": { "question": "How do I find my ring size?", "answer": "<p>Open the Size guide on any ring page. Wrap a paper strip around your finger, measure it in mm and match it to the chart. If you are between sizes, choose the larger one.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"]
+    }
+  },
+  "order": ["main", "faq"]
+}

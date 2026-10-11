@@ -9,18 +9,20 @@
 {%- assign swatch_hs = '' -%}{%- for n in swatch_names -%}{%- assign nh = n | handleize -%}{%- assign swatch_hs = swatch_hs | append: '|' | append: nh -%}{%- endfor -%}{%- assign swatch_hs = swatch_hs | split: '|' -%}
 {%- assign size_hs = '' -%}{%- for n in size_names -%}{%- assign nh = n | handleize -%}{%- assign size_hs = size_hs | append: '|' | append: nh -%}{%- endfor -%}{%- assign size_hs = size_hs | split: '|' -%}
 {%- assign current = product.selected_or_first_available_variant -%}
+{%- assign form_id = fid | append: '-form-' | append: section.id -%}
+{%- assign product_title_attr = product.title | escape -%}
 
-<form method="post" action="{{ routes.cart_add_url }}" id="{{ fid }}-form" class="pform" enctype="multipart/form-data"
-      data-product-form data-product-id="{{ product.id }}" data-handle="{{ product.handle }}">
+{%- form 'product', product, id: form_id, class: 'pform', novalidate: 'novalidate', data-product-form: '', data-product-id: product.id, data-handle: product.handle, data-product-title: product_title_attr -%}
   <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+  <script type="application/json" data-variant-stock>
+    {%- capture stock_json -%}{% for v in product.variants %}"{{ v.id }}":{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity | json }}{% else %}null{% endif %}{% unless forloop.last %},{% endunless %}{% endfor %}{%- endcapture -%}
+    { {{ stock_json }} }
+  </script>
 
   {%- unless product.has_only_default_variant -%}
     <div class="pform__options">
       {%- for option in product.options_with_values -%}
         {%- assign opt_name = option.name | strip -%}
-        {%- assign opt_key = option.name | handleize -%}
-        {%- assign is_swatch = false -%}
-        {%- assign is_size = false -%}
         {%- assign oname_h = opt_name | handleize -%}
         {%- assign is_swatch = false -%}
         {%- assign is_size = false -%}
@@ -41,10 +43,9 @@
           {%- if is_swatch -%}
             <div class="opt__swatches">
               {%- for value in option.values -%}
-                {%- assign soldout_combo = false -%}
-                <label class="swatch swatch--lg{% if value == option.selected_value %} is-selected{% endif %}" data-value="{{ value | escape }}">
+                <label class="swatch swatch--lg{% if value == option.selected_value %} is-selected{% endif %}{% if value.available == false %} is-soldout{% endif %}" data-value="{{ value | escape }}">
                   <input type="radio" name="options[{{ opt_name | escape }}]" value="{{ value | escape }}"
-                         {% if value == option.selected_value %}checked{% endif %} data-option-input="{{ forloop.index0 }}">
+                         {% if value == option.selected_value %}checked{% endif %} data-option-input>
                   <span class="swatch__dot" style="--sw: var(--sw-{{ value | handleize }}, #ccc)"></span>
                   <span class="swatch__name">{{ value }}</span>
                 </label>
@@ -54,19 +55,17 @@
             <div class="opt__sizes">
               {%- for value in option.values -%}
                 {%- assign v_soldout = false -%}
-                {%- for v in product.variants -%}
-                  {%- if v.options[forloop.parentloop.index0] == value and v.available == false and product.options.size == 1 -%}{%- assign v_soldout = true -%}{%- endif -%}
-                {%- endfor -%}
+                {%- if value.available == false -%}{%- assign v_soldout = true -%}{%- endif -%}
                 <label class="sizepill{% if value == option.selected_value %} is-selected{% endif %}{% if v_soldout %} is-soldout{% endif %}" data-value="{{ value | escape }}">
                   <input type="radio" name="options[{{ opt_name | escape }}]" value="{{ value | escape }}"
-                         {% if value == option.selected_value %}checked{% endif %} data-option-input="{{ forloop.index0 }}">
+                         {% if value == option.selected_value %}checked{% endif %} data-option-input>
                   <span>{{ value }}</span>
                 </label>
               {%- endfor -%}
             </div>
           {%- else -%}
             <div class="opt__select">
-              <select name="options[{{ opt_name | escape }}]" data-option-input="{{ forloop.index0 }}" class="select" aria-label="{{ opt_name | escape }}">
+              <select name="options[{{ opt_name | escape }}]" data-option-input class="select" aria-label="{{ opt_name | escape }}">
                 {%- for value in option.values -%}
                   <option value="{{ value | escape }}" {% if value == option.selected_value %}selected{% endif %}>{{ value }}</option>
                 {%- endfor -%}
@@ -84,7 +83,7 @@
     {%- render 'quantity-input', qty: 1, min: 1, id: pf_qty_id, size: 'lg' -%}
     <div class="pform__stock" data-stock-line>
       {%- if current.available -%}
-        {%- if current.inventory_quantity != blank and current.inventory_quantity <= settings.lowstock_threshold and current.inventory_policy == 'deny' -%}
+        {%- if current.inventory_management == 'shopify' and current.inventory_policy == 'deny' and current.inventory_quantity > 0 and current.inventory_quantity <= settings.lowstock_threshold -%}
           <span class="stock stock--low"><svg class="icon"><use href="#i-sparkle"/></svg>{{ 'products.low_stock' | t: count: current.inventory_quantity }}</span>
         {%- else -%}
           <span class="stock stock--ok"><svg class="icon"><use href="#i-check"/></svg>{{ 'products.in_stock' | t }}</span>
@@ -95,21 +94,32 @@
     </div>
   </div>
 
-  {%- comment -%} Line-item properties: engraving + gift wrap {%- endcomment -%}
-  {%- assign engrave_ok = false -%}
-  {%- if settings.enable_engraving and product.metafields.custom.engraving_enabled.value != false and product.tags contains 'no-engraving' -%}{%- assign engrave_ok = false -%}
-  {%- elsif settings.enable_engraving -%}{%- assign engrave_ok = true -%}{%- endif -%}
+  {%- comment -%}
+    Engraving + gift wrap. Shown as line-item properties on the piece. When a charge product is
+    picked in Theme settings → Product options, cart.js also adds that product so the price is real.
+  {%- endcomment -%}
+  {%- liquid
+    assign engrave_ok = settings.enable_engraving
+    if product.tags contains 'no-engraving' or product.metafields.custom.engraving_enabled.value == false
+      assign engrave_ok = false
+    endif
+    assign en_product = settings.engraving_product
+    assign gw_product = settings.gift_wrap_product
+  -%}
   {%- if engrave_ok -%}
     <div class="pform__extra">
       <label class="xcheck">
         <input type="checkbox" data-toggle-engraving>
         <span class="xcheck__box"><svg class="icon"><use href="#i-check"/></svg></span>
-        <span class="xcheck__txt"><svg class="icon"><use href="#i-pencil"/></svg>{{ 'products.engraving' | t }} <em>+{{ settings.engraving_price | times: 100 | money }}</em></span>
+        <span class="xcheck__txt"><svg class="icon"><use href="#i-pencil"/></svg>{{ 'products.engraving' | t }}
+          <em>{%- if en_product != blank and en_product.available -%}+{%- render 'money', amount: en_product.price -%}{%- else -%}{{ 'products.free' | t }}{%- endif -%}</em>
+        </span>
       </label>
       <div class="pform__engrave" data-engraving-wrap hidden>
-        <input class="input" type="text" name="properties[Engraving]" maxlength="{{ settings.engraving_max_chars }}"
-               placeholder="{{ 'products.engraving_placeholder' | t: count: settings.engraving_max_chars }}" data-engraving-input>
-        <span class="pform__hint" data-engraving-count>{{ settings.engraving_max_chars }}</span>
+        <input class="input" type="text" maxlength="{{ settings.engraving_max_chars }}" autocomplete="off"
+               placeholder="{{ 'products.engraving_placeholder' | t: count: settings.engraving_max_chars }}"
+               aria-label="{{ 'products.engraving' | t }}" data-engraving-input>
+        <span class="pform__hint" data-engraving-count aria-live="polite">{{ settings.engraving_max_chars }}</span>
         <p class="pform__hint">{{ 'products.engraving_hint' | t }}</p>
       </div>
     </div>
@@ -118,9 +128,11 @@
   {%- if settings.enable_gift_wrap -%}
     <div class="pform__extra">
       <label class="xcheck">
-        <input type="checkbox" name="properties[Gift Wrap]" value="Yes (+{{ settings.gift_wrap_price | times: 100 | money }})" data-giftwrap>
+        <input type="checkbox" data-giftwrap>
         <span class="xcheck__box"><svg class="icon"><use href="#i-check"/></svg></span>
-        <span class="xcheck__txt"><svg class="icon"><use href="#i-gift"/></svg>{{ 'products.gift_wrap' | t }} <em>+{{ settings.gift_wrap_price | times: 100 | money }}</em></span>
+        <span class="xcheck__txt"><svg class="icon"><use href="#i-gift"/></svg>{{ 'products.gift_wrap' | t }}
+          <em>{%- if gw_product != blank and gw_product.available -%}+{%- render 'money', amount: gw_product.price -%}{%- else -%}{{ 'products.free' | t }}{%- endif -%}</em>
+        </span>
       </label>
       <p class="pform__hint xcheck__note">{{ 'products.gift_wrap_note' | t }}</p>
     </div>
@@ -131,26 +143,32 @@
       <svg class="icon"><use href="#i-bag"/></svg>
       <span data-add-label>{%- if current.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}</span>
     </button>
-    {%- if current.available -%}
-      <div class="pform__dyncheckout">{{ payment_button }}</div>
+    {%- if fid != 'QV' -%}
+      <div class="pform__dyncheckout"{% unless current.available %} hidden{% endunless %}>{{ form | payment_button }}</div>
     {%- endif -%}
   </div>
   {%- if settings.enable_cod -%}<p class="pform__cod"><svg class="icon"><use href="#i-cash"/></svg>{{ settings.cod_note }}</p>{%- endif -%}
 
   {%- if settings.enable_pincode_check -%}
-    <div class="pincode">
-      <svg class="icon pincode__icon"><use href="#i-pin"/></svg>
-      <input class="input pincode__input" type="text" inputmode="numeric" maxlength="6" placeholder="{{ 'products.pincode_placeholder' | t }}" data-pincode-input aria-label="{{ 'products.pincode_label' | t }}">
-      <button type="button" class="btn btn--ghost btn--sm" data-pincode-check>{{ 'products.pincode_check' | t }}</button>
-      <p class="pincode__msg" data-pincode-msg role="status"></p>
+    <div class="pincode" data-pincode>
+      <p class="pincode__label"><svg class="icon"><use href="#i-truck"/></svg>{{ 'products.pincode_label' | t }}</p>
+      <div class="pincode__row">
+        <svg class="icon pincode__icon"><use href="#i-pin"/></svg>
+        <input class="input pincode__input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="postal-code"
+               placeholder="{{ 'products.pincode_placeholder' | t }}" data-pincode-input aria-label="{{ 'products.pincode_label' | t }}">
+        <button type="button" class="pincode__btn" data-pincode-check>{{ 'products.pincode_check' | t }}</button>
+      </div>
+      <div class="pincode__msg" data-pincode-msg role="status" aria-live="polite"></div>
     </div>
   {%- endif -%}
 
-  <ul class="pform__trust" aria-label="Product promises">
-    {%- assign trust = settings.trust_items | split: '|' -%}
-    {%- assign ticons = 'shield,return,gift,cert' | split: ',' -%}
-    {%- for item in trust limit: 4 -%}
-      <li><svg class="icon"><use href="#i-{{ ticons[forloop.index0] }}"></use></svg><span>{{ item | strip }}</span></li>
-    {%- endfor -%}
-  </ul>
-</form>
+  {%- assign trust = settings.trust_items | split: '|' -%}
+  {%- if trust.size > 0 -%}
+    <ul class="pform__trust" aria-label="{{ 'products.promises' | t }}">
+      {%- assign ticons = 'shield,return,gift,cert' | split: ',' -%}
+      {%- for item in trust limit: 4 -%}
+        {%- if item != blank -%}<li><svg class="icon"><use href="#i-{{ ticons[forloop.index0] }}"></use></svg><span>{{ item | strip }}</span></li>{%- endif -%}
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+{%- endform -%}

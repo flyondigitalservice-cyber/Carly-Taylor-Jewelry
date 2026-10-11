@@ -1,0 +1,9 @@
+{%- comment -%} Floating WhatsApp chat button (very common for Indian D2C stores) {%- endcomment -%}
+{%- assign wa_number = settings.social_whatsapp | remove: '+' | remove: ' ' | remove: '-' -%}
+{%- if settings.whatsapp_float and wa_number != blank -%}
+  {%- capture wa_text -%}{{ settings.whatsapp_message }}{% if template.name == 'product' %} {{ product.title }} — {{ shop.url }}{{ product.url }}{% endif %}{%- endcapture -%}
+  <a class="wafloat" href="https://wa.me/{{ wa_number }}?text={{ wa_text | strip | url_encode }}" target="_blank" rel="noopener" aria-label="{{ 'general.whatsapp_chat' | t }}">
+    <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+    <span class="wafloat__label">{{ 'general.whatsapp_chat' | t }}</span>
+  </a>
+{%- endif -%}

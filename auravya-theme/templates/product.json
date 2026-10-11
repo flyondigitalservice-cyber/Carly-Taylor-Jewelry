@@ -1,1 +1,30 @@
-{ "sections": { "main": { "type": "main-product", "settings": { "layout": "sticky", "show_related": true, "related_limit": 6 } } }, "order": ["main"] }
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": { "layout": "sticky", "show_breadcrumbs": true, "show_reviews": true },
+      "blocks": {
+        "title": { "type": "title", "settings": { "show_material": true } },
+        "rating": { "type": "rating", "settings": {} },
+        "price": { "type": "price", "settings": {} },
+        "offers": { "type": "offers", "settings": { "heading": "Available offers", "offers": "SILVER10 | Flat 10% off on your first order\nFESTIVE500 | ₹500 off on orders above ₹3,999\nPREPAID | Extra 5% off on UPI & card payments" } },
+        "buy": { "type": "buy_buttons", "settings": {} },
+        "details": { "type": "description", "settings": { "heading": "", "icon": "sparkle", "open": true } },
+        "material": { "type": "collapsible_tab", "settings": { "heading": "Material & finish", "icon": "cert", "content": "<ul><li>925 sterling silver, BIS hallmarked</li><li>Nickel-free and hypoallergenic — safe for sensitive skin</li><li>Choose your coating above: silver (rhodium), 18K gold or rose gold plating, or oxidised</li></ul>", "open": false } },
+        "care": { "type": "collapsible_tab", "settings": { "heading": "Care instructions", "icon": "shield", "content": "<p>Wipe with the soft cloth in your box after every wear. Keep away from perfume, sanitiser, chlorine and harsh chemicals. Store in the zip pouch so it stays bright. Free re-plating anytime under our lifetime plating warranty.</p>", "open": false } },
+        "shipping": { "type": "collapsible_tab", "settings": { "heading": "Shipping & returns", "icon": "truck", "content": "<ul><li>Dispatched within 24 hours; delivered in 3–6 days across India</li><li>Free shipping on orders above ₹1,499</li><li>Cash on Delivery available</li><li>Easy 15-day returns and exchanges</li></ul>", "open": false } },
+        "share": { "type": "share", "settings": {} }
+      },
+      "block_order": ["title", "rating", "price", "offers", "buy", "details", "material", "care", "shipping", "share"]
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": { "subheading": "Complete the look", "heading": "You may also love", "limit": 8 }
+    },
+    "recent": {
+      "type": "recently-viewed",
+      "settings": { "heading": "Recently viewed" }
+    }
+  },
+  "order": ["main", "recommendations", "recent"]
+}

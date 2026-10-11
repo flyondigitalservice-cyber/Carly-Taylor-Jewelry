@@ -1,9 +1,9 @@
 <section class="contact-sec container section-gap">
   {%- render 'breadcrumbs' -%}
   <header class="pagehead pagehead--center">
-    <span class="eyebrow">Concierge</span>
-    <h1 class="h1">{{ page.title | default: 'Get in touch' }}</h1>
-    <p class="pagehead__sub">{{ page.content | strip_html | truncatewords: 26 }}</p>
+    {%- if section.settings.eyebrow != blank -%}<span class="eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+    <h1 class="h1">{{ page.title | default: section.settings.heading }}</h1>
+    {%- if page.content != blank -%}<div class="pagehead__sub rte">{{ page.content }}</div>{%- endif -%}
   </header>
 
   <div class="contact-sec__grid">
@@ -37,26 +37,84 @@
       {%- endform -%}
     </div>
     <aside class="contact-sec__side">
-      <div class="contact-card">
-        <svg class="icon"><use href="#i-whatsapp"/></svg>
-        <strong>WhatsApp concierge</strong>
-        <p>Mon–Sat, 10am–7pm IST</p>
-        {%- if settings.social_whatsapp != blank -%}<a class="btn btn--ghost btn--sm" href="https://wa.me/{{ settings.social_whatsapp }}">Chat now</a>{%- endif -%}
-      </div>
+      {%- assign wa_number = settings.social_whatsapp | remove: '+' | remove: ' ' -%}
+      {%- if wa_number != blank -%}
+        <div class="contact-card">
+          <svg class="icon"><use href="#i-whatsapp"/></svg>
+          <strong>{{ section.settings.wa_title }}</strong>
+          <p>{{ section.settings.hours }}</p>
+          <a class="btn btn--ghost btn--sm" href="https://wa.me/{{ wa_number }}" target="_blank" rel="noopener">{{ 'general.whatsapp_chat' | t }}</a>
+        </div>
+      {%- endif -%}
+      {%- if section.settings.phone != blank -%}
+        <div class="contact-card">
+          <svg class="icon"><use href="#i-phone"/></svg>
+          <strong>{{ 'contact.phone' | t }}</strong>
+          <p><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></p>
+        </div>
+      {%- endif -%}
       <div class="contact-card">
         <svg class="icon"><use href="#i-mail"/></svg>
-        <strong>Email</strong>
-        <p>{{ shop.email | default: 'care@auravya.in' }}</p>
+        <strong>{{ 'contact.email' | t }}</strong>
+        <p><a href="mailto:{{ shop.email }}">{{ shop.email }}</a></p>
       </div>
-      <div class="contact-card">
-        <svg class="icon"><use href="#i-return"/></svg>
-        <strong>Returns & replating</strong>
-        <p>15-day returns · lifetime plating warranty on every piece.</p>
-      </div>
+      {%- if section.settings.note != blank -%}
+        <div class="contact-card">
+          <svg class="icon"><use href="#i-return"/></svg>
+          <strong>{{ section.settings.note_title }}</strong>
+          <p>{{ section.settings.note }}</p>
+        </div>
+      {%- endif -%}
     </aside>
   </div>
 </section>
 
 {% schema %}
-{ "name": "Contact page", "settings": [] }
+{
+  "name": "Contact page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Customer care"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading (if page has no title)",
+      "default": "Get in touch"
+    },
+    {
+      "type": "text",
+      "id": "wa_title",
+      "label": "WhatsApp card title",
+      "default": "Chat on WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Support hours",
+      "default": "Mon–Sat, 10 am – 7 pm IST"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "default": "+91 98765 43210"
+    },
+    {
+      "type": "text",
+      "id": "note_title",
+      "label": "Extra card title",
+      "default": "Returns & re-plating"
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Extra card text",
+      "default": "15-day easy returns · lifetime plating warranty on every piece."
+    }
+  ]
+}
 {% endschema %}

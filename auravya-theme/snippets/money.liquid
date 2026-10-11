@@ -1,0 +1,55 @@
+{%- comment -%}
+  Money formatter. Renders an amount (in paise / cents) the Indian way when the
+  shopper's currency is INR: ₹1,49,999 (lakh grouping), with paise hidden when
+  they are zero. Any other currency falls back to Shopify's own money format.
+  Args: amount (integer, paise)
+  Usage: {%- render 'money', amount: product.price -%}
+{%- endcomment -%}
+{%- liquid
+  assign m_amount = amount | default: 0 | round
+  if settings.money_indian_format and cart.currency.iso_code == 'INR'
+    assign m_neg = false
+    if m_amount < 0
+      assign m_neg = true
+      assign m_amount = m_amount | times: -1
+    endif
+    assign m_paise = m_amount | modulo: 100
+    assign m_rupees = m_amount | minus: m_paise | divided_by: 100
+    assign m_str = m_rupees | append: ''
+    assign m_len = m_str.size
+    if m_len > 3
+      assign m_head_len = m_len | minus: 3
+      assign m_last3 = m_str | slice: m_head_len, 3
+      assign m_head = m_str | slice: 0, m_head_len
+      assign m_odd = m_head_len | modulo: 2
+      assign m_out = ''
+      if m_odd == 1
+        assign m_out = m_head | slice: 0, 1
+      endif
+      assign m_pairs = m_head_len | minus: m_odd | divided_by: 2
+      if m_pairs > 0
+        for n in (1..m_pairs)
+          assign m_idx = n | minus: 1 | times: 2 | plus: m_odd
+          assign m_piece = m_head | slice: m_idx, 2
+          if m_out != ''
+            assign m_out = m_out | append: ','
+          endif
+          assign m_out = m_out | append: m_piece
+        endfor
+      endif
+      assign m_str = m_out | append: ',' | append: m_last3
+    endif
+    if m_paise > 0 or settings.money_hide_paise == false
+      assign m_p = m_paise | prepend: '0' | slice: -2, 2
+      assign m_str = m_str | append: '.' | append: m_p
+    endif
+    if m_neg
+      echo '−'
+    endif
+    echo '₹' | append: m_str
+  elsif settings.money_hide_paise
+    echo m_amount | money_without_trailing_zeros
+  else
+    echo m_amount | money
+  endif
+-%}

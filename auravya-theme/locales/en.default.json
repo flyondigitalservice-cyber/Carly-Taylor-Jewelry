@@ -1,4 +1,9 @@
 {
+  "404": {
+    "title": "Page not found",
+    "subtitle": "The page you're looking for seems to have been polished away.",
+    "cta": "Back to home"
+  },
   "general": {
     "search": "Search",
     "search_placeholder": "Search rings, necklaces, earrings…",
@@ -15,7 +20,20 @@
     "remove": "Remove",
     "page": "Page",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "copied": "Copied",
+    "copy_code": "Copy code",
+    "copy_failed": "Could not copy — please select and copy manually",
+    "days": "Days",
+    "hrs": "Hrs",
+    "mins": "Mins",
+    "secs": "Secs",
+    "offer_ends": "Offer ends in",
+    "shop_now": "Shop now",
+    "toggle_sound": "Sound on/off",
+    "use_code": "Use code",
+    "whatsapp_chat": "Chat with us",
+    "read_more": "Read more"
   },
   "announcement": {
     "label": "Announcement"
@@ -26,7 +44,7 @@
     "wishlist": "Wishlist"
   },
   "products": {
-    "add_to_cart": "Add to Cart",
+    "add_to_cart": "Add to Bag",
     "added": "Added to your bag",
     "sold_out": "Sold out",
     "unavailable": "Unavailable",
@@ -41,11 +59,11 @@
     "gift_wrap": "Add gift wrap",
     "gift_wrap_note": "Signature Auravya box, ribbon & handwritten note.",
     "cod_note": "COD available",
-    "pincode_label": "Check delivery",
+    "pincode_label": "Check delivery & COD",
     "pincode_placeholder": "Enter pincode",
     "pincode_check": "Check",
-    "pincode_ok": "Delivery in 2–4 days to {{ pin }}. Free above threshold.",
-    "pincode_bad": "We don't ship to this pincode yet.",
+    "pincode_ok": "Delivery by {{ date }} to {{ pin }}",
+    "pincode_bad": "Sorry, we do not deliver to {{ pin }} yet.",
     "details": "Details",
     "material": "Material",
     "care": "Care instructions",
@@ -53,12 +71,30 @@
     "reviews": "Reviews",
     "write_review": "Write a review",
     "based_on": "based on {{ count }} reviews",
-    "in_stock": "In stock, ships in 24 hrs",
+    "in_stock": "In stock — ships in 24 hrs",
     "low_stock": "Only {{ count }} left",
     "related": "You may also love",
     "recently_viewed": "Recently viewed",
     "notify_me": "Notify me when available",
-    "only_left": "Only {{ count }} left"
+    "only_left": "Only {{ count }} left",
+    "dimensions": "Dimensions",
+    "weight": "Weight",
+    "stone": "Stone",
+    "plating": "Plating",
+    "free": "Free",
+    "from": "From",
+    "mrp": "MRP",
+    "percent_off": "{{ percent }}% off",
+    "media_gallery": "Product images",
+    "media_n": "Image {{ n }}",
+    "zoom": "Zoom image",
+    "no_reviews": "No reviews yet — be the first to share yours.",
+    "promises": "Our promises",
+    "quick_view_error": "Could not load this product.",
+    "view_details": "View full details",
+    "pincode_invalid": "Please enter a valid 6-digit pincode",
+    "pincode_cod_yes": "Cash on Delivery available",
+    "pincode_cod_no": "Prepaid only for this pincode"
   },
   "cart": {
     "title": "Your Bag",
@@ -70,11 +106,16 @@
     "view_cart": "View bag",
     "note": "Order note",
     "note_placeholder": "Gift message, delivery instructions…",
-    "free_shipping_progress": "You're {{ amount }} away from FREE shipping",
-    "free_shipping_done": "You've unlocked FREE shipping 🎉",
+    "free_shipping_progress": "Add {{ amount }} more for FREE delivery",
+    "free_shipping_done": "Yay! You have unlocked FREE delivery",
     "item_added": "Item added to your cart",
     "update": "Update",
-    "you_may_like": "Goes well with"
+    "you_may_like": "Goes well with",
+    "cod_available": "Cash on Delivery available",
+    "error": "Something went wrong. Please try again.",
+    "items_total": "Items total",
+    "savings": "You save",
+    "secure": "100% secure checkout · UPI, cards, net banking & COD"
   },
   "wishlist": {
     "title": "Wishlist",
@@ -112,7 +153,8 @@
     "availability": "Availability",
     "min_price": "Minimum price",
     "max_price": "Maximum price",
-    "results_count": "{{ count }} products"
+    "results_count": "{{ count }} products",
+    "no_filters": "Set up filters in the Shopify Search & Discovery app."
   },
   "search": {
     "title": "Search",
@@ -123,15 +165,16 @@
     "products": "Products",
     "collections": "Collections",
     "pages": "Pages",
-    "view_all_results": "View all results"
+    "view_all_results": "View all results",
+    "popular": "Popular searches"
   },
   "newsletter": {
     "title": "Join the Auravya circle",
     "subtitle": "Early access to drops, member-only prices & styling notes. No spam, ever.",
     "placeholder": "Email address",
     "button": "Subscribe",
-    "success": "Welcome to the circle! Check your inbox for 10% off.",
-    "error": "Please enter a valid email."
+    "success": "Thank you for subscribing! Watch your inbox for offers and new drops.",
+    "error": "Please enter a valid email address."
   },
   "contact": {
     "title": "Get in touch",
@@ -173,15 +216,12 @@
     "edit": "Edit",
     "delete": "Delete"
   },
-  "404": {
-    "title": "Page not found",
-    "subtitle": "The page you're looking for seems to have been polished away.",
-    "cta": "Back to home"
-  },
   "password": {
     "title": "Opening soon",
     "subtitle": "We're polishing something beautiful. Leave your email to be first in line.",
-    "enter": "Enter using password"
+    "enter": "Enter using password",
+    "password": "Password",
+    "enter_button": "Enter"
   },
   "footer": {
     "newsletter_title": "Newsletter",
@@ -194,5 +234,15 @@
     "close_menu": "Close menu",
     "open_menu": "Open menu",
     "unit_price_separator": "per"
+  },
+  "gift_card": {
+    "title": "Your gift card",
+    "code": "Gift card code",
+    "expired": "This gift card has expired or is disabled.",
+    "expires_on": "Valid till {{ date }}",
+    "initial_value": "Originally {{ value }}",
+    "add_to_wallet": "Add to Apple Wallet",
+    "print": "Print",
+    "shop": "Start shopping"
   }
 }

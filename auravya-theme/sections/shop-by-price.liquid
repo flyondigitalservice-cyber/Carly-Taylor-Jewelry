@@ -1,0 +1,73 @@
+{%- comment -%} "Shop by budget" price cards — links into the collection with Shopify's native price filter {%- endcomment -%}
+<section class="shopprice section-gap" id="Section-{{ section.id }}">
+  <div class="container">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="sechead sechead--{{ section.settings.align }}">
+        {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="shopprice__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign col = block.settings.collection | default: section.settings.collection
+          if col != blank
+            assign base_url = col.url
+          else
+            assign base_url = routes.all_products_collection_url
+          endif
+          assign href = base_url | append: '?filter.v.price.lte=' | append: block.settings.max_price
+          if block.settings.min_price > 0
+            assign href = href | append: '&filter.v.price.gte=' | append: block.settings.min_price
+          endif
+          assign max_cents = block.settings.max_price | times: 100
+        -%}
+        <a class="shopprice__card" href="{{ href }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 600 | image_tag: class: 'shopprice__img', widths: '300, 450, 600', sizes: '(min-width: 990px) 25vw, 50vw', loading: 'lazy', alt: '' }}
+          {%- endif -%}
+          <span class="shopprice__label">{{ block.settings.label }}</span>
+          <span class="shopprice__amount">{%- render 'money', amount: max_cents -%}</span>
+          <span class="shopprice__cta">{{ 'general.shop_now' | t }} <svg class="icon"><use href="#i-arrow-r"/></svg></span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop by price",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Gifts for every budget" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by price" },
+    { "type": "select", "id": "align", "label": "Heading align", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ], "default": "center" },
+    { "type": "collection", "id": "collection", "label": "Collection to filter", "info": "Leave empty to use All products. Price filtering must be enabled in the Search & Discovery app." }
+  ],
+  "blocks": [
+    {
+      "type": "price",
+      "name": "Price card",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Under" },
+        { "type": "number", "id": "min_price", "label": "Minimum price (₹)", "default": 0 },
+        { "type": "number", "id": "max_price", "label": "Maximum price (₹)", "default": 999 },
+        { "type": "collection", "id": "collection", "label": "Collection (optional)" },
+        { "type": "image_picker", "id": "image", "label": "Background image (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{
+    "name": "Shop by price",
+    "blocks": [
+      { "type": "price", "settings": { "label": "Under", "max_price": 999 } },
+      { "type": "price", "settings": { "label": "Under", "max_price": 1999 } },
+      { "type": "price", "settings": { "label": "Under", "max_price": 2999 } },
+      { "type": "price", "settings": { "label": "Under", "max_price": 4999 } }
+    ]
+  }]
+}
+{% endschema %}

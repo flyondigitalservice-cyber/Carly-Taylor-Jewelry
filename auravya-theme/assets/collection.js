@@ -1,210 +1,119 @@
-/* AURAVYA collection/search — client-side facets, sorting, price range, pills */
+/* AURAVYA collection & search — native Shopify filters/sort with AJAX (Section Rendering API).
+   Without JavaScript the filter form still submits normally, so nothing depends on this file. */
 (function () {
   'use strict';
   const A = window.Auravya;
   const $ = A.$, $$ = A.$$;
 
-  const facetsRoot = $('[data-facets]');
-  if (!facetsRoot) return;
-  const grid = $('[data-product-grid]');
-  if (!grid) return;
-  const cards = $$('.pcard', grid);
-  cards.forEach((c, i) => { c.dataset.order = i; });
+  const resultsEl = () => $('[data-results]');
+  if (!resultsEl()) return;
+  let ctrl = null;
 
-  // Price ceiling comes from the facet markup (computed from real product prices); nothing hard-coded here.
-  const capEl = $('[data-price-range]', facetsRoot);
-  const CAP = (capEl && parseInt(capEl.dataset.priceCap, 10)) || 15000;
-
-  const state = { coating: [], size: [], type: [], stock: false, min: 0, max: CAP, sort: '' };
-
-  /* ---- read initial state from URL ---- */
-  const url = new URL(location.href);
-  state.coating = url.searchParams.getAll('coating');
-  state.size = url.searchParams.getAll('size');
-  state.type = url.searchParams.getAll('type');
-  state.stock = url.searchParams.get('stock') === '1';
-  state.min = parseInt(url.searchParams.get('min') || 0, 10);
-  state.max = parseInt(url.searchParams.get('max') || CAP, 10);
-  state.sort = url.searchParams.get('sort_by') || '';
-
-  function syncInputs() {
-    $$('[data-facet-input]', facetsRoot).forEach(i => {
-      if (i.dataset.coating) i.checked = state.coating.includes(i.value);
-      else if (i.dataset.size) i.checked = state.size.includes(i.value);
-      else if (i.name === 'filter.p.product_type') i.checked = state.type.includes(i.value);
-      else if (i.name === 'filter.v_availability') i.checked = state.stock;
-    });
-    const pmin = $('[data-price-min]', facetsRoot), pmax = $('[data-price-max]', facetsRoot);
-    if (pmin) pmin.value = state.min;
-    if (pmax) pmax.value = state.max;
-    paintPrice();
-    const sel = $('[data-sort-select]', facetsRoot);
-    if (sel && state.sort) sel.value = state.sort;
+  function urlFromForm(form) {
+    const fd = new FormData(form);
+    const params = new URLSearchParams();
+    for (const [k, v] of fd.entries()) { if (String(v).trim() !== '') params.append(k, v); }
+    const action = form.getAttribute('action') || location.pathname;
+    return action.split('?')[0] + '?' + params.toString();
   }
 
-  function matches(card) {
-    const price = parseInt(card.dataset.price, 10);
-    if (price < state.min || price > state.max) return false;
-    if (state.stock && card.dataset.available !== 'true') return false;
-    if (state.type.length && !state.type.includes((card.dataset.tags || '').split(',').find(t => false) || '') ) {
-      // match by product type via title fallback: use data-tags only when types provided
-      const types = (card.dataset.tags || '').split(',');
-      if (!state.type.some(t => types.includes(t))) {
-        // product type isn't in tags on all stores; fall back to always-true when unknown
-        if (!card.dataset.typeUnknown) return false;
-      }
-    }
-    const coat = (card.dataset.optionCoating || card.dataset.optionColor || card.dataset.optionColour || card.dataset.optionFinish || card.dataset.optionPlating || '').split('|').filter(Boolean);
-    if (state.coating.length && !state.coating.some(c => coat.includes(c))) return false;
-    const sizes = (card.dataset.optionSize || card.dataset.optionRingSize || card.dataset.optionBraceletSize || card.dataset.optionChainLength || card.dataset.optionLength || '').split('|').filter(Boolean);
-    if (state.size.length && !state.size.some(s => sizes.includes(s))) return false;
-    return true;
-  }
-
-  function apply() {
-    let visible = 0;
-    cards.forEach(c => {
-      const ok = matches(c);
-      c.style.display = ok ? '' : 'none';
-      if (ok) visible++;
-    });
-    sortGrid();
-    paintPills();
-    paintCount(visible);
-    writeUrl();
-  }
-
-  function sortGrid() {
-    if (!state.sort || state.sort === 'featured') {
-      cards.slice().sort((a, b) => a.dataset.order - b.dataset.order).forEach(c => grid.appendChild(c));
-      return;
-    }
-    const dir = state.sort.includes('descending') ? -1 : 1;
-    cards.slice().sort((a, b) => {
-      switch (state.sort) {
-        case 'price-ascending': return (a.dataset.price - b.dataset.price) * dir;
-        case 'price-descending': return (a.dataset.price - b.dataset.price) * dir;
-        case 'title-ascending': return a.dataset.title.localeCompare(b.dataset.title) * dir;
-        case 'title-descending': return a.dataset.title.localeCompare(b.dataset.title) * dir;
-        case 'best-selling': {
-          const av = (a.dataset.tags || '').includes('bestseller') ? 0 : 1;
-          const bv = (b.dataset.tags || '').includes('bestseller') ? 0 : 1;
-          return (av - bv) || (a.dataset.order - b.dataset.order);
+  function render(url, push) {
+    const host = resultsEl();
+    const sectionId = host.dataset.sectionId;
+    const wasOpen = !!$('[data-facets].is-open', host);
+    const openFacets = $$('[data-facet]:not(.is-closed)', host).map(f => f.dataset.facetKey);
+    host.classList.add('is-loading');
+    if (ctrl) ctrl.abort();
+    ctrl = 'AbortController' in window ? new AbortController() : null;
+    const fetchUrl = url + (url.indexOf('?') > -1 ? '&' : '?') + 'section_id=' + encodeURIComponent(sectionId);
+    fetch(fetchUrl, ctrl ? { signal: ctrl.signal } : {})
+      .then(r => r.text())
+      .then(html => {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const next = doc.querySelector('[data-results]');
+        if (!next) { location.href = url; return; }
+        host.innerHTML = next.innerHTML;
+        host.classList.remove('is-loading');
+        // keep the shopper's open/closed accordions and the mobile drawer state
+        $$('[data-facet]', host).forEach(f => {
+          if (openFacets.includes(f.dataset.facetKey)) { f.classList.remove('is-closed'); const h = $('.facet__head', f); h && h.setAttribute('aria-expanded', 'true'); }
+        });
+        if (wasOpen) { const fr = $('[data-facets]', host); fr && fr.classList.add('is-open'); }
+        paintAllPrices();
+        if (push) history.pushState({ facets: true }, '', url);
+        A.Wishlist && A.Wishlist.sync();
+        if (!wasOpen) {
+          const top = host.getBoundingClientRect().top + window.scrollY - 90;
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
         }
-        case 'created-descending': return (parseInt(b.dataset.isNew || 0) - parseInt(a.dataset.isNew || 0)) || (a.dataset.order - b.dataset.order);
-        default: return a.dataset.order - b.dataset.order;
-      }
-    }).forEach(c => grid.appendChild(c));
+      })
+      .catch((e) => { if (!e || e.name !== 'AbortError') location.href = url; });
   }
+  const renderDebounced = A.debounce((url) => render(url, true), 450);
 
-  function paintCount(n) {
-    const el = $('[data-results-count]');
-    if (el) el.textContent = n + (n === 1 ? ' product' : ' products');
-  }
-
-  function paintPills() {
-    const host = $('[data-filter-pills]', facetsRoot);
-    if (!host) return;
-    const pills = [];
-    state.coating.forEach(v => pills.push({ k: 'coating', v }));
-    state.size.forEach(v => pills.push({ k: 'size', v }));
-    state.type.forEach(v => pills.push({ k: 'type', v }));
-    if (state.stock) pills.push({ k: 'stock', v: 'In stock' });
-    if (state.min > 0 || state.max < CAP) pills.push({ k: 'price', v: A.money(state.min * 100) + ' – ' + A.money(state.max * 100) });
-    host.hidden = pills.length === 0;
-    host.innerHTML = pills.map(p => '<button class="chip is-active" data-pill-remove="' + p.k + '" data-pill-value="' + p.v.replace(/"/g, '&quot;') + '">' + p.v + ' <svg class="icon"><use href="#i-close"/></svg></button>').join('') +
-      (pills.length > 1 ? '<button class="chip" data-pill-remove="all">Clear all</button>' : '');
-    const cnt = $('[data-active-count]');
-    if (cnt) { cnt.textContent = pills.length; cnt.hidden = pills.length === 0; }
-  }
-
-  function writeUrl() {
-    const u = new URL(location.href);
-    ['coating', 'size', 'type', 'stock', 'min', 'max'].forEach(k => u.searchParams.delete(k));
-    state.coating.forEach(v => u.searchParams.append('coating', v));
-    state.size.forEach(v => u.searchParams.append('size', v));
-    state.type.forEach(v => u.searchParams.append('type', v));
-    if (state.stock) u.searchParams.set('stock', '1');
-    if (state.min > 0) u.searchParams.set('min', state.min);
-    if (state.max < CAP) u.searchParams.set('max', state.max);
-    if (state.sort) u.searchParams.set('sort_by', state.sort); else u.searchParams.delete('sort_by');
-    history.replaceState({}, '', u);
-  }
-
-  /* ---- price range ---- */
-  function paintPrice() {
-    const root = $('[data-price-range]', facetsRoot); if (!root) return;
+  /* ---- price range: sliders mirror the number inputs ---- */
+  function paintPrice(root) {
     const min = $('[data-price-min]', root), max = $('[data-price-max]', root);
     const fill = $('[data-price-fill]', root);
-    const lo = parseInt(min.value, 10), hi = parseInt(max.value, 10);
-    const span = parseInt(max.max, 10) || CAP;
-    fill.style.left = (lo / span * 100) + '%';
-    fill.style.right = (100 - hi / span * 100) + '%';
-    $('[data-price-label-min]', root).textContent = A.money(lo * 100);
-    $('[data-price-label-max]', root).textContent = A.money(hi * 100);
+    const span = parseFloat(root.dataset.max) || 1;
+    const lo = parseFloat(min.value) || 0, hi = parseFloat(max.value) || span;
+    if (fill) { fill.style.left = (lo / span * 100) + '%'; fill.style.right = (100 - hi / span * 100) + '%'; }
   }
-  facetsRoot.addEventListener('input', (e) => {
+  function paintAllPrices() { $$('[data-price-range]').forEach(paintPrice); }
+
+  document.addEventListener('input', (e) => {
     const r = e.target.closest('[data-price-range]'); if (!r) return;
-    let lo = parseInt($('[data-price-min]', r).value, 10);
-    let hi = parseInt($('[data-price-max]', r).value, 10);
-    if (lo > hi - 250) {
-      if (e.target.dataset.priceMin !== undefined) lo = hi - 250; else hi = lo + 250;
-      $('[data-price-min]', r).value = lo; $('[data-price-max]', r).value = hi;
+    const span = parseFloat(r.dataset.max) || 1;
+    const minS = $('[data-price-min]', r), maxS = $('[data-price-max]', r);
+    const minI = $('[data-price-input-min]', r), maxI = $('[data-price-input-max]', r);
+    if (e.target === minS || e.target === maxS) {
+      let lo = parseFloat(minS.value), hi = parseFloat(maxS.value);
+      if (lo > hi) { if (e.target === minS) lo = hi; else hi = lo; minS.value = lo; maxS.value = hi; }
+      minI.value = lo > 0 ? lo : '';
+      maxI.value = hi < span ? hi : '';
+    } else {
+      minS.value = minI.value || 0;
+      maxS.value = maxI.value || span;
     }
-    state.min = lo; state.max = hi;
-    paintPrice();
-    apply();
+    paintPrice(r);
+    if (window.innerWidth >= 1024) renderDebounced(urlFromForm(r.closest('form')));
   });
 
-  /* ---- facet inputs ---- */
-  facetsRoot.addEventListener('change', (e) => {
-    const i = e.target.closest('[data-facet-input]'); if (!i) return;
-    const on = i.checked;
-    if (i.dataset.coating) toggle(state.coating, i.value, on);
-    else if (i.dataset.size) toggle(state.size, i.value, on);
-    else if (i.name === 'filter.p.product_type') toggle(state.type, i.value, on);
-    else if (i.name === 'filter.v_availability') state.stock = on;
-    apply();
+  /* ---- checkbox filters: instant on desktop, "Apply" in the mobile drawer ---- */
+  document.addEventListener('change', (e) => {
+    const i = e.target.closest('[data-facet-input]');
+    if (i && window.innerWidth >= 1024) { render(urlFromForm(i.closest('form')), true); return; }
+    const s = e.target.closest('[data-sort-select]');
+    if (s) {
+      const root = s.closest('[data-facets]');
+      const form = $('[data-facet-form]', root);
+      $('[data-sort-hidden]', form).value = s.value;
+      render(urlFromForm(form), true);
+    }
   });
-  function toggle(arr, v, on) {
-    const i = arr.indexOf(v);
-    if (on && i < 0) arr.push(v);
-    if (!on && i >= 0) arr.splice(i, 1);
-  }
 
-  facetsRoot.addEventListener('submit', (e) => { e.preventDefault(); apply(); closeMobile(); });
+  document.addEventListener('submit', (e) => {
+    const form = e.target.closest('[data-facet-form]'); if (!form) return;
+    e.preventDefault();
+    const root = form.closest('[data-facets]'); root && root.classList.remove('is-open');
+    document.body.style.overflow = '';
+    render(urlFromForm(form), true);
+  });
 
-  /* ---- pills removal & clear ---- */
-  facetsRoot.addEventListener('click', (e) => {
-    const pill = e.target.closest('[data-pill-remove]');
-    if (pill) {
-      const k = pill.dataset.pillRemove, v = pill.dataset.pillValue;
-      if (k === 'all') { state.coating = []; state.size = []; state.type = []; state.stock = false; state.min = 0; state.max = CAP; }
-      else if (k === 'stock') state.stock = false;
-      else if (k === 'price') { state.min = 0; state.max = CAP; }
-      else toggle(state[k], v, false);
-      syncInputs(); apply();
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-facet-link], [data-results] .pagination a');
+    if (link) { e.preventDefault(); render(link.href.split('#')[0], true); return; }
+    if (e.target.closest('[data-open-filters]')) {
+      const root = $('[data-facets]'); if (root) { root.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
       return;
     }
-    if (e.target.closest('[data-clear-filters]')) {
-      state.coating = []; state.size = []; state.type = []; state.stock = false; state.min = 0; state.max = CAP;
-      syncInputs(); apply();
+    if (e.target.closest('[data-close-filters]')) {
+      const root = e.target.closest('[data-facets]'); if (root) root.classList.remove('is-open');
+      document.body.style.overflow = '';
     }
   });
 
-  /* ---- sort ---- */
-  facetsRoot.addEventListener('change', (e) => {
-    const s = e.target.closest('[data-sort-select]'); if (!s) return;
-    state.sort = s.value; apply();
-  });
-
-  /* ---- mobile drawer ---- */
-  function closeMobile() { if (window.innerWidth < 1024) facetsRoot.classList.remove('is-open'); }
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('[data-open-filters]')) facetsRoot.classList.add('is-open');
-    if (e.target.closest('[data-close-filters]')) closeMobile();
-  });
-
-  syncInputs();
-  apply();
+  window.addEventListener('popstate', (e) => { if (e.state && e.state.facets) render(location.href, false); });
+  history.replaceState({ facets: true }, '', location.href);
+  paintAllPrices();
 })();

@@ -1,38 +1,46 @@
-{%- comment -%} Rendered by /search/suggest.json?section_id=predictive-search {%- endcomment -%}
-{%- if search.performed -%}
-<div class="psuggest">
-  {%- if search.results_count == 0 -%}
-    <p class="psuggest__none">{{ 'search.no_results' | t: terms: search.terms }}</p>
-  {%- else -%}
-    {%- assign prod_count = 0 -%}
-    <div class="psuggest__grid">
-      <div class="psuggest__col">
-        {%- for item in search.results limit: 5 -%}
-          {%- if item.object_type == 'product' -%}
-            {%- assign prod_count = prod_count | plus: 1 -%}
+{%- comment -%}
+  Predictive search results. Rendered by Shopify at
+  /search/suggest?q=…&resources[type]=…&section_id=predictive-search (see assets/search.js)
+{%- endcomment -%}
+{%- if predictive_search.performed -%}
+  {%- assign res = predictive_search.resources -%}
+  {%- assign total = res.products.size | plus: res.collections.size | plus: res.pages.size | plus: res.articles.size -%}
+  <div class="psuggest">
+    {%- if total == 0 -%}
+      <p class="psuggest__none">{{ 'search.no_results' | t: terms: predictive_search.terms }}</p>
+    {%- else -%}
+      <div class="psuggest__grid">
+        <div class="psuggest__col">
+          {%- if res.products.size > 0 -%}<p class="psuggest__head">{{ 'search.products' | t }}</p>{%- endif -%}
+          {%- for item in res.products -%}
             <a class="psuggest__item" href="{{ item.url }}">
               {%- if item.featured_image -%}<img src="{{ item.featured_image | image_url: width: 120 }}" alt="" width="60" height="60" loading="lazy">{%- endif -%}
               <span class="psuggest__info">
                 <strong>{{ item.title }}</strong>
-                <span class="psuggest__price">{{ item.price_min | money }}</span>
+                <span class="psuggest__price">{%- render 'price', product: item, size: 'sm' -%}</span>
               </span>
             </a>
+          {%- endfor -%}
+        </div>
+        <div class="psuggest__col psuggest__col--side">
+          {%- if res.queries.size > 0 -%}
+            <p class="psuggest__head">{{ 'search.suggestions' | t }}</p>
+            {%- for q in res.queries -%}
+              <a class="psuggest__link" href="{{ q.url }}">{{ q.styled_text }}</a>
+            {%- endfor -%}
           {%- endif -%}
-        {%- endfor -%}
-      </div>
-      <div class="psuggest__col psuggest__col--side">
-        {%- for item in search.results limit: 8 -%}
-          {%- if item.object_type == 'collection' or item.object_type == 'page' or item.object_type == 'article' -%}
-            <a class="psuggest__link" href="{{ item.url }}"><em>{{ item.object_type | capitalize }}</em>{{ item.title }}</a>
+          {%- if res.collections.size > 0 -%}
+            <p class="psuggest__head">{{ 'search.collections' | t }}</p>
+            {%- for item in res.collections -%}<a class="psuggest__link" href="{{ item.url }}">{{ item.title }}</a>{%- endfor -%}
           {%- endif -%}
-        {%- endfor -%}
-        <a class="psuggest__all link-underline" href="{{ routes.search_url }}?q={{ search.terms | url_encode }}">{{ 'search.view_all_results' | t }} →</a>
+          {%- if res.pages.size > 0 or res.articles.size > 0 -%}
+            <p class="psuggest__head">{{ 'search.pages' | t }}</p>
+            {%- for item in res.pages -%}<a class="psuggest__link" href="{{ item.url }}">{{ item.title }}</a>{%- endfor -%}
+            {%- for item in res.articles -%}<a class="psuggest__link" href="{{ item.url }}">{{ item.title }}</a>{%- endfor -%}
+          {%- endif -%}
+          <a class="psuggest__all link-underline" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&type=product">{{ 'search.view_all_results' | t }} →</a>
+        </div>
       </div>
-    </div>
-  {%- endif -%}
-</div>
+    {%- endif -%}
+  </div>
 {%- endif -%}
-
-{% schema %}
-{ "name": "Predictive search", "settings": [] }
-{% endschema %}

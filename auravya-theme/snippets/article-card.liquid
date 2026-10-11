@@ -14,6 +14,6 @@
     </div>
     <h3 class="acard__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
     <p class="acard__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 18 }}</p>
-    <a class="acard__more link-underline" href="{{ article.url }}">{{ 'general.view_all' | t }} <svg class="icon"><use href="#i-arrow-r"/></svg></a>
+    <a class="acard__more link-underline" href="{{ article.url }}">{{ 'general.read_more' | t }} <svg class="icon"><use href="#i-arrow-r"/></svg></a>
   </div>
 </article>

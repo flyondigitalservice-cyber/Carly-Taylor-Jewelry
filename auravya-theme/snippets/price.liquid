@@ -1,18 +1,42 @@
 {%- comment -%}
   Price display. Args: product | variant, show_compare (bool), size ('sm'|'md'|'lg'), class
+  Product cards show "From ₹x" when variants are priced differently.
 {%- endcomment -%}
-{%- assign p = variant | default: product.selected_or_first_available_variant | default: product -%}
-{%- assign show_compare = show_compare | default: true -%}
-<div class="price price--{{ size | default: 'md' }} {{ class }}" data-price-wrap>
-  {%- if p.compare_at_price > p.price and show_compare -%}
-    <span class="price__sale">{{ p.price | money }}</span>
-    <s class="price__compare">{{ p.compare_at_price | money }}</s>
-    <span class="price__off">-{{ p.compare_at_price | minus: p.price | times: 100.0 | divided_by: p.compare_at_price | round }}%</span>
+{%- liquid
+  if variant
+    assign p = variant
+    assign varies = false
+  else
+    assign p = product.selected_or_first_available_variant
+    assign varies = product.price_varies
+    if template.name == 'product' and size == 'lg'
+      assign varies = false
+    endif
+  endif
+  assign show_compare = show_compare | default: true
+  assign display_price = p.price
+  if varies
+    assign display_price = product.price_min
+  endif
+  if show_compare == false
+    assign on_sale = false
+  elsif p.compare_at_price > p.price
+    assign on_sale = true
+  else
+    assign on_sale = false
+  endif
+-%}
+<div class="price price--{{ size | default: 'md' }}{% if on_sale %} price--on-sale{% endif %} {{ class }}" data-price-wrap>
+  {%- if on_sale -%}
+    <span class="price__sale">{% if varies %}{{ 'products.from' | t }} {% endif %}{%- render 'money', amount: display_price -%}</span>
+    <span class="price__compare">{% if settings.show_mrp_label %}<span class="price__mrp">{{ 'products.mrp' | t }}</span> {% endif %}<s>{%- render 'money', amount: p.compare_at_price -%}</s></span>
+    {%- assign off = p.compare_at_price | minus: p.price | times: 100.0 | divided_by: p.compare_at_price | round -%}
+    <span class="price__off">{{ 'products.percent_off' | t: percent: off }}</span>
   {%- else -%}
-    <span class="price__regular">{{ p.price | money }}</span>
+    <span class="price__regular">{% if varies %}{{ 'products.from' | t }} {% endif %}{%- render 'money', amount: display_price -%}</span>
   {%- endif -%}
   {%- if p.unit_price -%}
-    <span class="price__unit">{{ p.unit_price | money }} {{ 'accessibility.unit_price_separator' | t }} {{ p.unit_price_measurement.reference_unit }}</span>
+    <span class="price__unit">{%- render 'money', amount: p.unit_price -%} {{ 'accessibility.unit_price_separator' | t }} {{ p.unit_price_measurement.reference_unit }}</span>
   {%- endif -%}
   {%- unless p.available -%}<span class="price__soldout">{{ 'products.sold_out' | t }}</span>{%- endunless -%}
 </div>

@@ -1,0 +1,44 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{{ 'gift_card.title' | t }} — {{ shop.name }}</title>
+  {%- render 'theme-styles' -%}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ content_for_header }}
+</head>
+<body class="template-gift-card">
+  {%- render 'icon-set' -%}
+  <main class="giftcard">
+    <div class="giftcard__card">
+      <span class="wordmark">{{ settings.logo_text | default: shop.name }}</span>
+      <p class="eyebrow">{{ 'gift_card.title' | t }}</p>
+      {%- capture gc_balance -%}{%- render 'money', amount: gift_card.balance -%}{%- endcapture -%}
+      <p class="giftcard__amount">{{ gc_balance }}</p>
+      {%- if gift_card.balance != gift_card.initial_value -%}
+        {%- capture gc_initial -%}{%- render 'money', amount: gift_card.initial_value -%}{%- endcapture -%}
+        <p class="giftcard__note">{{ 'gift_card.initial_value' | t: value: gc_initial }}</p>
+      {%- endif -%}
+      {%- if gift_card.expired or gift_card.enabled == false -%}
+        <p class="giftcard__status">{{ 'gift_card.expired' | t }}</p>
+      {%- elsif gift_card.expires_on -%}
+        <p class="giftcard__note">{{ 'gift_card.expires_on' | t: date: gift_card.expires_on | date: '%d %b %Y' }}</p>
+      {%- endif -%}
+      <p class="giftcard__label">{{ 'gift_card.code' | t }}</p>
+      <button type="button" class="giftcard__code" onclick="navigator.clipboard && navigator.clipboard.writeText(this.dataset.code); this.classList.add('is-copied');" data-code="{{ gift_card.code | escape }}">
+        {{ gift_card.code | format_code }} <svg class="icon"><use href="#i-copy"/></svg>
+      </button>
+      {%- if gift_card.pass_url -%}
+        <a class="giftcard__wallet" href="{{ gift_card.pass_url }}">{{ 'gift_card.add_to_wallet' | t }}</a>
+      {%- endif -%}
+      <div class="giftcard__actions">
+        <a class="btn" href="{{ shop.url }}" target="_blank" rel="noopener">{{ 'gift_card.shop' | t }}</a>
+        <button class="btn btn--ghost" type="button" onclick="window.print()">{{ 'gift_card.print' | t }}</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

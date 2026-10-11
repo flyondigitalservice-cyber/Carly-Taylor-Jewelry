@@ -1,0 +1,26 @@
+{%- comment -%} Recently viewed products — read from the shopper's browser, so it is personal and needs no app. {%- endcomment -%}
+<section class="related recent section-gap" id="Section-{{ section.id }}" hidden>
+  <div class="container">
+    <div class="sechead sechead--split">
+      <h2 class="h3">{{ section.settings.heading }}</h2>
+      <div class="sechead__nav">
+        <button class="iconbtn" type="button" data-carousel-prev aria-label="{{ 'general.previous' | t }}"><svg class="icon"><use href="#i-chev-l"/></svg></button>
+        <button class="iconbtn" type="button" data-carousel-next aria-label="{{ 'general.next' | t }}"><svg class="icon"><use href="#i-chev-r"/></svg></button>
+      </div>
+    </div>
+    <div class="carousel" data-recent data-limit="{{ section.settings.limit }}" data-exclude="{{ product.handle }}">
+      <div class="carousel__track" data-carousel-track data-recent-track></div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Recently viewed" },
+    { "type": "range", "id": "limit", "min": 4, "max": 12, "step": 1, "label": "Products to show", "default": 8 }
+  ],
+  "presets": [{ "name": "Recently viewed" }]
+}
+{% endschema %}

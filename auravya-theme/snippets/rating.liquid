@@ -1,23 +1,19 @@
 {%- comment -%}
-  Star rating. Args: product, show_count (bool), size.
-  Reads Shopify Product Reviews / Judge.me / metafield rating in that order.
+  Star rating from Shopify's standard review metafields (reviews.rating / reviews.rating_count),
+  which Judge.me, Loox, Yotpo, Okendo and most review apps write to. Args: product, show_count, size
 {%- endcomment -%}
-{%- assign rating = blank -%}
-{%- assign count = 0 -%}
-{%- if product.metafields.reviews.rating.value != blank -%}
-  {%- assign rating = product.metafields.reviews.rating.value | plus: 0 -%}
-  {%- assign count = product.metafields.reviews.rating.count | default: 0 -%}
-{%- elsif product.metafields.judgeme.reviews_count != blank -%}
-  {%- assign rating = product.metafields.judgeme.rating | plus: 0 -%}
-  {%- assign count = product.metafields.judgeme.reviews_count | plus: 0 -%}
-{%- endif -%}
-{%- if rating == blank and product.rating != blank -%}
-  {%- assign rating = product.rating | plus: 0 -%}
-  {%- assign count = product.rating_count | default: 0 -%}
-{%- endif -%}
-{%- if rating != blank and settings.reviews_enable -%}
+{%- liquid
+  assign r_mf = product.metafields.reviews.rating.value
+  if r_mf != blank
+    assign rating = r_mf.rating | plus: 0
+    assign scale = r_mf.scale_max | default: 5 | plus: 0
+    assign count = product.metafields.reviews.rating_count.value | default: 0
+  endif
+-%}
+{%- if r_mf != blank and settings.reviews_enable and count > 0 -%}
+  {%- assign pct = rating | divided_by: scale | times: 100 -%}
   <div class="rating rating--{{ size | default: 'sm' }}" role="img" aria-label="{{ 'accessibility.star_reviews' | t: count: rating }}">
-    <span class="rating__stars" style="--fill: {{ rating | divided_by: 5.0 | times: 100 }}%">
+    <span class="rating__stars" style="--fill: {{ pct }}%">
       <span class="rating__row rating__row--bg" aria-hidden="true">
         <svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg>
       </span>

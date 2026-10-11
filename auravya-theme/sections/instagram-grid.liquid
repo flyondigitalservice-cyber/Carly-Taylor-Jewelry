@@ -1,0 +1,44 @@
+{%- comment -%} Instagram-style photo grid. Each tile can link to a post or a product. {%- endcomment -%}
+<section class="igrid section-gap" id="Section-{{ section.id }}">
+  <div class="container">
+    <div class="sechead sechead--center">
+      {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      {%- if section.settings.handle != blank and settings.social_instagram != blank -%}
+        <a class="igrid__handle link-underline" href="{{ settings.social_instagram }}" target="_blank" rel="noopener"><svg class="icon"><use href="#i-instagram"/></svg>{{ section.settings.handle }}</a>
+      {%- endif -%}
+    </div>
+    <div class="igrid__grid">
+      {%- for block in section.blocks -%}
+        {%- assign link = block.settings.link | default: settings.social_instagram -%}
+        <a class="igrid__tile" href="{{ link | default: '#' }}"{% if link contains 'instagram.com' %} target="_blank" rel="noopener"{% endif %} {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '200, 300, 450, 600', sizes: '(min-width: 990px) 17vw, 33vw', alt: block.settings.image.alt }}
+          {%- else -%}
+            <span class="igrid__ph"><svg class="icon"><use href="#i-instagram"/></svg></span>
+          {%- endif -%}
+          <span class="igrid__hover" aria-hidden="true"><svg class="icon"><use href="#i-instagram"/></svg></span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Instagram grid",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "#WearAuravya" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Seen on you" },
+    { "type": "text", "id": "handle", "label": "Instagram handle", "default": "@auravya", "info": "Links to the Instagram URL in Theme settings → Social media." }
+  ],
+  "blocks": [
+    { "type": "image", "name": "Photo", "settings": [
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "url", "id": "link", "label": "Link", "info": "A post or a product. Defaults to your Instagram profile." }
+    ] }
+  ],
+  "max_blocks": 12,
+  "presets": [{ "name": "Instagram grid", "blocks": [{ "type": "image" }, { "type": "image" }, { "type": "image" }, { "type": "image" }, { "type": "image" }, { "type": "image" }] }]
+}
+{% endschema %}

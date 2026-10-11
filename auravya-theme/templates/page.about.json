@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "main": { "type": "main-page", "settings": {} },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "subheading": "Our story",
+        "heading": "Born in Jaipur, made for everyday India.",
+        "text": "Auravya began with a simple idea: real 925 silver should be beautiful enough for a wedding and easy enough for a Monday. Every piece is hand-finished by karigars in Jaipur, BIS hallmarked, and plated thick so the shine keeps up with you.",
+        "float_card": "Handcrafted in Jaipur since 2019",
+        "button_label": "Shop bestsellers",
+        "button_link": "/collections/all"
+      },
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "icon": "cert", "title": "BIS hallmarked 925", "text": "Real sterling silver, always." } },
+        "f2": { "type": "feature", "settings": { "icon": "shield", "title": "Lifetime plating warranty", "text": "Free re-plating, forever." } },
+        "f3": { "type": "feature", "settings": { "icon": "gift", "title": "Gift-ready packaging", "text": "Signature box with every order." } }
+      },
+      "block_order": ["f1", "f2", "f3"]
+    },
+    "trust": { "type": "trust-bar", "settings": {} }
+  },
+  "order": ["main", "story", "trust"]
+}

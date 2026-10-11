@@ -1,0 +1,74 @@
+{%- comment -%}
+  Shoppable reels: vertical videos (upload in Content → Files) each linked to a product.
+  Videos autoplay muted only while on screen to stay light on mobile data.
+{%- endcomment -%}
+<section class="reels section-gap" id="Section-{{ section.id }}">
+  <div class="container">
+    <div class="sechead sechead--split sechead--{{ section.settings.align }}">
+      <div>
+        {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+        {%- if section.settings.heading != blank -%}<h2 class="h2">{{ section.settings.heading }}</h2>{%- endif -%}
+      </div>
+      <div class="sechead__nav">
+        <button class="iconbtn" type="button" data-carousel-prev aria-label="{{ 'general.previous' | t }}"><svg class="icon"><use href="#i-chev-l"/></svg></button>
+        <button class="iconbtn" type="button" data-carousel-next aria-label="{{ 'general.next' | t }}"><svg class="icon"><use href="#i-chev-r"/></svg></button>
+      </div>
+    </div>
+    <div class="carousel">
+      <div class="carousel__track reels__track" data-carousel-track>
+        {%- for block in section.blocks -%}
+          {%- assign p = block.settings.product -%}
+          <div class="reel" {{ block.shopify_attributes }}>
+            <div class="reel__media">
+              {%- if block.settings.video != blank -%}
+                {{ block.settings.video | video_tag: muted: true, loop: true, playsinline: true, autoplay: false, preload: 'none', class: 'reel__video', image_size: '540x' }}
+                <button class="iconbtn reel__sound" type="button" data-reel-sound aria-label="{{ 'general.toggle_sound' | t }}"><svg class="icon"><use href="#i-volume-off"/></svg></button>
+              {%- elsif block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 540 | image_tag: loading: 'lazy', widths: '270, 405, 540', alt: block.settings.caption }}
+              {%- else -%}
+                <span class="reel__ph"><svg class="icon"><use href="#i-play"/></svg></span>
+              {%- endif -%}
+              {%- if block.settings.caption != blank -%}<p class="reel__caption">{{ block.settings.caption }}</p>{%- endif -%}
+            </div>
+            {%- if p != blank -%}
+              <a class="reel__product" href="{{ p.url }}">
+                {%- if p.featured_image -%}{{ p.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', width: 48, height: 48 }}{%- endif -%}
+                <span class="reel__pinfo"><strong>{{ p.title }}</strong>{%- render 'price', product: p, size: 'sm' -%}</span>
+              </a>
+              <button class="btn btn--sm btn--block reel__add" type="button" {% if p.has_only_default_variant %}data-add-to-cart="{{ p.selected_or_first_available_variant.id }}"{% else %}data-quick-add="{{ p.handle }}"{% endif %} {% unless p.available %}disabled{% endunless %}>
+                {%- if p.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+              </button>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shoppable reels",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Watch & shop" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Styled by you" },
+    { "type": "select", "id": "align", "label": "Heading align", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ], "default": "left" }
+  ],
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Reel",
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video", "info": "Vertical 9:16 MP4, under 15 MB works best." },
+        { "type": "image_picker", "id": "image", "label": "Image (if no video)" },
+        { "type": "text", "id": "caption", "label": "Caption" },
+        { "type": "product", "id": "product", "label": "Product" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [{ "name": "Shoppable reels", "blocks": [{ "type": "reel" }, { "type": "reel" }, { "type": "reel" }, { "type": "reel" }] }]
+}
+{% endschema %}

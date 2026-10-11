@@ -1,0 +1,21 @@
+{%- comment -%} Free-shipping progress bar. Server-rendered so it is correct on first paint; cart.js keeps it live. {%- endcomment -%}
+{%- liquid
+  assign fs_threshold = settings.free_shipping_threshold | times: 100
+  assign fs_remaining = fs_threshold | minus: cart.items_subtotal_price
+  if fs_threshold > 0
+    assign fs_pct = cart.items_subtotal_price | times: 100 | divided_by: fs_threshold | at_most: 100
+  else
+    assign fs_pct = 100
+  endif
+-%}
+<div class="shipbar{% if fs_remaining <= 0 %} is-done{% endif %} {{ class }}" data-shipbar>
+  <div class="shipbar__label" data-shipbar-label>
+    {%- if fs_remaining <= 0 -%}
+      {{ 'cart.free_shipping_done' | t }}
+    {%- else -%}
+      {%- capture fs_amount -%}{%- render 'money', amount: fs_remaining -%}{%- endcapture -%}
+      {{ 'cart.free_shipping_progress' | t: amount: fs_amount }}
+    {%- endif -%}
+  </div>
+  <div class="shipbar__track"><span class="shipbar__fill" data-shipbar-fill style="width:{{ fs_pct }}%"></span></div>
+</div>

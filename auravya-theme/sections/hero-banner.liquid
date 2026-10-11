@@ -44,31 +44,112 @@
 {
   "name": "Hero banner",
   "settings": [
-    { "type": "range", "id": "height", "min": 60, "max": 100, "step": 5, "unit": "vh", "label": "Height", "default": 88 },
-    { "type": "select", "id": "layout", "label": "Layout", "options": [
-      { "value": "split", "label": "Text left / image right" },
-      { "value": "overlay", "label": "Text over image" }
-    ], "default": "split" },
-    { "type": "select", "id": "text_position", "label": "Text align", "options": [
-      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
-    ], "default": "left" }
+    {
+      "type": "range",
+      "id": "height",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Height",
+      "default": 88
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "split",
+          "label": "Text left / image right"
+        },
+        {
+          "value": "overlay",
+          "label": "Text over image"
+        }
+      ],
+      "default": "split"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text align",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    }
   ],
-  "blocks": {
-    "slide": {
+  "blocks": [
+    {
+      "type": "slide",
       "name": "Slide",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Festive Edit" },
-        { "type": "textarea", "id": "heading", "label": "Heading", "default": "Silver that stays,\nshine that speaks." },
-        { "type": "textarea", "id": "text", "label": "Text", "default": "925 sterling silver, plated in your choice of gold, rose gold or rhodium — crafted to be worn every day." },
-        { "type": "text", "id": "button_label", "label": "Button 1 label", "default": "Shop bestsellers" },
-        { "type": "url", "id": "button_link", "label": "Button 1 link" },
-        { "type": "text", "id": "button2_label", "label": "Button 2 label", "default": "Explore silver" },
-        { "type": "url", "id": "button2_link", "label": "Button 2 link" },
-        { "type": "text", "id": "usps", "label": "USPs (| separated)", "default": "Lifetime plating warranty|7-day easy returns" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "The Festive Edit"
+        },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Silver that stays,\nshine that speaks."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "925 sterling silver, plated in your choice of gold, rose gold or rhodium — crafted to be worn every day."
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button 1 label",
+          "default": "Shop bestsellers"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button 1 link"
+        },
+        {
+          "type": "text",
+          "id": "button2_label",
+          "label": "Button 2 label",
+          "default": "Explore silver"
+        },
+        {
+          "type": "url",
+          "id": "button2_link",
+          "label": "Button 2 link"
+        },
+        {
+          "type": "text",
+          "id": "usps",
+          "label": "USPs (| separated)",
+          "default": "Lifetime plating warranty|7-day easy returns"
+        }
       ]
     }
-  },
-  "presets": [{ "name": "Hero banner" }]
+  ],
+  "presets": [
+    {
+      "name": "Hero banner"
+    }
+  ]
 }
 {% endschema %}

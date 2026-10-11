@@ -1,0 +1,20 @@
+{%- comment -%}
+  Newsletter sign-up using Shopify's customer form (creates a subscribed customer, honours double opt-in).
+  Args: form_id (unique), class
+{%- endcomment -%}
+{%- form 'customer', id: form_id, class: 'newsform', novalidate: 'novalidate' -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+  {%- if form.posted_successfully? -%}
+    <p class="newsform__msg newsform__msg--ok" role="status"><svg class="icon"><use href="#i-check"/></svg>{{ 'newsletter.success' | t }}</p>
+  {%- else -%}
+    <div class="newsform__row">
+      <input class="input" type="email" name="contact[email]" placeholder="{{ 'newsletter.placeholder' | t }}" aria-label="{{ 'newsletter.placeholder' | t }}"
+             autocomplete="email" inputmode="email" required value="{{ form.email }}"
+             {% if form.errors %}aria-invalid="true" aria-describedby="{{ form_id }}-error"{% endif %}>
+      <button class="btn" type="submit">{{ 'newsletter.button' | t }}</button>
+    </div>
+    {%- if form.errors -%}
+      <p class="newsform__msg newsform__msg--err" id="{{ form_id }}-error" role="alert">{{ 'newsletter.error' | t }}</p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endform -%}
