@@ -15,7 +15,7 @@
           {%- if block.settings.image != blank -%}
             {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '200, 300, 450, 600', sizes: '(min-width: 990px) 17vw, 33vw', alt: block.settings.image.alt }}
           {%- else -%}
-            <span class="igrid__ph"><svg class="icon"><use href="#i-instagram"/></svg></span>
+            {%- render 'starter-image', index: forloop.index0, alt: '' -%}
           {%- endif -%}
           <span class="igrid__hover" aria-hidden="true"><svg class="icon"><use href="#i-instagram"/></svg></span>
         </a>

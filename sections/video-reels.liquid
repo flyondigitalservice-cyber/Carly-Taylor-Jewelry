@@ -26,7 +26,7 @@
               {%- elsif block.settings.image != blank -%}
                 {{ block.settings.image | image_url: width: 540 | image_tag: loading: 'lazy', widths: '270, 405, 540', alt: block.settings.caption }}
               {%- else -%}
-                <span class="reel__ph"><svg class="icon"><use href="#i-play"/></svg></span>
+                {%- render 'starter-image', hint: block.settings.caption, index: forloop.index0, alt: block.settings.caption -%}<span class="reel__ph"><svg class="icon"><use href="#i-play"/></svg></span>
               {%- endif -%}
               {%- if block.settings.caption != blank -%}<p class="reel__caption">{{ block.settings.caption }}</p>{%- endif -%}
             </div>

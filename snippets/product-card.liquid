@@ -30,7 +30,7 @@
           }}
         {%- endif -%}
       {%- else -%}
-        <span class="pcard__ph" aria-hidden="true"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+        {%- assign ph_index = index | default: 0 | modulo: 6 | plus: 1 -%}{%- assign ph_name = 'product-' | append: ph_index -%}{{ ph_name | placeholder_svg_tag: 'pcard__phsvg' }}
       {%- endif -%}
       <span class="pcard__tint" aria-hidden="true"></span>
     </a>

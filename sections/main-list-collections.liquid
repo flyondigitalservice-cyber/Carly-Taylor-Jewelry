@@ -15,7 +15,7 @@
             {%- elsif collection.products.first.featured_image -%}
               <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" alt="" width="600" height="600" loading="lazy">
             {%- else -%}
-              <span class="catgrid__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+              {%- render 'starter-image', hint: collection.title, index: forloop.index0, alt: collection.title -%}
             {%- endif -%}
           </div>
           <span class="catgrid__label">{{ collection.title }} <svg class="icon"><use href="#i-arrow-ur"/></svg></span>

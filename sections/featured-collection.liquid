@@ -26,6 +26,8 @@
             <div class="carousel__slide">
               {%- render 'product-card', product: product, index: forloop.index0 -%}
             </div>
+          {%- else -%}
+            {%- for i in (1..limit) -%}<div class="carousel__slide">{%- render 'placeholder-card', index: forloop.index0 -%}</div>{%- endfor -%}
           {%- endfor -%}
         </div>
       </div>
@@ -33,6 +35,8 @@
       <div class="pgrid pgrid--{{ section.settings.columns }}">
         {%- for product in col.products limit: limit -%}
           {%- render 'product-card', product: product, index: forloop.index0 -%}
+        {%- else -%}
+          {%- for i in (1..limit) -%}{%- render 'placeholder-card', index: forloop.index0 -%}{%- endfor -%}
         {%- endfor -%}
       </div>
     {%- endif -%}

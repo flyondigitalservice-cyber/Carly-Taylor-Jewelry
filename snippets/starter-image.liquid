@@ -1,0 +1,28 @@
+{%- comment -%}
+  Bundled starter photography so a fresh store never shows empty grey boxes.
+  Shown only when the merchant has not uploaded an image; replace it from the theme editor.
+  Args: hint (text to match, e.g. a collection title), index (fallback rotation), class, alt, loading, sizes
+{%- endcomment -%}
+{%- liquid
+  assign pool = 'av-cat-necklaces,av-cat-earrings,av-cat-bracelets,av-cat-anklets,av-pearl-hoops,av-earrings-stand,av-necklace-bust' | split: ','
+  assign h = hint | downcase
+  assign file = ''
+  if h contains 'necklace' or h contains 'pendant' or h contains 'chain' or h contains 'mangalsutra' or h contains 'festive'
+    assign file = 'av-cat-necklaces'
+  elsif h contains 'earring' or h contains 'jhumk' or h contains 'stud'
+    assign file = 'av-cat-earrings'
+  elsif h contains 'bracelet' or h contains 'bangle' or h contains 'kada' or h contains 'gift'
+    assign file = 'av-cat-bracelets'
+  elsif h contains 'anklet' or h contains 'payal' or h contains 'toe' or h contains 'everyday' or h contains 'daily'
+    assign file = 'av-cat-anklets'
+  elsif h contains 'ring' or h contains 'him' or h contains 'men'
+    assign file = 'av-earrings-stand'
+  elsif h contains 'hero' or h contains 'banner'
+    assign file = 'av-necklace-bust'
+  endif
+  if file == ''
+    assign i = index | default: 0 | modulo: pool.size
+    assign file = pool[i]
+  endif
+-%}
+<img class="{{ class }} is-starter" src="{{ file | append: '.jpg' | asset_url }}" alt="{{ alt | escape }}" loading="{{ loading | default: 'lazy' }}" decoding="async" width="960" height="1200">

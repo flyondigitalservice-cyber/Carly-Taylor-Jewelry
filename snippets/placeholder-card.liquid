@@ -1,0 +1,30 @@
+{%- comment -%} Sample product card shown only while a collection is empty (fresh store / theme editor). Args: index {%- endcomment -%}
+{%- liquid
+  assign names = 'Star Constellation Necklace,Pearl Drop Hoops,Silver Payal Anklet,Solitaire Promise Ring,Charm Bead Bracelet,Oxidised Jhumka Earrings,Heart Pendant,Twisted Toe Ring' | split: ','
+  assign hints = 'necklace,earring,anklet,ring,bracelet,earring,necklace,anklet' | split: ','
+  assign prices = '149900,129900,99900,89900,169900,119900,139900,49900' | split: ','
+  assign mrps = '199900,0,129900,0,219900,0,0,69900' | split: ','
+  assign i = index | default: 0 | modulo: 8
+  assign price = prices[i] | plus: 0
+  assign mrp = mrps[i] | plus: 0
+-%}
+<div class="pcard pcard--{{ settings.card_style }} pcard--sample">
+  <div class="pcard__media">
+    <a class="pcard__link" href="{{ routes.all_products_collection_url }}">
+      {%- render 'starter-image', hint: hints[i], index: i, class: 'pcard__img pcard__img--1', alt: names[i] -%}
+    </a>
+    {%- if mrp > 0 -%}<div class="badges"><span class="badge badge--sale">{{ settings.badge_sale_text }}</span></div>{%- endif -%}
+  </div>
+  <div class="pcard__info">
+    {%- if settings.card_show_vendor -%}<span class="pcard__vendor">{{ settings.default_material }}</span>{%- endif -%}
+    <h3 class="pcard__title"><a href="{{ routes.all_products_collection_url }}">{{ names[i] }}</a></h3>
+    <div class="price price--sm{% if mrp > 0 %} price--on-sale{% endif %}">
+      {%- if mrp > 0 -%}
+        <span class="price__sale">{%- render 'money', amount: price -%}</span>
+        <span class="price__compare">{% if settings.show_mrp_label %}<span class="price__mrp">{{ 'products.mrp' | t }}</span> {% endif %}<s>{%- render 'money', amount: mrp -%}</s></span>
+      {%- else -%}
+        <span class="price__regular">{%- render 'money', amount: price -%}</span>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

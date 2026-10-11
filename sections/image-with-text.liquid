@@ -5,7 +5,7 @@
       {%- if section.settings.image != blank -%}
         <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}" loading="lazy" width="1200" height="1400">
       {%- else -%}
-        <div class="iwt__ph" aria-hidden="true"><svg class="icon"><use href="#i-sparkle"/></svg></div>
+        {%- render 'starter-image', hint: 'pearl', index: 4, alt: section.settings.heading -%}
       {%- endif -%}
       {%- if section.settings.float_card != blank -%}
         <div class="iwt__float">{{ section.settings.float_card }}</div>

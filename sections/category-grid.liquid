@@ -18,7 +18,7 @@
             {%- elsif block.settings.collection.products.first.featured_image != blank -%}
               <img src="{{ block.settings.collection.products.first.featured_image | image_url: width: 600 }}" alt="" width="600" height="600" loading="lazy">
             {%- else -%}
-              <span class="catgrid__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+              {%- assign hint = block.settings.label | append: ' ' | append: block.settings.collection.title -%}{%- render 'starter-image', hint: hint, index: forloop.index0, alt: block.settings.label -%}
             {%- endif -%}
           </div>
           <span class="catgrid__label">{{ block.settings.label | default: block.settings.collection.title | default: 'Shop all' }} <svg class="icon"><use href="#i-arrow-ur"/></svg></span>

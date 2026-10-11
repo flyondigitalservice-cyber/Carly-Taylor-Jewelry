@@ -966,3 +966,12 @@ textarea.input{resize:vertical;min-height:70px}
 }
 .crumbs li{display:inline-flex;align-items:center;gap:.45rem}
 @media (min-width:1024px){ .pdp__grid--sticky .gallery--thumbs ~ .pdp__badges{left:calc(84px + 1.8rem)} }
+
+/* ---------- Starter imagery & sample cards (fresh store) ---------- */
+.catgrid__media img.is-starter,.iwt__media img.is-starter,.igrid__tile img.is-starter,.reel__media img.is-starter,.pcard__media img.is-starter{width:100%;height:100%;object-fit:cover}
+.iwt__media > img.is-starter{aspect-ratio:6/7;border-radius:var(--radius)}
+.reel__media img.is-starter + .reel__ph{background:rgba(0,0,0,.18);color:#fff}
+.pcard__phsvg{width:100%;height:100%;background:color-mix(in srgb,var(--c-text) 5%,var(--c-surface));fill:color-mix(in srgb,var(--c-text) 30%,transparent)}
+.pcard--sample .pcard__media{aspect-ratio:var(--ratio);overflow:hidden}
+.footer__links--contact a{display:inline-flex;gap:.6rem;align-items:center}
+@media (max-width:639.98px){ .promo__badge{top:.8rem;right:.8rem;font-size:.6rem} .promo__copy{padding-top:2.4rem} }
