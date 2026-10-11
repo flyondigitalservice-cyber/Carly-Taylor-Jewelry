@@ -1,0 +1,62 @@
+{%- comment -%} Editorial split: image + copy with feature list {%- endcomment -%}
+<section class="iwt section-gap">
+  <div class="container iwt__inner iwt__inner--{{ section.settings.image_position }}">
+    <div class="iwt__media">
+      {%- if section.settings.image != blank -%}
+        <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}" loading="lazy" width="1200" height="1400">
+      {%- else -%}
+        <div class="iwt__ph" aria-hidden="true"><svg class="icon"><use href="#i-sparkle"/></svg></div>
+      {%- endif -%}
+      {%- if section.settings.float_card != blank -%}
+        <div class="iwt__float">{{ section.settings.float_card }}</div>
+      {%- endif -%}
+    </div>
+    <div class="iwt__copy">
+      {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+      <h2 class="h2">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<div class="rte">{{ section.settings.text | newline_to_br }}</div>{%- endif -%}
+      {%- if section.blocks.size > 0 -%}
+        <ul class="iwt__features">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>
+              <svg class="icon"><use href="#i-{{ block.settings.icon | default: 'check' }}"></use></svg>
+              <div><strong>{{ block.settings.title }}</strong>{%- if block.settings.text != blank -%}<span>{{ block.settings.text }}</span>{%- endif -%}</div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if section.settings.button_link != blank -%}
+        <a class="btn btn--lg" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "image_position", "label": "Image position", "options": [
+      { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }
+    ], "default": "left" },
+    { "type": "text", "id": "subheading", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Heading" },
+    { "type": "textarea", "id": "text", "label": "Text" },
+    { "type": "text", "id": "float_card", "label": "Floating card text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "blocks": {
+    "feature": {
+      "name": "Feature",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon id", "info": "shield, return, gift, cert, sparkle, box, truck, pencil" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  },
+  "presets": [{ "name": "Image with text", "blocks": [{ "type": "feature" }, { "type": "feature" }, { "type": "feature" }] }]
+}
+{% endschema %}

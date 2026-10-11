@@ -1,0 +1,99 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": { "height": 88, "layout": "split", "text_position": "left" },
+      "blocks": {
+        "s1": { "type": "slide", "settings": {
+          "image": "",
+          "eyebrow": "The Festive 2026 Edit",
+          "heading": "Silver that stays,\nshine that speaks.",
+          "text": "925 sterling silver, plated in your choice of gold, rose gold or rhodium — crafted to be worn every day, priced to be loved forever.",
+          "button_label": "Shop bestsellers",
+          "button_link": "/collections/best-seller",
+          "button2_label": "Explore 925 silver",
+          "button2_link": "/collections/silver-jewellery",
+          "usps": "Lifetime plating warranty|7-day easy returns|BIS-registered 925"
+        } },
+        "s2": { "type": "slide", "settings": {
+          "image": "",
+          "eyebrow": "Gifting, sorted",
+          "heading": "Under ₹3,000,\nover expectations.",
+          "text": "Curated silver gifts in signature Auravya boxes with a handwritten note.",
+          "button_label": "Shop gifts",
+          "button_link": "/collections/gifts-under-3000",
+          "button2_label": "",
+          "button2_link": "",
+          "usps": "Free gift wrap|Ships in 24 hrs"
+        } }
+      },
+      "block_order": ["s1", "s2"]
+    },
+    "trust": { "type": "trust-bar", "settings": {} },
+    "cats": {
+      "type": "category-grid",
+      "settings": { "subheading": "Shop by category", "heading": "Find your forever piece", "align": "left" },
+      "blocks": {
+        "c1": { "type": "tile", "settings": { "collection": "necklaces", "label": "Necklaces" } },
+        "c2": { "type": "tile", "settings": { "collection": "earrings", "label": "Earrings" } },
+        "c3": { "type": "tile", "settings": { "collection": "rings", "label": "Rings" } },
+        "c4": { "type": "tile", "settings": { "collection": "bracelets", "label": "Bracelets" } },
+        "c5": { "type": "tile", "settings": { "collection": "anklets", "label": "Anklets & more" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5"]
+    },
+    "best": {
+      "type": "featured-collection",
+      "settings": { "collection": "best-seller", "subheading": "Most loved", "heading": "Bestsellers", "layout": "carousel", "limit": 10, "align": "left" }
+    },
+    "promo1": {
+      "type": "promo-banner",
+      "settings": {
+        "style": "solid",
+        "bg": "#1E1A16",
+        "text_position": "center",
+        "eyebrow": "Pick your finish",
+        "heading": "One design. Four precious coatings.",
+        "text": "Every piece is available in bright silver, 18K gold vermeil, rose gold & hand-oxidised — choose the one that feels like you.",
+        "badge": "925 + plating",
+        "button_label": "Browse by coating",
+        "button_link": "/collections/silver-jewellery"
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "subheading": "Our craft",
+        "heading": "Made by hand, hallmarked by law, worn by you.",
+        "text": "Each Auravya piece begins as recycled 925 sterling silver, hand-set with conflict-free zircons by karigars in Jaipur, then plated to micron-level thickness so the shine keeps up with your life.",
+        "float_card": "3.2 micron plating · 5-layer protection",
+        "button_label": "Read our story",
+        "button_link": "/pages/about"
+      },
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "icon": "cert", "title": "BIS-registered 925", "text": "Hallmark-certified silver, always." } },
+        "f2": { "type": "feature", "settings": { "icon": "shield", "title": "Lifetime plating warranty", "text": "Free re-plating, forever." } },
+        "f3": { "type": "feature", "settings": { "icon": "gift", "title": "Signature packaging", "text": "Gift-ready box with every order." } }
+      },
+      "block_order": ["f1", "f2", "f3"]
+    },
+    "new": {
+      "type": "featured-collection",
+      "settings": { "collection": "new-arrival", "subheading": "Just landed", "heading": "New arrivals", "layout": "grid", "columns": "4", "limit": 8, "align": "left" }
+    },
+    "reviews": {
+      "type": "review-highlight",
+      "settings": { "subheading": "Loved across India", "heading": "What our circle says", "avg": "4.8", "count": "2,400" },
+      "blocks": {
+        "r1": { "type": "review", "settings": { "stars": 5, "quote": "The gold plating looks exactly like real gold. Wore the constellation necklace daily for 6 months — zero tarnish.", "author": "Meera S.", "meta": "Bengaluru · Star Constellation Necklace" } },
+        "r2": { "type": "review", "settings": { "stars": 5, "quote": "Ordered with engraving for my sister's wedding. Packaging made me tear up. Beautiful work.", "author": "Ananya R.", "meta": "Pune · Forever Heart Pendant" } },
+        "r3": { "type": "review", "settings": { "stars": 4, "quote": "Ring fit perfectly using their size guide. Rose gold finish is subtle and elegant.", "author": "Kavya N.", "meta": "Chennai · Solitaire Promise Ring" } },
+        "r4": { "type": "review", "settings": { "stars": 5, "quote": "COD + fast delivery to a tier-3 town. The payal is delicate yet sturdy. Buying two more as gifts.", "author": "Ritika J.", "meta": "Indore · Silver Payal Anklet" } }
+      },
+      "block_order": ["r1", "r2", "r3", "r4"]
+    },
+    "journal": { "type": "blog-preview", "settings": { "subheading": "The Journal", "heading": "Care, styling & silver lore" } }
+  },
+  "order": ["hero", "trust", "cats", "best", "promo1", "story", "new", "reviews", "journal"]
+}

@@ -1,0 +1,59 @@
+{%- comment -%} Testimonials / press marquee {%- endcomment -%}
+<section class="reviews-sec section-gap" style="--trust-bg: {{ section.settings.bg | default: settings.color_surface }}">
+  <div class="container">
+    <div class="sechead sechead--center">
+      {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+      <h2 class="h2">{{ section.settings.heading }}</h2>
+      <div class="reviews-sec__score">
+        <span class="rating rating--md"><span class="rating__stars" style="--fill: {{ section.settings.avg | default: 4.7 | divided_by: 5.0 | times: 100 }}%">
+          <span class="rating__row rating__row--bg"><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg></span>
+          <span class="rating__row rating__row--fg"><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg></span>
+        </span></span>
+        <span class="reviews-sec__count">{{ section.settings.avg | default: '4.7' }} / 5 · {{ section.settings.count | default: '2,400' }}+ verified reviews</span>
+      </div>
+    </div>
+  </div>
+  <div class="marquee" data-marquee>
+    <div class="marquee__track">
+      {%- for i in (1..2) -%}
+        <div class="marquee__group" aria-hidden="{% if i == 2 %}true{% else %}false{% endif %}">
+          {%- for block in section.blocks -%}
+            <figure class="tcard">
+              <div class="tcard__stars" style="--fill: {{ block.settings.stars | default: 5 | divided_by: 5.0 | times: 100 }}%">
+                <span class="rating__row rating__row--bg"><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg></span>
+                <span class="rating__row rating__row--fg"><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg></span>
+              </div>
+              <blockquote>{{ block.settings.quote }}</blockquote>
+              <figcaption><strong>{{ block.settings.author }}</strong>{%- if block.settings.meta != blank -%}<span>{{ block.settings.meta }}</span>{%- endif -%}</figcaption>
+            </figure>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Reviews highlight",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Loved across India" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What our circle says" },
+    { "type": "text", "id": "avg", "label": "Average rating", "default": "4.7" },
+    { "type": "text", "id": "count", "label": "Review count", "default": "2,400" },
+    { "type": "color", "id": "bg", "label": "Background" }
+  ],
+  "blocks": {
+    "review": {
+      "name": "Review",
+      "settings": [
+        { "type": "range", "id": "stars", "min": 1, "max": 5, "step": 1, "label": "Stars", "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Quote" },
+        { "type": "text", "id": "author", "label": "Author" },
+        { "type": "text", "id": "meta", "label": "Meta", "info": "e.g. city, product bought" }
+      ]
+    }
+  },
+  "presets": [{ "name": "Reviews highlight", "blocks": [{ "type": "review" }, { "type": "review" }, { "type": "review" }, { "type": "review" }] }]
+}
+{% endschema %}

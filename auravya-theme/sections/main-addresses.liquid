@@ -1,0 +1,52 @@
+<section class="addresses container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <div class="account__head">
+    <h1 class="h1">{{ 'customer.addresses' | t }}</h1>
+    <button class="btn btn--sm" type="button" data-address-new>{{ 'customer.add_address' | t }}</button>
+  </div>
+
+  <div class="addresses__grid" data-address-list>
+    {%- for address in customer.addresses -%}
+      <div class="contact-card addresses__card" data-address-id="{{ address.id }}">
+        {%- if address == customer.default_address -%}<span class="chip chip--ok">{{ 'customer.default_address' | t }}</span>{%- endif -%}
+        <p>{{ address | format_address }}</p>
+        <div class="addresses__actions">
+          <button class="link-underline" type="button" data-address-edit="{{ address.id }}">{{ 'customer.edit' | t }}</button>
+          <button class="link-underline err" type="button" data-address-delete="{{ address.id }}">{{ 'customer.delete' | t }}</button>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <div class="modal modal--inline" id="AddressForm" data-address-form hidden>
+    <div class="auth__card auth__card--wide">
+      <h2 class="h3" data-address-form-title>{{ 'customer.add_address' | t }}</h2>
+      {%- form 'customer_address', customer.new_address, class: 'cform' -%}
+        <div class="cform__row">
+          <label class="field"><span>{{ 'customer.first_name' | t }}</span><input class="input" type="text" name="address[first_name]" value="{{ form.first_name }}"></label>
+          <label class="field"><span>{{ 'customer.last_name' | t }}</span><input class="input" type="text" name="address[last_name]" value="{{ form.last_name }}"></label>
+        </div>
+        <label class="field"><span>Address 1</span><input class="input" type="text" name="address[address1]" value="{{ form.address1 }}"></label>
+        <label class="field"><span>Address 2</span><input class="input" type="text" name="address[address2]" value="{{ form.address2 }}"></label>
+        <div class="cform__row">
+          <label class="field"><span>City</span><input class="input" type="text" name="address[city]" value="{{ form.city }}"></label>
+          <label class="field"><span>State</span><input class="input" type="text" name="address[province]" value="{{ form.province }}"></label>
+        </div>
+        <div class="cform__row">
+          <label class="field"><span>PIN code</span><input class="input" type="text" name="address[zip]" value="{{ form.zip }}"></label>
+          <label class="field"><span>Country</span><input class="input" type="text" name="address[country]" value="{{ form.country | default: 'India' }}"></label>
+        </div>
+        <label class="field"><span>Phone</span><input class="input" type="tel" name="address[phone]" value="{{ form.phone }}"></label>
+        <label class="check"><input type="checkbox" name="address[default]" value="1"><span class="check__box"><svg class="icon"><use href="#i-check"/></svg></span><span>Set as default address</span></label>
+        <div class="cform__row">
+          <button class="btn" type="submit">Save address</button>
+          <button class="btn btn--ghost" type="button" data-address-cancel>Cancel</button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Addresses", "settings": [] }
+{% endschema %}

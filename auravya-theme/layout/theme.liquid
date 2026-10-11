@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code | default: 'en' }}" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="{{ settings.color_background }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="{{ shop.url }}">
+
+  {%- render 'head-seo' -%}
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 96, height: 96 }}">
+  {%- else -%}
+    <link rel="icon" type="image/svg+xml" href="{{ 'favicon.svg' | asset_url }}">
+  {%- endif -%}
+
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ content_for_header }}
+
+  <script>document.documentElement.className = document.documentElement.className.replace('no-js','js');</script>
+
+  {%- style -%}
+    :root{
+      --c-bg: {{ settings.color_background }};
+      --c-surface: {{ settings.color_surface }};
+      --c-text: {{ settings.color_text }};
+      --c-muted: {{ settings.color_text_muted }};
+      --c-accent: {{ settings.color_accent }};
+      --c-btn: {{ settings.color_button }};
+      --c-btn-text: {{ settings.color_button_text }};
+      --c-border: {{ settings.color_border }};
+      --c-sale: {{ settings.color_sale }};
+      --c-success: {{ settings.color_success }};
+      --c-star: {{ settings.color_star }};
+      --page-w: {{ settings.page_width }}px;
+      --sec-gap: {{ settings.space_sections }}px;
+      --body-size: {{ settings.type_body_scale }}px;
+      --head-scale: {{ settings.type_heading_scale | divided_by: 100.0 }};
+      --font-head: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+      --font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+      --ratio: {% if settings.card_image_ratio == 'portrait' %}4/5{% elsif settings.card_image_ratio == 'adaptive' %}auto{% else %}1/1{% endif %};
+      --logo-w: {{ settings.logo_width }}px;
+      --radius: 14px;
+      --shadow-1: 0 1px 2px rgba(30,26,22,.05), 0 8px 24px -12px rgba(30,26,22,.14);
+      --shadow-2: 0 12px 40px -12px rgba(30,26,22,.22);
+      --ease: cubic-bezier(.22,.61,.21,1);
+      {%- comment -%} Coating swatch colours parsed from settings.swatch_map {%- endcomment -%}
+      {%- assign swatch_lines = settings.swatch_map | newline_to_br | split: '<br />' -%}
+      {%- for line in swatch_lines -%}
+        {%- assign pair = line | split: ':' -%}
+        {%- if pair.size == 2 -%}
+          {%- assign sw_name = pair[0] | strip | handleize -%}
+          {%- assign sw_val = pair[1] | strip -%}
+          --sw-{{ sw_name }}: {{ sw_val }};
+        {%- endif -%}
+      {%- endfor -%}
+    }
+    {%- if settings.type_uppercase_buttons -%}
+      .btn, .eyebrow, .chip, .tabs button, .announce span { text-transform: uppercase; }
+    {%- endif -%}
+  {%- endstyle -%}
+
+  {{ 'theme.js' | asset_url | script_tag }}
+</head>
+
+<body class="template-{{ template.name | handleize }}{% if template.suffix %} template-suffix-{{ template.suffix }}{% endif %}">
+  <a class="skip-link" href="#MainContent">{{ 'general.skip_to_content' | t }}</a>
+
+  {%- render 'icon-set' -%}
+
+  {% sections 'header-group' %}
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  {%- render 'cart-drawer' -%}
+  {%- if settings.wishlist_enable -%}{%- render 'wishlist-drawer' -%}{%- endif -%}
+  {%- render 'quick-add-modal' -%}
+  {%- render 'size-guide-modal' -%}
+  {%- render 'zoom-lightbox' -%}
+  <div id="ToastHost" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+
+  {{ 'cart.js' | asset_url | script_tag }}
+  {%- if template.name == 'product' or template.name == 'collection' or template.name == 'search' or request.page_type == 'quick-view' -%}
+    {{ 'product.js' | asset_url | script_tag }}
+  {%- endif -%}
+  {%- if template.name == 'collection' or template.name == 'search' -%}
+    {{ 'collection.js' | asset_url | script_tag }}
+  {%- endif -%}
+  {{ 'search.js' | asset_url | script_tag }}
+
+  <script type="application/json" id="ShopRoutes">
+    {{ routes | json }}
+  </script>
+  <script type="application/json" id="ShopSettings">
+    {
+      "money_format": {{ shop.money_format | json }},
+      "cart_drawer": {{ settings.cart_drawer_enable | json }},
+      "free_ship": {{ settings.free_shipping_threshold | json }},
+      "free_ship_on": {{ settings.cart_free_shipping | json }},
+      "wishlist": {{ settings.wishlist_enable | json }},
+      "swatch_names": {{ settings.swatch_option_names | json }},
+      "size_names": {{ settings.size_option_names | json }},
+      "swatch_map": {{ settings.swatch_map | json }},
+      "gift_wrap": {{ settings.enable_gift_wrap | json }},
+      "coating_tint": {{ settings.enable_coating_tint | json }},
+      "gift_wrap_price": {{ settings.gift_wrap_price | json }},
+      "engraving": {{ settings.enable_engraving | json }},
+      "engraving_max": {{ settings.engraving_max_chars | json }},
+      "lowstock": {{ settings.lowstock_threshold | json }},
+      "engraving_price": {{ settings.engraving_price | json }},
+      "strings": {
+        "added": {{ 'products.added' | t | json }},
+        "sold_out": {{ 'products.sold_out' | t | json }},
+        "select_size": {{ 'products.select_size' | t | json }},
+        "select_coating": {{ 'products.select_coating' | t | json }},
+        "free_ship_done": {{ 'cart.free_shipping_done' | t | json }},
+        "free_ship_progress": {{ 'cart.free_shipping_progress' | t | json }},
+        "wl_added": {{ 'wishlist.added' | t | json }},
+        "wl_removed": {{ 'wishlist.removed' | t | json }},
+        "loading": {{ 'general.loading' | t | json }},
+        "only_left": {{ 'products.only_left' | t | json }},
+        "results_count": {{ 'collection.results_count' | t | json }}
+      }
+    }
+  </script>
+</body>
+</html>

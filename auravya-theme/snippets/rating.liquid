@@ -1,0 +1,30 @@
+{%- comment -%}
+  Star rating. Args: product, show_count (bool), size.
+  Reads Shopify Product Reviews / Judge.me / metafield rating in that order.
+{%- endcomment -%}
+{%- assign rating = blank -%}
+{%- assign count = 0 -%}
+{%- if product.metafields.reviews.rating.value != blank -%}
+  {%- assign rating = product.metafields.reviews.rating.value | plus: 0 -%}
+  {%- assign count = product.metafields.reviews.rating.count | default: 0 -%}
+{%- elsif product.metafields.judgeme.reviews_count != blank -%}
+  {%- assign rating = product.metafields.judgeme.rating | plus: 0 -%}
+  {%- assign count = product.metafields.judgeme.reviews_count | plus: 0 -%}
+{%- endif -%}
+{%- if rating == blank and product.rating != blank -%}
+  {%- assign rating = product.rating | plus: 0 -%}
+  {%- assign count = product.rating_count | default: 0 -%}
+{%- endif -%}
+{%- if rating != blank and settings.reviews_enable -%}
+  <div class="rating rating--{{ size | default: 'sm' }}" role="img" aria-label="{{ 'accessibility.star_reviews' | t: count: rating }}">
+    <span class="rating__stars" style="--fill: {{ rating | divided_by: 5.0 | times: 100 }}%">
+      <span class="rating__row rating__row--bg" aria-hidden="true">
+        <svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg><svg class="icon"><use href="#i-star-o"/></svg>
+      </span>
+      <span class="rating__row rating__row--fg" aria-hidden="true">
+        <svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg><svg class="icon"><use href="#i-star"/></svg>
+      </span>
+    </span>
+    {%- if show_count != false -%}<span class="rating__count">({{ count }})</span>{%- endif -%}
+  </div>
+{%- endif -%}

@@ -1,0 +1,158 @@
+{%- comment -%} Sticky header: logo, nav with mega menu, search, account, wishlist, cart {%- endcomment -%}
+<header class="header{% if settings.header_sticky %} header--sticky{% endif %}" data-header>
+  <div class="header__inner container">
+    <button class="iconbtn header__burger" data-menu-open aria-label="{{ 'general.menu' | t }}" aria-expanded="false">
+      <svg class="icon"><use href="#i-menu"/></svg>
+    </button>
+
+    <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {%- if settings.logo != blank -%}
+        <img src="{{ settings.logo | image_url: width: 400 }}" alt="{{ shop.name | escape }}" style="max-width:var(--logo-w)" width="400" height="120">
+      {%- else -%}
+        <span class="wordmark">{{ settings.logo_text | default: shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <nav class="header__nav" aria-label="Primary">
+      <ul class="header__menu">
+        {%- assign menu_handle = section.settings.menu | default: 'main-menu' -%}
+        {%- for link in linklists[menu_handle].links -%}
+          {%- assign is_mega = false -%}
+          {%- if settings.header_mega_menu and link.title == settings.mega_menu_trigger -%}{%- assign is_mega = true -%}{%- endif -%}
+          <li class="header__item{% if link.links.size > 0 %} has-sub{% endif %}{% if is_mega %} has-mega{% endif %}{% if link.active %} is-active{% endif %}">
+            <a href="{{ link.url }}" {% if link.links.size > 0 %}aria-haspopup="true" aria-expanded="false"{% endif %}>{{ link.title }}</a>
+            {%- if link.links.size > 0 and is_mega == false -%}
+              <ul class="header__sub">
+                {%- for child in link.links -%}
+                  <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="header__tools">
+      <button class="iconbtn header__searchbtn" data-search-open aria-label="{{ 'general.search' | t }}" aria-expanded="false">
+        <svg class="icon"><use href="#i-search"/></svg>
+      </button>
+      <a class="iconbtn header__acct hide-sm" href="{{ routes.account_url }}" aria-label="{{ 'header.account' | t }}">
+        <svg class="icon"><use href="#i-user"/></svg>
+      </a>
+      {%- if settings.wishlist_enable -%}
+        <button class="iconbtn header__wish hide-sm" data-wishlist-open aria-label="{{ settings.wishlist_label }}">
+          <svg class="icon"><use href="#i-heart"/></svg>
+          <span class="toolcount" data-wl-count hidden>0</span>
+        </button>
+      {%- endif -%}
+      <button class="iconbtn header__cart" data-cart-open aria-label="{{ 'general.cart' | t }}">
+        <svg class="icon"><use href="#i-bag"/></svg>
+        <span class="toolcount" data-cart-count hidden>0</span>
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} Predictive search panel {%- endcomment -%}
+  <div class="searchpanel" data-search-panel hidden>
+    <form class="searchpanel__form container" action="{{ routes.search_url }}" method="get" role="search">
+      <svg class="icon searchpanel__icon"><use href="#i-search"/></svg>
+      <input class="searchpanel__input" type="search" name="q" placeholder="{{ 'general.search_placeholder' | t }}"
+             autocomplete="off" data-predictive-input aria-label="{{ 'general.search' | t }}">
+      <input type="hidden" name="type" value="product">
+      <button class="iconbtn searchpanel__close" type="button" data-search-close aria-label="{{ 'general.close' | t }}"><svg class="icon"><use href="#i-close"/></svg></button>
+    </form>
+    <div class="searchpanel__results container" data-predictive-results></div>
+  </div>
+
+  {%- comment -%} Mega menu panel {%- endcomment -%}
+  {%- if settings.header_mega_menu -%}
+  <div class="mega" data-mega hidden>
+    <div class="mega__inner container">
+      <div class="mega__cols">
+        {%- for col in section.blocks -%}
+          <div class="mega__col">
+            {%- if col.settings.heading != blank -%}<h3 class="mega__head">{{ col.settings.heading }}</h3>{%- endif -%}
+            {%- if col.settings.collection != blank -%}
+              <a class="mega__tile" href="{{ col.settings.collection.url }}">
+                {%- if col.settings.collection.image -%}<img src="{{ col.settings.collection.image | image_url: width: 480 }}" alt="" loading="lazy">{%- endif -%}
+                <span>{{ col.settings.collection.title }} <svg class="icon"><use href="#i-arrow-ur"/></svg></span>
+              </a>
+            {%- endif -%}
+            <ul class="mega__links">
+              {%- for link in col.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+              {%- if col.settings.link_url != blank -%}<li><a class="mega__more" href="{{ col.settings.link_url }}">{{ col.settings.link_text | default: 'View all' }} <svg class="icon"><use href="#i-arrow-r"/></svg></a></li>{%- endif -%}
+            </ul>
+          </div>
+        {%- endfor -%}
+      </div>
+      {%- if section.settings.promo_image != blank -%}
+        <a class="mega__promo" href="{{ section.settings.promo_url | default: routes.all_products_collection_url }}">
+          <img src="{{ section.settings.promo_image | image_url: width: 700 }}" alt="{{ section.settings.promo_image.alt | escape }}" loading="lazy">
+          {%- if section.settings.promo_text != blank -%}<span class="mega__promo-text">{{ section.settings.promo_text }}</span>{%- endif -%}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} Mobile nav drawer {%- endcomment -%}
+  <div class="mnav" data-mnav hidden>
+    <div class="mnav__scrim" data-menu-close></div>
+    <div class="mnav__panel">
+      <div class="mnav__head">
+        <span class="wordmark wordmark--sm">{{ settings.logo_text | default: shop.name }}</span>
+        <button class="iconbtn" data-menu-close aria-label="{{ 'general.close' | t }}"><svg class="icon"><use href="#i-close"/></svg></button>
+      </div>
+      <nav class="mnav__body" aria-label="Mobile">
+        <ul class="mnav__list">
+          {%- assign menu_handle = section.settings.menu | default: 'main-menu' -%}
+        {%- for link in linklists[menu_handle].links -%}
+            <li class="mnav__item{% if link.links.size > 0 %} has-sub{% endif %}">
+              {%- if link.links.size > 0 -%}
+                <details class="mnav__acc">
+                  <summary><span>{{ link.title }}</span><svg class="icon"><use href="#i-chev-d"/></svg></summary>
+                  <ul class="mnav__sublist">
+                    {%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}
+                  </ul>
+                </details>
+              {%- else -%}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+        <div class="mnav__foot">
+          <a class="btn btn--block" href="{{ routes.account_url }}">{{ 'header.login' | t }}</a>
+          {%- render 'social-links', class: 'socials--row' -%}
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "header", "content": "Mega menu promo" },
+    { "type": "image_picker", "id": "promo_image", "label": "Promo image" },
+    { "type": "text", "id": "promo_text", "label": "Promo text" },
+    { "type": "url", "id": "promo_url", "label": "Promo link" }
+  ],
+  "blocks": {
+    "column": {
+      "name": "Mega column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Column heading" },
+        { "type": "collection", "id": "collection", "label": "Feature collection (tile)" },
+        { "type": "link_list", "id": "menu", "label": "Column links" },
+        { "type": "text", "id": "link_text", "label": "Bottom link text" },
+        { "type": "url", "id": "link_url", "label": "Bottom link URL" }
+      ]
+    }
+  },
+  "max_blocks": 4
+}
+{% endschema %}

@@ -1,0 +1,19 @@
+<section class="nf section-gap container">
+  <div class="nf__inner">
+    <span class="nf__code">404</span>
+    <h1 class="h1">{{ '404.title' | t }}</h1>
+    <p>{{ '404.subtitle' | t }}</p>
+    <form class="searchform searchform--sm" action="{{ routes.search_url }}" method="get" role="search">
+      <div class="searchform__row">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input class="input" type="search" name="q" placeholder="{{ 'general.search_placeholder' | t }}" aria-label="{{ 'general.search' | t }}">
+        <button class="btn" type="submit">{{ 'search.title' | t }}</button>
+      </div>
+    </form>
+    <a class="btn btn--ghost" href="{{ routes.root_url }}">{{ '404.cta' | t }}</a>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "404 page", "settings": [] }
+{% endschema %}

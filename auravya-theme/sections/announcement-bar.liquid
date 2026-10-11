@@ -1,0 +1,23 @@
+{%- assign msgs = section.settings.messages | default: settings.announcement_messages | split: '|' -%}
+{%- if msgs.size > 0 and msgs.first != blank -%}
+<div class="announce{% if section.settings.color_bg != blank %} announce--custom{% endif %}" style="{% if section.settings.color_bg != blank %}background:{{ section.settings.color_bg }};{% endif %}{% if section.settings.color_text != blank %}color:{{ section.settings.color_text }};{% endif %}"
+     data-announce data-rotate="{{ section.settings.rotate | default: settings.announcement_rotate }}">
+  <div class="announce__track" data-announce-track>
+    {%- for msg in msgs -%}
+      {%- if msg != blank -%}<span class="announce__msg{% if forloop.first %} is-active{% endif %}">{{ msg | strip }}</span>{%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    { "type": "textarea", "id": "messages", "label": "Messages (leave empty to use global)", "info": "One per line, separated by |" },
+    { "type": "range", "id": "rotate", "min": 0, "max": 12, "step": 1, "unit": "s", "label": "Rotate every", "default": 5 },
+    { "type": "color", "id": "color_bg", "label": "Background (optional)" },
+    { "type": "color", "id": "color_text", "label": "Text colour (optional)" }
+  ]
+}
+{% endschema %}

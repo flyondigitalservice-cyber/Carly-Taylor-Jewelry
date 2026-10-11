@@ -1,0 +1,54 @@
+{%- comment -%} Shop-by-category tiles {%- endcomment -%}
+<section class="catgrid section-gap">
+  <div class="container">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="sechead sechead--{{ section.settings.align }}">
+        {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+        <h2 class="h2">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+    <div class="catgrid__grid catgrid__grid--{{ section.blocks.size | at_most: 5 }}">
+      {%- for block in section.blocks -%}
+        <a class="catgrid__tile" href="{{ block.settings.collection.url | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+          <div class="catgrid__media">
+            {%- if block.settings.image != blank -%}
+              <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.label | default: block.settings.collection.title | escape }}" width="600" height="600" loading="lazy">
+            {%- elsif block.settings.collection.image != blank -%}
+              <img src="{{ block.settings.collection.image | image_url: width: 600 }}" alt="{{ block.settings.collection.title | escape }}" width="600" height="600" loading="lazy">
+            {%- elsif block.settings.collection.products.first.featured_image != blank -%}
+              <img src="{{ block.settings.collection.products.first.featured_image | image_url: width: 600 }}" alt="" width="600" height="600" loading="lazy">
+            {%- else -%}
+              <span class="catgrid__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+            {%- endif -%}
+          </div>
+          <span class="catgrid__label">{{ block.settings.label | default: block.settings.collection.title | default: 'Shop all' }} <svg class="icon"><use href="#i-arrow-ur"/></svg></span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Category grid",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Shop by category" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find your forever piece" },
+    { "type": "select", "id": "align", "label": "Heading align", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ], "default": "left" }
+  ],
+  "blocks": {
+    "tile": {
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image override" },
+        { "type": "text", "id": "label", "label": "Label override" }
+      ]
+    }
+  },
+  "max_blocks": 8,
+  "presets": [{ "name": "Category grid", "blocks": [{ "type": "tile" }, { "type": "tile" }, { "type": "tile" }, { "type": "tile" }, { "type": "tile" }] }]
+}
+{% endschema %}

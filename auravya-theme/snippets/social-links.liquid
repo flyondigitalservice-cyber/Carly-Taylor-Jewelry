@@ -1,0 +1,11 @@
+{%- assign has_social = false -%}
+{%- if settings.social_instagram != blank or settings.social_facebook != blank or settings.social_pinterest != blank or settings.social_youtube != blank or settings.social_whatsapp != blank -%}{%- assign has_social = true -%}{%- endif -%}
+{%- if has_social -%}
+<ul class="socials {{ class }}">
+  {%- if settings.social_instagram != blank -%}<li><a href="{{ settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram"><svg class="icon"><use href="#i-instagram"/></svg></a></li>{%- endif -%}
+  {%- if settings.social_facebook != blank -%}<li><a href="{{ settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook"><svg class="icon"><use href="#i-facebook"/></svg></a></li>{%- endif -%}
+  {%- if settings.social_pinterest != blank -%}<li><a href="{{ settings.social_pinterest }}" target="_blank" rel="noopener" aria-label="Pinterest"><svg class="icon"><use href="#i-pinterest"/></svg></a></li>{%- endif -%}
+  {%- if settings.social_youtube != blank -%}<li><a href="{{ settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube"><svg class="icon"><use href="#i-youtube"/></svg></a></li>{%- endif -%}
+  {%- if settings.social_whatsapp != blank -%}<li><a href="https://wa.me/{{ settings.social_whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="icon"><use href="#i-whatsapp"/></svg></a></li>{%- endif -%}
+</ul>
+{%- endif -%}

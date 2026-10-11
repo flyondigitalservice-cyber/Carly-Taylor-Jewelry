@@ -1,0 +1,49 @@
+<section class="cartpage container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <h1 class="h1">{{ 'cart.title' | t }} ({{ cart.item_count }})</h1>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="empty">
+      <svg class="icon empty__icon"><use href="#i-bag"/></svg>
+      <p>{{ 'cart.empty' | t }}</p>
+      <a class="btn" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+    </div>
+  {%- else -%}
+    {%- if settings.cart_free_shipping -%}
+      {%- assign remaining = settings.free_shipping_threshold | times: 100 | minus: cart.items_subtotal_price -%}
+      <div class="shipbar shipbar--page" data-shipbar>
+        <div class="shipbar__label" data-shipbar-label>
+          {%- if remaining <= 0 -%}{{ 'cart.free_shipping_done' | t }}{%- else -%}{{ 'cart.free_shipping_progress' | t: amount: remaining | money }}{%- endif -%}
+        </div>
+        <div class="shipbar__track"><span class="shipbar__fill" style="width:{{ cart.items_subtotal_price | times: 100.0 | divided_by: settings.free_shipping_threshold | divided_by: 100 | at_most: 100 }}%"></span></div>
+      </div>
+    {%- endif -%}
+
+    <div class="cartpage__grid">
+      <div class="cartpage__items">
+        {%- for item in cart.items -%}
+          {%- render 'cart-item', item: item -%}
+        {%- endfor -%}
+        <a class="link-underline cartpage__continue" href="{{ routes.all_products_collection_url }}"><svg class="icon"><use href="#i-chev-l"/></svg> {{ 'general.continue_shopping' | t }}</a>
+      </div>
+      <aside class="cartpage__summary">
+        <form action="{{ routes.cart_url }}" method="post" novalidate data-cart-page-form>
+          {%- if settings.cart_note_enable -%}
+            <label class="field"><span>{{ 'cart.note' | t }}</span>
+              <textarea class="input" rows="3" name="note" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
+            </label>
+          {%- endif -%}
+          <div class="drawer__subtotal"><span>{{ 'cart.subtotal' | t }}</span><strong>{{ cart.items_subtotal_price | money }}</strong></div>
+          <p class="drawer__fineprint">{{ 'cart.subtotal_note' | t }}</p>
+          {%- if settings.enable_cod -%}<p class="pform__cod"><svg class="icon"><use href="#i-cash"/></svg>{{ settings.cod_note }}</p>{%- endif -%}
+          <button class="btn btn--lg btn--block" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
+        </form>
+        {%- render 'payment-icons' -%}
+      </aside>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Cart page", "settings": [] }
+{% endschema %}

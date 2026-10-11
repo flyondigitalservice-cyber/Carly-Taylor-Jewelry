@@ -1,0 +1,159 @@
+{%- comment -%}
+  Filter + sort UI for collection & search. Uses native Shopify filter objects when available,
+  plus dedicated coating/size/price facets. Args: results (collection or search), id
+{%- endcomment -%}
+{%- assign sort_by = results.sort_by | default: results.default_sort_by | default: 'featured' -%}
+<div class="facets" data-facets id="Filters">
+  <form class="facets__form" action="" method="get" data-facet-form>
+    {%- comment -%} keep search term {%- endcomment -%}
+    {%- if request.page_type == 'search' -%}<input type="hidden" name="q" value="{{ search.terms | escape }}">{%- endif -%}
+    {%- if request.page_type == 'collection' -%}<input type="hidden" name="sort_by" value="{{ sort_by }}">{%- endif -%}
+
+    <div class="facets__head">
+      <h2 class="facets__title"><svg class="icon"><use href="#i-filter"/></svg>{{ 'collection.filters' | t }}</h2>
+      <button type="button" class="facets__clear link-underline" data-clear-filters>{{ 'collection.clear_all' | t }}</button>
+      <button type="button" class="iconbtn facets__close" data-close-filters aria-label="{{ 'general.close' | t }}"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+
+    <div class="facets__scroll">
+      {%- comment -%} Availability {%- endcomment -%}
+      <div class="facet" data-facet>
+        <button type="button" class="facet__head" aria-expanded="true">
+          <span>{{ 'collection.availability' | t }}</span><svg class="icon"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="facet__body">
+          <label class="check">
+            <input type="checkbox" name="filter.v_availability" value="1" {% if results.current_filters.availability %}checked{% endif %} data-facet-input>
+            <span class="check__box"><svg class="icon"><use href="#i-check"/></svg></span>
+            <span>{{ 'collection.in_stock_only' | t }}</span>
+          </label>
+        </div>
+      </div>
+
+      {%- comment -%} Coating / colour — aggregated from option values across results {%- endcomment -%}
+      {%- assign swatch_names = settings.swatch_option_names | split: ',' -%}
+      {%- assign size_names = settings.size_option_names | split: ',' -%}
+      {%- assign swatch_hs = '' -%}{%- for n in swatch_names -%}{%- assign nh = n | handleize -%}{%- assign swatch_hs = swatch_hs | append: '|' | append: nh -%}{%- endfor -%}{%- assign swatch_hs = swatch_hs | split: '|' -%}
+      {%- assign size_hs = '' -%}{%- for n in size_names -%}{%- assign nh = n | handleize -%}{%- assign size_hs = size_hs | append: '|' | append: nh -%}{%- endfor -%}{%- assign size_hs = size_hs | split: '|' -%}
+      {%- assign coating_values = '' -%}
+      {%- assign size_values = '' -%}
+      {%- assign price_cap_c = 0 -%}
+      {%- for p in results.products limit: 200 -%}
+        {%- if p.price_max > price_cap_c -%}{%- assign price_cap_c = p.price_max -%}{%- endif -%}
+        {%- for opt in p.options_with_values -%}
+          {%- assign oname = opt.name | handleize -%}
+          {%- if swatch_hs contains oname -%}
+            {%- for val in opt.values -%}{%- assign coating_values = coating_values | append: val | append: '|' -%}{%- endfor -%}
+          {%- endif -%}
+          {%- if size_hs contains oname -%}
+            {%- for val in opt.values -%}{%- assign size_values = size_values | append: val | append: '|' -%}{%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+      {%- assign coating_list = coating_values | split: '|' | uniq | compact -%}
+      {%- assign size_list = size_values | split: '|' | uniq | compact -%}
+
+      {%- if coating_list.size > 0 -%}
+        <div class="facet" data-facet>
+          <button type="button" class="facet__head" aria-expanded="true">
+            <span>{{ 'collection.coating' | t }}</span><svg class="icon"><use href="#i-chev-d"/></svg>
+          </button>
+          <div class="facet__body">
+            <div class="facet__swatches">
+              {%- for val in coating_list -%}
+                <label class="check check--swatch">
+                  <input type="checkbox" name="filter.p.custom.coating" value="{{ val | escape }}" data-facet-input data-coating="{{ val | escape }}">
+                  <span class="swatch__dot" style="--sw: var(--sw-{{ val | handleize }}, #ccc)"></span>
+                  <span>{{ val }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if size_list.size > 0 -%}
+        <div class="facet" data-facet>
+          <button type="button" class="facet__head" aria-expanded="false">
+            <span>{{ 'collection.size' | t }}</span><svg class="icon"><use href="#i-chev-d"/></svg>
+          </button>
+          <div class="facet__body">
+            <div class="facet__sizes">
+              {%- for val in size_list -%}
+                <label class="check check--size">
+                  <input type="checkbox" name="filter.v_option.size" value="{{ val | escape }}" data-facet-input data-size="{{ val | escape }}">
+                  <span>{{ val }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Category (product type) {%- endcomment -%}
+      <div class="facet" data-facet>
+        <button type="button" class="facet__head" aria-expanded="false">
+          <span>{{ 'collection.category' | t }}</span><svg class="icon"><use href="#i-chev-d"/></svg>
+        </button>
+        <div class="facet__body">
+          {%- assign types = '' -%}
+          {%- for p in results.products limit: 200 -%}{%- assign types = types | append: p.type | append: '|' -%}{%- endfor -%}
+          {%- assign type_list = types | split: '|' | uniq | compact -%}
+          {%- for t in type_list -%}
+            <label class="check">
+              <input type="checkbox" name="filter.p.product_type" value="{{ t | escape }}" data-facet-input>
+              <span class="check__box"><svg class="icon"><use href="#i-check"/></svg></span>
+              <span>{{ t }}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} Price {%- endcomment -%}
+      <div class="facet" data-facet>
+        <button type="button" class="facet__head" aria-expanded="false">
+          <span>{{ 'collection.price' | t }}</span><svg class="icon"><use href="#i-chev-d"/></svg>
+        </button>
+        {%- assign cap_c = settings.price_filter_cap | times: 100 -%}
+        {%- if price_cap_c > cap_c -%}{%- assign cap_c = price_cap_c -%}{%- endif -%}
+        {%- assign cap = cap_c | divided_by: 100 | plus: 999 | divided_by: 1000 | times: 1000 -%}
+        <div class="facet__body">
+          <div class="pricerange" data-price-range data-price-cap="{{ cap }}">
+            <div class="pricerange__track"><div class="pricerange__fill" data-price-fill></div></div>
+            <input type="range" min="0" max="{{ cap }}" step="250" value="0" data-price-min aria-label="{{ 'collection.min_price' | t }}">
+            <input type="range" min="0" max="{{ cap }}" step="250" value="{{ cap }}" data-price-max aria-label="{{ 'collection.max_price' | t }}">
+            <div class="pricerange__labels"><span data-price-label-min>{{ 0 | money }}</span><span data-price-label-max>{{ cap | money }}</span></div>
+            <input type="hidden" name="filter.v.price.gte" data-price-hidden-min>
+            <input type="hidden" name="filter.v.price.lte" data-price-hidden-max>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="facets__foot">
+      <button type="submit" class="btn btn--block" data-apply-filters>{{ 'collection.apply' | t }}</button>
+    </div>
+  </form>
+
+  <div class="toolbar">
+    <button type="button" class="btn btn--ghost toolbar__filter" data-open-filters>
+      <svg class="icon"><use href="#i-filter"/></svg>{{ 'collection.filter' | t }}
+      <span class="toolbar__count" data-active-count hidden>0</span>
+    </button>
+    <div class="toolbar__sort">
+      <label class="toolbar__sortlabel" for="SortBy-{{ id }}">{{ 'collection.sort_by' | t }}</label>
+      <div class="opt__select opt__select--sm">
+        <select id="SortBy-{{ id }}" class="select" data-sort-select>
+          {%- assign sorts = 'featured,best-selling,title-ascending,title-descending,price-ascending,price-descending,created-ascending,created-descending' | split: ',' -%}
+          {%- assign sort_keys = 'sort_featured,sort_best_selling,sort_az,sort_za,sort_price_asc,sort_price_desc,sort_date_asc,sort_date_desc' | split: ',' -%}
+          {%- for s in sorts -%}
+            <option value="{{ s }}" {% if sort_by == s %}selected{% endif %}>{{ 'collection.' | append: sort_keys[forloop.index0] | t }}</option>
+          {%- endfor -%}
+        </select>
+        <svg class="icon select__chev"><use href="#i-chev-d"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="facets__pills" data-filter-pills hidden></div>
+</div>

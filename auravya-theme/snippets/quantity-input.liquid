@@ -1,0 +1,12 @@
+{%- comment -%} Quantity stepper. Args: qty (default 1), min, max, id, small {%- endcomment -%}
+<quantity-input class="qty qty--{{ size | default: 'md' }}"{% if id %} data-for="{{ id }}"{% endif %}>
+  <button type="button" class="qty__btn" data-step="-1" aria-label="{{ 'general.decrease' | t }}">
+    <svg class="icon"><use href="#i-minus"/></svg>
+  </button>
+  <input class="qty__input" type="number" inputmode="numeric" name="{{ input_name | default: 'quantity' }}"
+         value="{{ qty | default: 1 }}" min="{{ min | default: 1 }}" {% if max %}max="{{ max }}"{% endif %}
+         aria-label="{{ 'general.quantity' | t }}" {% if id %}id="{{ id }}"{% endif %}>
+  <button type="button" class="qty__btn" data-step="1" aria-label="{{ 'general.increase' | t }}">
+    <svg class="icon"><use href="#i-plus"/></svg>
+  </button>
+</quantity-input>

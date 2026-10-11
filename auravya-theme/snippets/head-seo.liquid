@@ -1,0 +1,77 @@
+{%- comment -%} SEO meta: title, description, canonical, OG + Twitter, JSON-LD {%- endcomment -%}
+{%- if template.name == 'product' -%}
+  {%- assign seo_title = product.title | append: ' — ' | append: shop.name -%}
+  {%- assign seo_desc = product.description | strip_html | truncate: 200 -%}
+  {%- assign seo_img = product.featured_image -%}
+{%- elsif template.name == 'collection' -%}
+  {%- assign seo_title = collection.title | append: ' — ' | append: shop.name -%}
+  {%- assign seo_desc = collection.description | strip_html | truncate: 200 -%}
+  {%- assign seo_img = collection.image -%}
+{%- elsif template.name == 'article' -%}
+  {%- assign seo_title = article.title | append: ' — ' | append: shop.name -%}
+  {%- assign seo_desc = article.excerpt_or_content | strip_html | truncate: 200 -%}
+  {%- assign seo_img = article.image -%}
+{%- elsif template.name == 'page' -%}
+  {%- assign seo_title = page.title | append: ' — ' | append: shop.name -%}
+  {%- assign seo_desc = page.content | strip_html | truncate: 200 -%}
+{%- else -%}
+  {%- assign seo_title = page_title | append: ' — ' | append: shop.name -%}
+  {%- assign seo_desc = page_description | default: shop.description -%}
+{%- endif -%}
+
+<title>{{ seo_title | escape }}</title>
+{%- if seo_desc != blank -%}<meta name="description" content="{{ seo_desc | escape }}">{%- endif -%}
+<link rel="canonical" href="{{ canonical_url }}">
+
+<meta property="og:site_name" content="{{ shop.name | escape }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:title" content="{{ seo_title | escape }}">
+{%- if seo_desc != blank -%}<meta property="og:description" content="{{ seo_desc | escape }}">{%- endif -%}
+<meta property="og:type" content="{% if template.name == 'product' %}product{% elsif template.name == 'article' %}article{% else %}website{% endif %}">
+{%- if seo_img -%}
+  <meta property="og:image" content="{{ seo_img | image_url: width: 1200 }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="1200">
+{%- endif -%}
+{%- if template.name == 'product' -%}
+  <meta property="product:price:amount" content="{{ product.selected_or_first_available_variant.price | divided_by: 100.0 }}">
+  <meta property="product:price:currency" content="{{ shop.currency }}">
+{%- endif -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title | escape }}">
+{%- if seo_desc != blank -%}<meta name="twitter:description" content="{{ seo_desc | escape }}">{%- endif -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | json }}
+  {%- if settings.social_instagram != blank -%}, "sameAs": [{{ settings.social_instagram | json }}]{%- endif -%}
+}
+</script>
+{%- if template.name == 'product' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ canonical_url | json }},
+  "image": [{% for img in product.images limit: 5 %}{{ img | image_url: width: 1200 | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "description": {{ product.description | strip_html | truncate: 400 | json }},
+  "sku": {{ product.selected_or_first_available_variant.sku | default: product.handle | json }},
+  "brand": { "@type": "Brand", "name": {{ shop.name | json }} },
+  "offers": [{% for v in product.variants limit: 10 %}{
+    "@type": "Offer",
+    "price": {{ v.price | divided_by: 100.0 }},
+    "priceCurrency": {{ shop.currency | json }},
+    "availability": "{% if v.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "url": {{ shop.url | append: product.url | append: '?variant=' | append: v.id | json }}
+  }{% unless forloop.last %},{% endunless %}{% endfor %}]
+  {%- assign rmf = product.metafields.reviews.rating -%}
+  {%- if rmf != blank -%}
+  , "aggregateRating": { "@type": "AggregateRating", "ratingValue": {{ rmf.value | json }}, "reviewCount": {{ rmf.count | default: 1 | json }} }
+  {%- endif -%}
+}
+</script>
+{%- endif -%}

@@ -1,0 +1,62 @@
+<section class="contact-sec container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <header class="pagehead pagehead--center">
+    <span class="eyebrow">Concierge</span>
+    <h1 class="h1">{{ page.title | default: 'Get in touch' }}</h1>
+    <p class="pagehead__sub">{{ page.content | strip_html | truncatewords: 26 }}</p>
+  </header>
+
+  <div class="contact-sec__grid">
+    <div class="contact-sec__form">
+      {%- form 'contact', class: 'cform' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="formnote formnote--ok"><svg class="icon"><use href="#i-check"/></svg>{{ 'contact.success' | t }}</p>
+        {%- endif -%}
+        {%- if form.errors -%}
+          <p class="formnote formnote--err">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+        <div class="cform__row">
+          <label class="field">
+            <span>{{ 'contact.name' | t }}</span>
+            <input class="input" type="text" name="contact[name]" value="{{ form.name | default: customer.name }}" required>
+          </label>
+          <label class="field">
+            <span>{{ 'contact.email' | t }}</span>
+            <input class="input" type="email" name="contact[email]" value="{{ form.email | default: customer.email }}" required>
+          </label>
+        </div>
+        <label class="field">
+          <span>{{ 'contact.phone' | t }}</span>
+          <input class="input" type="tel" name="contact[phone]" value="{{ form.phone }}" inputmode="tel">
+        </label>
+        <label class="field">
+          <span>{{ 'contact.message' | t }}</span>
+          <textarea class="input" rows="5" name="contact[body]" required>{{ form.body }}</textarea>
+        </label>
+        <button class="btn btn--lg" type="submit">{{ 'contact.send' | t }}</button>
+      {%- endform -%}
+    </div>
+    <aside class="contact-sec__side">
+      <div class="contact-card">
+        <svg class="icon"><use href="#i-whatsapp"/></svg>
+        <strong>WhatsApp concierge</strong>
+        <p>Mon–Sat, 10am–7pm IST</p>
+        {%- if settings.social_whatsapp != blank -%}<a class="btn btn--ghost btn--sm" href="https://wa.me/{{ settings.social_whatsapp }}">Chat now</a>{%- endif -%}
+      </div>
+      <div class="contact-card">
+        <svg class="icon"><use href="#i-mail"/></svg>
+        <strong>Email</strong>
+        <p>{{ shop.email | default: 'care@auravya.in' }}</p>
+      </div>
+      <div class="contact-card">
+        <svg class="icon"><use href="#i-return"/></svg>
+        <strong>Returns & replating</strong>
+        <p>15-day returns · lifetime plating warranty on every piece.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Contact page", "settings": [] }
+{% endschema %}

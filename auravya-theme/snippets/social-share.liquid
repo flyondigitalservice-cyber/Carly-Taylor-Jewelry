@@ -1,0 +1,11 @@
+{%- assign share_url = canonical_url | url_encode -%}
+{%- assign share_title = product.title | default: page.title | default: shop.name | url_encode -%}
+<div class="share">
+  <span class="share__label">Share</span>
+  <ul>
+    <li><a href="https://wa.me/?text={{ share_title }}%20{{ share_url }}" target="_blank" rel="noopener" aria-label="Share on WhatsApp"><svg class="icon"><use href="#i-whatsapp"/></svg></a></li>
+    <li><a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url }}" target="_blank" rel="noopener" aria-label="Share on Facebook"><svg class="icon"><use href="#i-facebook"/></svg></a></li>
+    <li><a href="https://pinterest.com/pin/create/button/?url={{ share_url }}&description={{ share_title }}" target="_blank" rel="noopener" aria-label="Share on Pinterest"><svg class="icon"><use href="#i-pinterest"/></svg></a></li>
+    <li><button type="button" class="share__copy" data-copy-link aria-label="Copy link"><svg class="icon"><use href="#i-arrow-ur"/></svg></button></li>
+  </ul>
+</div>

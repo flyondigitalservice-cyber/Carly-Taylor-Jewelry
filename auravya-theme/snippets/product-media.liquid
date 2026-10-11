@@ -1,0 +1,36 @@
+{%- comment -%} PDP gallery: main stage + thumbnails + zoom. Args: product, layout ('stack'|'thumbs') {%- endcomment -%}
+<product-gallery class="gallery gallery--{{ section.settings.gallery_layout | default: 'thumbs' }}" data-gallery>
+  <div class="gallery__stage" data-stage>
+    {%- for media in product.media -%}
+      <figure class="gallery__slide{% if forloop.first %} is-active{% endif %}" data-slide="{{ media.id }}"
+              data-alt="{{ media.alt | default: '' | escape }}"
+              data-variant-ids="{% for v in product.variants %}{% if v.featured_media.id == media.id %}{{ v.id }} {% endif %}{% endfor %}">
+        {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
+          {{ media | media_tag: image_size: '1200x', controls: true, class: 'gallery__video' }}
+        {%- else -%}
+          <img src="{{ media | image_url: width: 1200 }}" alt="{{ media.alt | default: product.title | escape }}"
+               width="1200" height="1200" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async"
+               fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
+        {%- endif -%}
+        <span class="gallery__tint" aria-hidden="true"></span>
+        <button class="gallery__zoom iconbtn" type="button" data-zoom="{{ media | image_url: width: 2000 }}" aria-label="{{ 'products.quick_view' | t }}">
+          <svg class="icon"><use href="#i-zoom"/></svg>
+        </button>
+      </figure>
+    {%- endfor -%}
+    {%- if product.media.size == 0 -%}
+      <figure class="gallery__slide is-active"><span class="pcard__ph gallery__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span></figure>
+    {%- endif -%}
+  </div>
+
+  {%- if product.media.size > 1 -%}
+    <div class="gallery__thumbs" role="tablist" aria-label="Product images" data-thumbs>
+      {%- for media in product.media -%}
+        <button class="gallery__thumb{% if forloop.first %} is-active{% endif %}" type="button" role="tab"
+                data-thumb="{{ media.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Image {{ forloop.index }}">
+          <img src="{{ media | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy">
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</product-gallery>

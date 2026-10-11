@@ -1,0 +1,21 @@
+<section class="auth container section-gap">
+  <div class="auth__card">
+    <h1 class="h2">{{ 'customer.register_title' | t }}</h1>
+    {%- form 'create_customer', class: 'cform' -%}
+      {%- if form.errors -%}<p class="formnote formnote--err">{{ form.errors | default_errors }}</p>{%- endif -%}
+      <div class="cform__row">
+        <label class="field"><span>{{ 'customer.first_name' | t }}</span><input class="input" type="text" name="customer[first_name]" autocomplete="given-name"></label>
+        <label class="field"><span>{{ 'customer.last_name' | t }}</span><input class="input" type="text" name="customer[last_name]" autocomplete="family-name"></label>
+      </div>
+      <label class="field"><span>{{ 'customer.email' | t }}</span><input class="input" type="email" name="customer[email]" autocomplete="email" required></label>
+      <label class="field"><span>{{ 'customer.password' | t }}</span><input class="input" type="password" name="customer[password]" autocomplete="new-password" required></label>
+      <p class="auth__fine">By creating an account you agree to our terms & privacy policy.</p>
+      <button class="btn btn--lg btn--block" type="submit">{{ 'customer.create' | t }}</button>
+    {%- endform -%}
+    <p class="auth__alt">Already a member? <a class="link-underline" href="{{ routes.account_login_url }}">{{ 'customer.login_title' | t }}</a></p>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Register", "settings": [] }
+{% endschema %}

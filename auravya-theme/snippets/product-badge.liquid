@@ -1,0 +1,20 @@
+{%- comment -%} Badges overlay for product cards & PDP. Args: product {%- endcomment -%}
+{%- assign badges = '' -%}
+{%- if product.compare_at_price > product.price -%}
+  {%- capture badges -%}{{ badges }}<span class="badge badge--sale">{{ settings.badge_sale_text }}{% if settings.badge_sale_percent %} −{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round }}%{% endif %}</span>{%- endcapture -%}
+{%- endif -%}
+{%- unless product.available -%}
+  {%- capture badges -%}{{ badges }}<span class="badge badge--soldout">{{ settings.badge_soldout_text }}</span>{%- endcapture -%}
+{%- endunless -%}
+{%- if product.available -%}
+  {%- assign created = product.created_at | date: '%s' | plus: 0 -%}
+  {%- assign now = 'now' | date: '%s' | plus: 0 -%}
+  {%- assign age_days = now | minus: created | divided_by: 86400 -%}
+  {%- if age_days <= settings.badge_new_days -%}
+    {%- capture badges -%}{{ badges }}<span class="badge badge--new">{{ settings.badge_new_text }}</span>{%- endcapture -%}
+  {%- endif -%}
+  {%- if product.tags contains settings.badge_bestseller_tag -%}
+    {%- capture badges -%}{{ badges }}<span class="badge badge--best">{{ settings.badge_bestseller_text }}</span>{%- endcapture -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if badges != blank -%}<div class="badges {{ class }}">{{ badges }}</div>{%- endif -%}

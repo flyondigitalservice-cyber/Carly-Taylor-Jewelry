@@ -1,0 +1,28 @@
+<section class="blog-sec container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <header class="pagehead">
+    <span class="eyebrow">{{ shop.name }} Journal</span>
+    <h1 class="h1">{{ blog.title }}</h1>
+    {%- if blog.description != blank -%}<p class="pagehead__sub">{{ blog.description }}</p>{%- endif -%}
+  </header>
+  {%- if blog.tags.size > 0 -%}
+    <div class="blog-sec__tags">
+      <a class="chip{% if current_tags == blank %} is-active{% endif %}" href="{{ blog.url }}">All</a>
+      {%- for tag in blog.all_tags -%}
+        <a class="chip{% if current_tags contains tag %} is-active{% endif %}" href="{{ blog.url | append: '/tagged/' | append: tag | handleize }}">{{ tag }}</a>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- paginate blog.articles by 9 -%}
+    <div class="blogprev__grid blogprev__grid--full">
+      {%- for article in blog.articles -%}
+        {%- render 'article-card', article: article -%}
+      {%- endfor -%}
+    </div>
+    {%- render 'pagination', paginate: paginate -%}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{ "name": "Blog page", "settings": [] }
+{% endschema %}

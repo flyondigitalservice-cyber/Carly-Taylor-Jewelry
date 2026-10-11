@@ -1,0 +1,19 @@
+{%- comment -%} Blog card. Args: article {%- endcomment -%}
+<article class="acard">
+  <a class="acard__media" href="{{ article.url }}">
+    {%- if article.image -%}
+      <img src="{{ article.image | image_url: width: 900 }}" alt="{{ article.image.alt | default: article.title | escape }}" width="900" height="600" loading="lazy">
+    {%- else -%}
+      <span class="acard__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+    {%- endif -%}
+  </a>
+  <div class="acard__body">
+    <div class="acard__meta">
+      <span class="eyebrow">{{ article.tags.first | default: 'Journal' }}</span>
+      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %b %Y' }}</time>
+    </div>
+    <h3 class="acard__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+    <p class="acard__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 18 }}</p>
+    <a class="acard__more link-underline" href="{{ article.url }}">{{ 'general.view_all' | t }} <svg class="icon"><use href="#i-arrow-r"/></svg></a>
+  </div>
+</article>

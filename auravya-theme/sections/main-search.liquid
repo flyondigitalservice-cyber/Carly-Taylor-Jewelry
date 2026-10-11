@@ -1,0 +1,54 @@
+<section class="search-sec container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <header class="pagehead">
+    <h1 class="h1">{{ 'search.results_for' | t: terms: search.terms }}</h1>
+    <p class="pagehead__count">{{ 'search.results_count' | t: count: search.results_count }}</p>
+  </header>
+
+  <form class="searchform" action="{{ routes.search_url }}" method="get" role="search">
+    <input type="hidden" name="type" value="product">
+    <div class="searchform__row">
+      <svg class="icon"><use href="#i-search"/></svg>
+      <input class="input input--lg" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search_placeholder' | t }}" aria-label="{{ 'general.search' | t }}">
+      <button class="btn btn--lg" type="submit">{{ 'search.title' | t }}</button>
+    </div>
+  </form>
+
+  {%- if search.performed -%}
+    {%- if search.results_count == 0 -%}
+      <div class="empty">
+        <svg class="icon empty__icon"><use href="#i-search"/></svg>
+        <p>{{ 'search.no_results' | t: terms: search.terms }}</p>
+        <a class="btn btn--ghost" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    {%- else -%}
+      {%- paginate search.results by 12 -%}
+        <div class="collayout__inner">
+          <aside class="collayout__side">
+            {%- render 'facets', results: search, id: section.id -%}
+          </aside>
+          <div class="collayout__main">
+            <div class="pgrid pgrid--3" data-product-grid>
+              {%- for item in search.results -%}
+                {%- if item.object_type == 'product' -%}
+                  {%- render 'product-card', product: item, index: forloop.index0 -%}
+                {%- elsif item.object_type == 'article' or item.object_type == 'page' -%}
+                  <a class="searchhit" href="{{ item.url }}">
+                    <strong>{{ item.title }}</strong>
+                    <span>{{ item.content | strip_html | truncatewords: 14 }}</span>
+                    <em>{{ item.object_type | capitalize }}</em>
+                  </a>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            {%- render 'pagination', paginate: paginate -%}
+          </div>
+        </div>
+      {%- endpaginate -%}
+    {%- endif -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Search results", "settings": [] }
+{% endschema %}

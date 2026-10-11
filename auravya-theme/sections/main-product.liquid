@@ -1,0 +1,131 @@
+{%- comment -%} Product page: gallery + buy box + accordions + reviews + share {%- endcomment -%}
+{%- assign current = product.selected_or_first_available_variant -%}
+<section class="pdp container section-gap-narrow" data-product-page data-product-json='{{ product | json | escape }}'>
+  <div class="pdp__grid pdp__grid--{{ section.settings.layout }}">
+    <div class="pdp__gallery">
+      {%- render 'product-media', product: product -%}
+    </div>
+
+    <div class="pdp__buy">
+      {%- render 'breadcrumbs', product: product, collection: collection -%}
+      <div class="pdp__head">
+        <span class="pdp__vendor">{{ product.metafields.custom.material | default: '925 Sterling Silver' }}</span>
+        <h1 class="pdp__title">{{ product.title }}</h1>
+        {%- if settings.reviews_enable -%}
+          <a class="pdp__ratinglink" href="#Reviews-{{ section.id }}">
+            {%- render 'rating', product: product, size: 'sm' -%}
+          </a>
+        {%- endif -%}
+        {%- render 'price', product: product, size: 'lg' -%}
+        <p class="pdp__taxnote">Inclusive of all taxes</p>
+      </div>
+
+      {%- render 'product-form', product: product, id_prefix: 'PF' -%}
+
+      <div class="pdp__accs">
+        {%- assign t_details = 'products.details' | t -%}
+        {%- assign t_material = 'products.material' | t -%}
+        {%- assign t_care = 'products.care' | t -%}
+        {%- assign t_ship = 'products.shipping_returns' | t -%}
+        {%- capture details_html -%}
+          <div class="rte">{{ product.description }}</div>
+          {%- if product.metafields.custom.dimensions != blank -%}<p class="pdpspec"><strong>Dimensions:</strong> {{ product.metafields.custom.dimensions }}</p>{%- endif -%}
+          {%- if product.metafields.custom.weight != blank -%}<p class="pdpspec"><strong>Weight:</strong> {{ product.metafields.custom.weight }}</p>{%- endif -%}
+        {%- endcapture -%}
+        {%- render 'collapsible-row', title: t_details, content: details_html, open: true, icon: 'sparkle' -%}
+
+        {%- capture material_html -%}
+          <ul class="pdpul">
+            <li>{{ product.metafields.custom.material | default: '925 Sterling Silver (BIS hallmark)' }}</li>
+            {%- if product.metafields.custom.stone != blank -%}<li>Stone: {{ product.metafields.custom.stone }}</li>{%- endif -%}
+            <li>Coating: choose your finish above — every coating is nickel-free & hypoallergenic</li>
+            {%- if product.metafields.custom.plating != blank -%}<li>Plating: {{ product.metafields.custom.plating }}</li>{%- endif -%}
+          </ul>
+        {%- endcapture -%}
+        {%- render 'collapsible-row', title: t_material, content: material_html, icon: 'cert' -%}
+
+        {%- capture care_html -%}
+          <div class="rte">{{ product.metafields.custom.care_instructions | default: 'Wipe with the included soft cloth after wear. Keep away from perfume, chlorine and harsh chemicals. Store in your Auravya pouch, sealed. Free re-plating anytime under our lifetime plating warranty.' }}</div>
+        {%- endcapture -%}
+        {%- render 'collapsible-row', title: t_care, content: care_html, icon: 'shield' -%}
+
+        {%- capture ship_html -%}
+          <ul class="pdpul">
+            <li>Dispatch in 24 hrs; delivery in 2–4 days across India</li>
+            <li>Free shipping above {{ settings.free_shipping_threshold | money }}</li>
+            <li>{{ 'cart.subtotal_note' | t }}</li>
+            <li>15-day easy returns, no questions asked</li>
+            {%- if settings.enable_cod -%}<li>{{ settings.cod_note }}</li>{%- endif -%}
+          </ul>
+        {%- endcapture -%}
+        {%- render 'collapsible-row', title: t_ship, content: ship_html, icon: 'truck' -%}
+      </div>
+
+      {%- render 'social-share' -%}
+    </div>
+  </div>
+
+  {%- if settings.reviews_enable -%}
+    <div class="pdp__reviews" id="Reviews-{{ section.id }}">
+      <div class="sechead sechead--split">
+        <h2 class="h3">{{ 'products.reviews' | t }}</h2>
+        <span class="link-underline">{{ 'products.write_review' | t }}</span>
+      </div>
+      {%- if settings.reviews_provider == 'judgeme' -%}
+        <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}"></div>
+        <div class="jdgm-widget jdgm-rev" id="judgeme_product_reviews" data-id="{{ product.id }}"></div>
+      {%- elsif settings.reviews_provider == 'shopify' -%}
+        <div id="shopify-product-reviews" data-product-id="{{ product.id }}">{{ product.metafields.spr.reviews }}</div>
+      {%- endif -%}
+      {%- assign rmf = product.metafields.reviews.rating -%}
+      {%- assign rc = rmf.count | default: 0 -%}
+      {%- if rc > 0 -%}
+        <div class="revsummary">
+          <div class="revsummary__score">
+            <strong>{{ rmf.value }}</strong>
+            {%- render 'rating', product: product, show_count: false, size: 'md' -%}
+            <span>{{ 'products.based_on' | t: count: rc }}</span>
+          </div>
+          <div class="revsummary__bars">
+            {%- assign dist = product.metafields.reviews.rating_distribution | default: '0,0,0,0,0' -%}
+            {%- assign dist_arr = dist | split: ',' -%}
+            {%- for i in (1..5) reversed -%}
+              {%- assign cnt = dist_arr[forloop.index0] | default: '0' | plus: 0 -%}
+              {%- assign pct = cnt | times: 100.0 | divided_by: rc -%}
+              <div class="revbar"><span>{{ i }}★</span><span class="revbar__track"><span style="width:{{ pct }}%"></span></span><em>{{ cnt }}</em></div>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{%- if section.settings.show_related -%}
+  {%- render 'related-products', product: product, collection: collection, limit: section.settings.related_limit -%}
+{%- endif -%}
+
+<div class="pdp__stickybar" data-sticky-bar>
+  <div class="pdp__stickybar-inner container">
+    <div class="pdp__stickyinfo">
+      <strong>{{ product.title | truncate: 40 }}</strong>
+      {%- render 'price', product: product, size: 'sm', show_compare: false -%}
+    </div>
+    <button class="btn" data-sticky-add {% unless current.available %}disabled{% endunless %}>
+      {%- if current.available -%}{{ 'products.add_to_cart' | t }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+    </button>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    { "type": "select", "id": "layout", "label": "Gallery layout", "options": [
+      { "value": "sticky", "label": "Sticky gallery (2-col)" }, { "value": "stack", "label": "Stacked" }
+    ], "default": "sticky" },
+    { "type": "checkbox", "id": "show_related", "label": "Show related products", "default": true },
+    { "type": "range", "id": "related_limit", "min": 4, "max": 10, "step": 1, "label": "Related products", "default": 6 }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,32 @@
+<section class="auth container section-gap">
+  <div class="auth__card" id="login" data-auth-pane="login">
+    <h1 class="h2">{{ 'customer.login_title' | t }}</h1>
+    {%- form 'customer_login', class: 'cform' -%}
+      {%- if form.errors -%}<p class="formnote formnote--err">{{ form.errors | default_errors }}</p>{%- endif -%}
+      <label class="field"><span>{{ 'customer.email' | t }}</span><input class="input" type="email" name="customer[email]" autocomplete="email" required></label>
+      <label class="field"><span>{{ 'customer.password' | t }}</span><input class="input" type="password" name="customer[password]" autocomplete="current-password" required></label>
+      <button class="btn btn--lg btn--block" type="submit">{{ 'customer.login_title' | t }}</button>
+      <button class="link-underline auth__swap" type="button" data-auth-show="recover">{{ 'customer.forgot' | t }}</button>
+    {%- endform -%}
+    <p class="auth__alt">{{ 'customer.create' | t }}? <a class="link-underline" href="{{ routes.account_register_url }}">{{ 'customer.register_title' | t }}</a></p>
+  </div>
+
+  <div class="auth__card" id="recover" data-auth-pane="recover" hidden>
+    <h1 class="h2">{{ 'customer.recover_title' | t }}</h1>
+    <p class="auth__note">{{ 'customer.recover_note' | t }}</p>
+    {%- form 'recover_customer_password', class: 'cform' -%}
+      {%- if form.posted_successfully? -%}<p class="formnote formnote--ok">Reset link sent. Check your inbox.</p>{%- endif -%}
+      <label class="field"><span>{{ 'customer.email' | t }}</span><input class="input" type="email" name="email" required></label>
+      <button class="btn btn--lg btn--block" type="submit">{{ 'customer.submit_recover' | t }}</button>
+      <button class="link-underline auth__swap" type="button" data-auth-show="login">Back to login</button>
+    {%- endform -%}
+  </div>
+
+  {%- if shop.checkout.guest_login -%}
+    <div class="auth__guest">{%- form 'guest_login' -%}<button class="btn btn--ghost" type="submit">{{ 'customer.guest_continue' | t }}</button>{%- endform -%}</div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Login", "settings": [] }
+{% endschema %}

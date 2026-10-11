@@ -1,0 +1,93 @@
+<footer class="footer" role="contentinfo">
+  {%- if section.settings.show_newsletter -%}
+  <div class="footer__news">
+    <div class="container footer__newsinner">
+      <div class="footer__newstext">
+        <h2 class="h3">{{ 'newsletter.title' | t }}</h2>
+        <p>{{ section.settings.newsletter_text | default: settings.tagline }}</p>
+      </div>
+      <form class="newsform" data-newsletter novalidate>
+        <input class="input" type="email" name="contact[email]" placeholder="{{ 'newsletter.placeholder' | t }}" aria-label="{{ 'newsletter.placeholder' | t }}" autocomplete="email" inputmode="email" required>
+        <button class="btn" type="submit">{{ 'newsletter.button' | t }}</button>
+        <p class="newsform__msg" role="status"></p>
+      </form>
+    </div>
+  </div>
+  {%- endif -%}
+
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <a class="footer__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+        {%- if settings.logo != blank -%}
+          <img src="{{ settings.logo | image_url: width: 320 }}" alt="{{ shop.name | escape }}" width="320" height="96" loading="lazy">
+        {%- else -%}
+          <span class="wordmark">{{ settings.logo_text | default: shop.name }}</span>
+        {%- endif -%}
+      </a>
+      <p class="footer__tag">{{ section.settings.about_text | default: 'Handcrafted 925 sterling silver jewellery with your choice of precious plating. Made in India, loved everywhere.' }}</p>
+      {%- render 'social-links', class: 'socials--row' -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- assign col_menu = block.settings.menu -%}
+      {%- if col_menu != blank and col_menu.links.size > 0 -%}
+        <details class="footer__col" open {{ block.shopify_attributes }}>
+          <summary class="footer__head">{{ block.settings.heading | default: col_menu.title }}<svg class="icon" aria-hidden="true"><use href="#i-chev-d"/></svg></summary>
+          <div class="footer__colbody">
+            <ul class="footer__links">
+              {%- for link in col_menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+            </ul>
+          </div>
+        </details>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <details class="footer__col footer__col--contact" open>
+      <summary class="footer__head">{{ section.settings.contact_heading | default: 'Concierge' }}<svg class="icon" aria-hidden="true"><use href="#i-chev-d"/></svg></summary>
+      <div class="footer__colbody">
+        <ul class="footer__links footer__links--contact">
+          {%- if shop.email != blank -%}<li><a href="mailto:{{ shop.email }}"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>{{ shop.email }}</a></li>{%- endif -%}
+          {%- if settings.social_whatsapp != blank -%}<li><a href="https://wa.me/{{ settings.social_whatsapp }}" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>+{{ settings.social_whatsapp }}</a></li>{%- endif -%}
+          {%- assign first_notice = settings.announcement_messages | split: '|' | first | strip -%}
+          {%- if first_notice != blank -%}<li><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>{{ first_notice }}</li>{%- endif -%}
+        </ul>
+        {%- render 'payment-icons' -%}
+      </div>
+    </details>
+  </div>
+
+  <div class="footer__base">
+    <div class="container footer__baseinner">
+      {%- assign year = 'now' | date: '%Y' -%}
+      <p>{{ 'footer.copyright' | t: year: year, shop: shop.name }}</p>
+      <ul class="footer__legal">
+        {%- if shop.refund_policy != blank -%}<li><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | default: 'Refund policy' }}</a></li>{%- endif -%}
+        {%- if shop.shipping_policy != blank -%}<li><a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title | default: 'Shipping policy' }}</a></li>{%- endif -%}
+        {%- if shop.terms_of_service != blank -%}<li><a href="{{ shop.terms_of_service.url }}">{{ shop.terms_of_service.title | default: 'Terms of service' }}</a></li>{%- endif -%}
+        {%- if shop.privacy_policy != blank -%}<li><a href="{{ shop.privacy_policy.url }}">{{ shop.privacy_policy.title | default: 'Privacy policy' }}</a></li>{%- endif -%}
+      </ul>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter band", "default": true },
+    { "type": "text", "id": "newsletter_text", "label": "Newsletter subtext", "info": "Leave blank to use your brand tagline." },
+    { "type": "textarea", "id": "about_text", "label": "About blurb" },
+    { "type": "text", "id": "contact_heading", "label": "Contact heading", "default": "Concierge" }
+  ],
+  "blocks": {
+    "menu": {
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Column heading", "info": "Leave blank to use the menu's name." },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  },
+  "max_blocks": 4
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{%- comment -%} Breadcrumbs. Args: collection (optional), product (optional), page/custom title {%- endcomment -%}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="{{ routes.root_url }}">Home</a></li>
+    {%- if product and collection -%}
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><span aria-current="page">{{ product.title }}</span></li>
+    {%- elsif collection -%}
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><a href="{{ routes.collections_url }}">Collections</a></li>
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><span aria-current="page">{{ collection.title }}</span></li>
+    {%- elsif product -%}
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><a href="{{ routes.all_products_collection_url }}">Shop</a></li>
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><span aria-current="page">{{ product.title }}</span></li>
+    {%- elsif article -%}
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><a href="{{ blog.url }}">{{ blog.title }}</a></li>
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><span aria-current="page">{{ article.title }}</span></li>
+    {%- elsif page_title -%}
+      <li><svg class="icon"><use href="#i-chev-r"/></svg><span aria-current="page">{{ page_title }}</span></li>
+    {%- endif -%}
+  </ol>
+</nav>

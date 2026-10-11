@@ -1,0 +1,13 @@
+{%- comment -%} Accessible accordion row. Args: title, id, open (bool), content passed via block usage inline {%- endcomment -%}
+<details class="acc" id="{{ id | default: '' }}" {% if open %}open{% endif %} data-acc>
+  <summary class="acc__head">
+    <span class="acc__title">
+      {%- if icon -%}<svg class="icon acc__icon"><use href="#i-{{ icon }}"></use></svg>{%- endif -%}
+      {{ title }}
+    </span>
+    <svg class="icon acc__chev" aria-hidden="true"><use href="#i-chev-d"/></svg>
+  </summary>
+  <div class="acc__body">
+    <div class="acc__inner">{{ content }}</div>
+  </div>
+</details>

@@ -1,0 +1,32 @@
+<section class="listcol container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <header class="pagehead pagehead--center">
+    <span class="eyebrow">All collections</span>
+    <h1 class="h1">{{ 'general.view_all' | t }}</h1>
+  </header>
+  {%- paginate collections by 12 -%}
+    <div class="catgrid__grid catgrid__grid--4">
+      {%- for collection in collections -%}
+        {%- unless collection.handle == 'frontpage' or collection.products_count == 0 -%}
+        <a class="catgrid__tile" href="{{ collection.url }}">
+          <div class="catgrid__media">
+            {%- if collection.image -%}
+              <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" width="600" height="600" loading="lazy">
+            {%- elsif collection.products.first.featured_image -%}
+              <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" alt="" width="600" height="600" loading="lazy">
+            {%- else -%}
+              <span class="catgrid__ph"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+            {%- endif -%}
+          </div>
+          <span class="catgrid__label">{{ collection.title }} <svg class="icon"><use href="#i-arrow-ur"/></svg></span>
+        </a>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+    {%- render 'pagination', paginate: paginate -%}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{ "name": "Collections list", "settings": [] }
+{% endschema %}

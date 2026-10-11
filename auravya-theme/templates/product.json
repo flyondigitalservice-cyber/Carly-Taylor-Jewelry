@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "main-product", "settings": { "layout": "sticky", "show_related": true, "related_limit": 6 } } }, "order": ["main"] }

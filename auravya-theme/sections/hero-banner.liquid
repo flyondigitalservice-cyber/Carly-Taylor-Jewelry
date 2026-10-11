@@ -1,0 +1,74 @@
+{%- comment -%} Hero with layered image + editorial copy. Supports slides. {%- endcomment -%}
+<section class="hero hero--{{ section.settings.layout }}" style="--hero-h: {{ section.settings.height }}vh; --hero-align: {{ section.settings.text_position }};">
+  {%- for block in section.blocks -%}
+    <div class="hero__slide{% if forloop.first %} is-active{% endif %}" data-hero-slide {{ block.shopify_attributes }}>
+      {%- if block.settings.image != blank -%}
+        <div class="hero__bg">
+          <img src="{{ block.settings.image | image_url: width: 2400 }}" alt="{{ block.settings.image.alt | default: block.settings.heading | escape }}"
+               width="2400" height="1200" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
+        </div>
+      {%- else -%}
+        <div class="hero__bg hero__bg--tint" aria-hidden="true"></div>
+      {%- endif -%}
+      <div class="hero__content container">
+        <div class="hero__copy">
+          {%- if block.settings.eyebrow != blank -%}<span class="eyebrow hero__eyebrow">{{ block.settings.eyebrow }}</span>{%- endif -%}
+          <h1 class="hero__title">{{ block.settings.heading | newline_to_br }}</h1>
+          {%- if block.settings.text != blank -%}<p class="hero__text">{{ block.settings.text }}</p>{%- endif -%}
+          <div class="hero__ctas">
+            {%- if block.settings.button_link != blank -%}
+              <a class="btn btn--lg" href="{{ block.settings.button_link }}">{{ block.settings.button_label | default: 'Shop now' }}</a>
+            {%- endif -%}
+            {%- if block.settings.button2_link != blank -%}
+              <a class="btn btn--lg btn--ghost" href="{{ block.settings.button2_link }}">{{ block.settings.button2_label }}</a>
+            {%- endif -%}
+          </div>
+          {%- if block.settings.usps != blank -%}
+            <ul class="hero__usps">
+              {%- assign usps = block.settings.usps | split: '|' -%}
+              {%- for u in usps -%}<li><svg class="icon"><use href="#i-check"/></svg>{{ u | strip }}</li>{%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endfor -%}
+  {%- if section.blocks.size > 1 -%}
+    <div class="hero__dots" data-hero-dots>
+      {%- for block in section.blocks -%}<button class="hero__dot{% if forloop.first %} is-active{% endif %}" data-hero-dot="{{ forloop.index0 }}" aria-label="Slide {{ forloop.index }}"></button>{%- endfor -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "settings": [
+    { "type": "range", "id": "height", "min": 60, "max": 100, "step": 5, "unit": "vh", "label": "Height", "default": 88 },
+    { "type": "select", "id": "layout", "label": "Layout", "options": [
+      { "value": "split", "label": "Text left / image right" },
+      { "value": "overlay", "label": "Text over image" }
+    ], "default": "split" },
+    { "type": "select", "id": "text_position", "label": "Text align", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }
+    ], "default": "left" }
+  ],
+  "blocks": {
+    "slide": {
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The Festive Edit" },
+        { "type": "textarea", "id": "heading", "label": "Heading", "default": "Silver that stays,\nshine that speaks." },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "925 sterling silver, plated in your choice of gold, rose gold or rhodium — crafted to be worn every day." },
+        { "type": "text", "id": "button_label", "label": "Button 1 label", "default": "Shop bestsellers" },
+        { "type": "url", "id": "button_link", "label": "Button 1 link" },
+        { "type": "text", "id": "button2_label", "label": "Button 2 label", "default": "Explore silver" },
+        { "type": "url", "id": "button2_link", "label": "Button 2 link" },
+        { "type": "text", "id": "usps", "label": "USPs (| separated)", "default": "Lifetime plating warranty|7-day easy returns" }
+      ]
+    }
+  },
+  "presets": [{ "name": "Hero banner" }]
+}
+{% endschema %}

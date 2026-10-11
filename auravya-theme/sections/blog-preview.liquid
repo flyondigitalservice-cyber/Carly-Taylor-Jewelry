@@ -1,0 +1,33 @@
+{%- assign blog = section.settings.blog | default: blogs['journal'] | default: blogs.first -%}
+{%- if blog != blank -%}
+<section class="blogprev section-gap">
+  <div class="container">
+    <div class="sechead sechead--split">
+      <div>
+        {%- if section.settings.subheading != blank -%}<span class="eyebrow">{{ section.settings.subheading }}</span>{%- endif -%}
+        <h2 class="h2">{{ section.settings.heading | default: blog.title }}</h2>
+      </div>
+      <a class="sechead__all link-underline" href="{{ blog.url }}">All stories <svg class="icon"><use href="#i-arrow-r"/></svg></a>
+    </div>
+    <div class="blogprev__grid">
+      {%- assign articles_limit = section.settings.limit | default: 3 -%}
+      {%- for article in blog.articles limit: articles_limit -%}
+        {%- render 'article-card', article: article -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Journal preview",
+  "settings": [
+    { "type": "blog", "id": "blog", "label": "Blog" },
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "The Journal" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "range", "id": "limit", "min": 2, "max": 4, "step": 1, "label": "Posts", "default": 3 }
+  ],
+  "presets": [{ "name": "Journal preview" }]
+}
+{% endschema %}

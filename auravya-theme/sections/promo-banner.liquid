@@ -1,0 +1,42 @@
+{%- comment -%} Full-bleed promo banner with overlay copy + optional countdown-free CTA {%- endcomment -%}
+<section class="promo section-gap-narrow">
+  <div class="container">
+    <div class="promo__inner promo__inner--{{ section.settings.style }}" style="{% if section.settings.bg != blank %}background:{{ section.settings.bg }};{% endif %}">
+      {%- if section.settings.image != blank -%}
+        <div class="promo__bg"><img src="{{ section.settings.image | image_url: width: 2000 }}" alt="{{ section.settings.image.alt | escape }}" loading="lazy" width="2000" height="900"></div>
+      {%- endif -%}
+      <div class="promo__copy promo__copy--{{ section.settings.text_position }}">
+        {%- if section.settings.eyebrow != blank -%}<span class="eyebrow">{{ section.settings.eyebrow }}</span>{%- endif -%}
+        <h2 class="h2">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}<p>{{ section.settings.text }}</p>{%- endif -%}
+        {%- if section.settings.button_link != blank -%}
+          <a class="btn btn--lg{% if section.settings.style == 'image' %} btn--light{% endif %}" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.badge != blank -%}<span class="promo__badge">{{ section.settings.badge }}</span>{%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image" },
+    { "type": "color", "id": "bg", "label": "Background colour (if no image)" },
+    { "type": "select", "id": "style", "label": "Style", "options": [
+      { "value": "image", "label": "Image with overlay" }, { "value": "solid", "label": "Solid panel" }
+    ], "default": "image" },
+    { "type": "select", "id": "text_position", "label": "Text position", "options": [
+      { "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }
+    ], "default": "left" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Heading" },
+    { "type": "textarea", "id": "text", "label": "Text" },
+    { "type": "text", "id": "badge", "label": "Corner badge" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop the edit" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Promo banner" }]
+}
+{% endschema %}

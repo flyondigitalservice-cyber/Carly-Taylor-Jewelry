@@ -1,0 +1,33 @@
+{%- comment -%} Pagination. Requires `paginate` object in scope. Args: anchor {%- endcomment -%}
+{%- if paginate.pages > 1 -%}
+<nav class="pagination" role="navigation" aria-label="Pagination">
+  {%- if paginate.previous -%}
+    <a class="pagination__btn" href="{{ paginate.previous.url }}{{ anchor }}" rel="prev">
+      <svg class="icon"><use href="#i-chev-l"/></svg><span class="hide-sm">{{ 'general.previous' | t }}</span>
+    </a>
+  {%- else -%}
+    <span class="pagination__btn is-disabled"><svg class="icon"><use href="#i-chev-l"/></svg><span class="hide-sm">{{ 'general.previous' | t }}</span></span>
+  {%- endif -%}
+
+  <ol class="pagination__list">
+    {%- assign cur_page = paginate.current_page | append: '' -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <li><a class="pagination__num" href="{{ part.url }}{{ anchor }}">{{ part.title }}</a></li>
+      {%- elsif part.title == cur_page -%}
+        <li><span class="pagination__num is-current" aria-current="page">{{ part.title }}</span></li>
+      {%- else -%}
+        <li><span class="pagination__gap">{{ part.title }}</span></li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ol>
+
+  {%- if paginate.next -%}
+    <a class="pagination__btn" href="{{ paginate.next.url }}{{ anchor }}" rel="next">
+      <span class="hide-sm">{{ 'general.next' | t }}</span><svg class="icon"><use href="#i-chev-r"/></svg>
+    </a>
+  {%- else -%}
+    <span class="pagination__btn is-disabled"><span class="hide-sm">{{ 'general.next' | t }}</span><svg class="icon"><use href="#i-chev-r"/></svg></span>
+  {%- endif -%}
+</nav>
+{%- endif -%}

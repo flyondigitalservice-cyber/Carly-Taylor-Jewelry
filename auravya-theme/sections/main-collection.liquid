@@ -1,0 +1,67 @@
+{%- comment -%} Collection template: banner, breadcrumb, facets + product grid + pagination {%- endcomment -%}
+{%- assign per_page = section.settings.products_per_page | default: 12 -%}
+
+{%- if section.settings.show_banner and collection.description != blank or section.settings.show_banner and collection.image -%}
+<section class="colbanner" style="{% if section.settings.banner_bg != blank %}background:{{ section.settings.banner_bg }}{% endif %}">
+  <div class="container colbanner__inner">
+    {%- if collection.image and section.settings.show_image -%}
+      <div class="colbanner__img"><img src="{{ collection.image | image_url: width: 1600 }}" alt="{{ collection.title | escape }}" width="1600" height="500" loading="eager"></div>
+    {%- endif -%}
+    <div class="colbanner__copy">
+      {%- render 'breadcrumbs', collection: collection -%}
+      <h1 class="h1">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}<div class="rte colbanner__desc">{{ collection.description }}</div>{%- endif -%}
+    </div>
+  </div>
+</section>
+{%- else -%}
+<div class="container pagehead">
+  {%- render 'breadcrumbs', collection: collection -%}
+  <h1 class="h1">{{ collection.title }}</h1>
+  <p class="pagehead__count">{{ 'collection.product_count' | t: count: collection.products_count }}</p>
+</div>
+{%- endif -%}
+
+<section class="collayout container section-gap-narrow" id="CollectionBody">
+  {%- paginate collection.products by per_page -%}
+    <div class="collayout__inner">
+      <aside class="collayout__side">
+        {%- render 'facets', results: collection, id: section.id -%}
+      </aside>
+      <div class="collayout__main">
+        <div class="collayout__meta">
+          <p class="collayout__count" data-results-count>{{ 'collection.product_count' | t: count: paginate.items }}</p>
+        </div>
+        {%- if collection.products.size == 0 -%}
+          <div class="empty">
+            <svg class="icon empty__icon"><use href="#i-search"/></svg>
+            <p>{{ 'collection.no_results' | t }}</p>
+            <button class="btn btn--ghost" data-clear-filters>{{ 'collection.reset' | t }}</button>
+          </div>
+        {%- else -%}
+          <div class="pgrid pgrid--{{ section.settings.columns | default: 3 }}" data-product-grid>
+            {%- for product in collection.products -%}
+              {%- render 'product-card', product: product, index: forloop.index0 -%}
+            {%- endfor -%}
+          </div>
+          {%- render 'pagination', paginate: paginate, anchor: '#CollectionBody' -%}
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    { "type": "checkbox", "id": "show_banner", "label": "Show collection banner", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true },
+    { "type": "color", "id": "banner_bg", "label": "Banner background" },
+    { "type": "range", "id": "products_per_page", "min": 6, "max": 36, "step": 3, "label": "Products per page", "default": 12 },
+    { "type": "select", "id": "columns", "label": "Columns (desktop)", "options": [
+      { "value": "2", "label": "2" }, { "value": "3", "label": "3" }, { "value": "4", "label": "4" }
+    ], "default": "3" }
+  ]
+}
+{% endschema %}

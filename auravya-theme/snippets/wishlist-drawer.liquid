@@ -1,0 +1,17 @@
+{%- comment -%} Wishlist drawer. Persisted client-side (localStorage) by theme.js {%- endcomment -%}
+<div class="drawer" id="WishlistDrawer" data-drawer="wishlist" role="dialog" aria-modal="true" aria-label="{{ settings.wishlist_label }}" hidden>
+  <div class="drawer__scrim" data-drawer-close></div>
+  <aside class="drawer__panel drawer__panel--right">
+    <header class="drawer__head">
+      <h2 class="drawer__title"><svg class="icon"><use href="#i-heart"/></svg>{{ settings.wishlist_label }} <span class="drawer__count" data-wl-count>0</span></h2>
+      <button class="iconbtn" data-drawer-close aria-label="{{ 'general.close' | t }}"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="drawer__body" data-wishlist-body>
+      <div class="drawer__empty">
+        <svg class="icon drawer__emptyicon"><use href="#i-heart"/></svg>
+        <p>{{ 'wishlist.empty' | t }}</p>
+        <a class="btn" href="{{ routes.all_products_collection_url }}" data-drawer-close>{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    </div>
+  </aside>
+</div>

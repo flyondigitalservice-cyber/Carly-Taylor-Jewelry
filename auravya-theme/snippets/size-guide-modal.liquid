@@ -1,0 +1,63 @@
+{%- comment -%} Size guide modal: renders the size-guide page content + built-in ring size table {%- endcomment -%}
+<div class="modal" id="SizeGuide" data-modal="sizeguide" role="dialog" aria-modal="true" aria-label="{{ 'products.size_guide' | t }}" hidden>
+  <div class="modal__scrim" data-modal-close></div>
+  <div class="modal__panel modal__panel--narrow">
+    <button class="iconbtn modal__close" data-modal-close aria-label="{{ 'general.close' | t }}"><svg class="icon"><use href="#i-close"/></svg></button>
+    <div class="modal__body sizeguide">
+      <h2 class="sizeguide__title"><svg class="icon"><use href="#i-ruler"/></svg>{{ 'products.size_guide' | t }}</h2>
+      {%- assign sg = pages[settings.size_guide_page] -%}
+      {%- if sg != blank -%}
+        <div class="rte">{{ sg.content }}</div>
+      {%- else -%}
+        <div class="tabs" data-tabs>
+          <div class="tabs__bar" role="tablist">
+            <button class="is-active" role="tab" aria-selected="true" data-tab="ring">Rings</button>
+            <button role="tab" aria-selected="false" data-tab="bangle">Bangles & bracelets</button>
+            <button role="tab" aria-selected="false" data-tab="chain">Chains</button>
+          </div>
+          <div class="tabs__panel is-active" data-panel="ring">
+            <table class="table">
+              <thead><tr><th>India / UK</th><th>US</th><th>Circumference (mm)</th><th>Diameter (mm)</th></tr></thead>
+              <tbody>
+                <tr><td>8</td><td>4¼</td><td>48.0</td><td>15.3</td></tr>
+                <tr><td>10</td><td>5¼</td><td>50.6</td><td>16.1</td></tr>
+                <tr><td>12</td><td>6</td><td>51.9</td><td>16.5</td></tr>
+                <tr><td>14</td><td>7</td><td>54.4</td><td>17.3</td></tr>
+                <tr><td>16</td><td>8</td><td>57.0</td><td>18.1</td></tr>
+                <tr><td>18</td><td>9</td><td>59.5</td><td>18.9</td></tr>
+                <tr><td>20</td><td>10</td><td>62.1</td><td>19.8</td></tr>
+                <tr><td>22</td><td>11</td><td>64.6</td><td>20.6</td></tr>
+                <tr><td>24</td><td>12</td><td>67.2</td><td>21.4</td></tr>
+              </tbody>
+            </table>
+            <p class="sizeguide__tip">Wrap a thin paper strip around the widest part of your finger, mark where it meets, and measure in mm. When between sizes, choose the larger one.</p>
+          </div>
+          <div class="tabs__panel" data-panel="bangle">
+            <table class="table">
+              <thead><tr><th>Size</th><th>Bangle diameter (in)</th><th>Circumference (in)</th></tr></thead>
+              <tbody>
+                <tr><td>2.4 / S</td><td>2.40</td><td>7.54</td></tr>
+                <tr><td>2.6 / M</td><td>2.60</td><td>8.17</td></tr>
+                <tr><td>2.8 / L</td><td>2.80</td><td>8.80</td></tr>
+                <tr><td>3.0 / XL</td><td>3.00</td><td>9.42</td></tr>
+              </tbody>
+            </table>
+            <p class="sizeguide__tip">For adjustable bracelets & anklets, one size fits most (22–26 cm with extender).</p>
+          </div>
+          <div class="tabs__panel" data-panel="chain">
+            <table class="table">
+              <thead><tr><th>Length</th><th>Falls at</th></tr></thead>
+              <tbody>
+                <tr><td>14 in (35 cm)</td><td>Choker — base of neck</td></tr>
+                <tr><td>16 in (40 cm)</td><td>Collarbone</td></tr>
+                <tr><td>18 in (45 cm)</td><td>Just below collarbone (most popular)</td></tr>
+                <tr><td>20 in (50 cm)</td><td>Upper chest</td></tr>
+                <tr><td>24 in (60 cm)</td><td>Sternum</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+{%- assign items = section.settings.items | default: settings.trust_items | split: '|' -%}
+{%- assign icons = section.settings.icons | default: 'shield,return,gift,cert' | split: ',' -%}
+<section class="trustbar" style="--trust-bg: {{ section.settings.bg | default: settings.color_surface }}">
+  <div class="container trustbar__inner">
+    {%- for item in items -%}
+      {%- if item != blank -%}
+      <div class="trustbar__item">
+        <svg class="icon"><use href="#i-{{ icons[forloop.index0] | default: 'sparkle' | strip }}"></use></svg>
+        <span>{{ item | strip }}</span>
+      </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "settings": [
+    { "type": "textarea", "id": "items", "label": "Items (| separated, leave empty for global)", "info": "Icons used in order: shield, return, gift, cert" },
+    { "type": "text", "id": "icons", "label": "Icon ids (comma separated)", "default": "shield,return,gift,cert" },
+    { "type": "color", "id": "bg", "label": "Background" }
+  ],
+  "presets": [{ "name": "Trust bar" }]
+}
+{% endschema %}

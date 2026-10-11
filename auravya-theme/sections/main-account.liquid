@@ -1,0 +1,68 @@
+<section class="account container section-gap">
+  {%- render 'breadcrumbs' -%}
+  <div class="account__head">
+    <div>
+      <span class="eyebrow">{{ 'customer.account_title' | t }}</span>
+      <h1 class="h1">{{ customer.name | default: customer.email }}</h1>
+    </div>
+    <div class="account__actions">
+      <a class="btn btn--ghost btn--sm" href="{{ routes.account_addresses_url }}">{{ 'customer.addresses' | t }}</a>
+      <a class="btn btn--ghost btn--sm" href="{{ routes.account_logout_url }}">{{ 'customer.logout' | t }}</a>
+    </div>
+  </div>
+
+  <div class="account__grid">
+    <div class="account__orders">
+      <h2 class="h3">{{ 'customer.orders' | t }}</h2>
+      {%- paginate customer.orders by 10 -%}
+        {%- if customer.orders.size == 0 -%}
+          <div class="empty empty--sm">
+            <svg class="icon empty__icon"><use href="#i-box"/></svg>
+            <p>{{ 'customer.no_orders' | t }}</p>
+            <a class="btn btn--ghost" href="{{ routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+          </div>
+        {%- else -%}
+          <div class="tablewrap">
+            <table class="table table--orders">
+              <thead><tr><th>{{ 'customer.order_number' | t }}</th><th>{{ 'customer.order_date' | t }}</th><th>{{ 'customer.order_status' | t }}</th><th>{{ 'customer.order_total' | t }}</th><th></th></tr></thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.created_at | date: '%d %b %Y' }}</td>
+                    <td><span class="chip chip--{{ order.fulfillment_status | default: 'pending' }}">{{ order.fulfillment_status | default: 'Pending' }}</span></td>
+                    <td>{{ order.total_price | money }}</td>
+                    <td><a class="link-underline" href="{{ order.order_url }}">{{ 'customer.view_order' | t }}</a></td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+          {%- render 'pagination', paginate: paginate -%}
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+    <aside class="account__side">
+      <div class="contact-card">
+        <svg class="icon"><use href="#i-user"/></svg>
+        <strong>{{ 'customer.default_address' | t }}</strong>
+        {%- if customer.default_address -%}
+          <p>{{ customer.default_address | format_address }}</p>
+        {%- else -%}
+          <p>No address saved yet.</p>
+        {%- endif -%}
+        <a class="btn btn--ghost btn--sm" href="{{ routes.account_addresses_url }}">Manage</a>
+      </div>
+      <div class="contact-card">
+        <svg class="icon"><use href="#i-heart"/></svg>
+        <strong>{{ settings.wishlist_label }}</strong>
+        <p>Your saved pieces live on this device.</p>
+        <button class="btn btn--ghost btn--sm" data-wishlist-open>Open</button>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Account", "settings": [] }
+{% endschema %}
